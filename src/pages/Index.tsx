@@ -195,14 +195,95 @@ const Index = () => {
                 className="relative mx-auto max-w-md"
               >
                 <div className="absolute inset-0 -z-10 rounded-full bg-gradient-to-br from-primary-glow/40 to-accent/30 blur-3xl" />
-                <motion.img
-                  src={funnelArt}
-                  alt="Broken bridge between students and investors"
-                  width={1024} height={1024} loading="lazy"
-                  className="w-full select-none drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                 decoding="async" />
+                <div className="relative rounded-3xl border border-white/15 bg-white/[0.04] p-6 backdrop-blur-xl shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)]">
+                  <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-destructive/80" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-accent/80" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-white/40" />
+                    </div>
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-white/50">conversion.funnel</span>
+                  </div>
+
+                  <svg viewBox="0 0 360 280" className="mt-4 w-full" aria-label="Student to investor funnel chart">
+                    <defs>
+                      <linearGradient id="funnelGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="hsl(var(--primary-glow))" stopOpacity="0.85" />
+                        <stop offset="55%" stopColor="hsl(var(--accent))" stopOpacity="0.75" />
+                        <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity="0.85" />
+                      </linearGradient>
+                      <linearGradient id="crackGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="hsl(var(--destructive))" stopOpacity="0" />
+                        <stop offset="50%" stopColor="hsl(var(--destructive))" stopOpacity="1" />
+                        <stop offset="100%" stopColor="hsl(var(--destructive))" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+
+                    {/* grid */}
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <line key={i} x1="0" y1={i * 60 + 20} x2="360" y2={i * 60 + 20} stroke="white" strokeOpacity="0.06" strokeDasharray="2 4" />
+                    ))}
+
+                    {/* funnel shape */}
+                    <motion.path
+                      d="M20 30 L340 30 L260 130 L260 200 L100 200 L100 130 Z"
+                      fill="url(#funnelGrad)"
+                      stroke="white"
+                      strokeOpacity="0.25"
+                      strokeWidth="1"
+                      initial={{ pathLength: 0, opacity: 0 }}
+                      whileInView={{ pathLength: 1, opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.2, ease: "easeOut" }}
+                    />
+
+                    {/* crack line */}
+                    <motion.path
+                      d="M110 145 L155 155 L140 170 L200 175 L185 195 L240 200"
+                      fill="none"
+                      stroke="url(#crackGrad)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      initial={{ pathLength: 0 }}
+                      whileInView={{ pathLength: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.4, delay: 0.6 }}
+                    />
+
+                    {/* falling dots = lost ideas */}
+                    {[
+                      { x: 130, d: 0.2 }, { x: 175, d: 0.6 }, { x: 215, d: 0.9 }, { x: 250, d: 1.2 },
+                    ].map((p, i) => (
+                      <motion.circle
+                        key={i}
+                        cx={p.x} cy="210" r="2.5"
+                        fill="hsl(var(--destructive))"
+                        initial={{ y: 0, opacity: 0 }}
+                        animate={{ y: [0, 50, 50], opacity: [0, 1, 0] }}
+                        transition={{ duration: 2.4, repeat: Infinity, delay: p.d, ease: "easeIn" }}
+                      />
+                    ))}
+
+                    {/* labels */}
+                    <text x="30" y="22" fill="white" fillOpacity="0.7" fontSize="10" fontFamily="ui-monospace, monospace">IN · 50,000 students</text>
+                    <text x="180" y="248" textAnchor="middle" fill="hsl(var(--destructive))" fontSize="11" fontWeight="700" fontFamily="ui-sans-serif">OUT · ₹0 raised</text>
+                  </svg>
+
+                  <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+                    <div className="rounded-lg border border-white/10 bg-white/[0.03] p-2">
+                      <div className="font-mono text-[10px] uppercase tracking-wider text-white/50">Top</div>
+                      <div className="font-display text-base font-bold text-white">50K</div>
+                    </div>
+                    <div className="rounded-lg border border-accent/30 bg-accent/10 p-2">
+                      <div className="font-mono text-[10px] uppercase tracking-wider text-white/60">Mid</div>
+                      <div className="font-display text-base font-bold text-accent-glow">7.5K</div>
+                    </div>
+                    <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-2">
+                      <div className="font-mono text-[10px] uppercase tracking-wider text-white/60">Out</div>
+                      <div className="font-display text-base font-bold text-white">&lt;2%</div>
+                    </div>
+                  </div>
+                </div>
                 {/* Floating tags */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }}
