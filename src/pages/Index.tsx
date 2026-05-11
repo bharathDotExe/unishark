@@ -152,30 +152,22 @@ const Index = () => {
                 India is bursting with student talent — but the path from <span className="font-semibold text-white">idea</span> to <span className="font-semibold text-white">capital</span> is broken. Cold emails. No network. No trust layer.
               </p>
 
-              <div className="mt-10 flex max-w-md flex-col items-center gap-3">
+              <div className="mt-10 grid max-w-md grid-cols-3 gap-3">
                 {[
-                  { n: "50K", label: "Students with ideas", width: "100%", tone: "from-white/25 to-white/10", drop: null },
-                  { n: "7.5K", label: "Reach an investor", width: "82%", tone: "from-accent/40 to-accent/15", drop: "−85%" },
-                  { n: "<2%", label: "Get funded", width: "60%", tone: "from-destructive/50 to-destructive/20", drop: "−73%" },
-                  { n: "₹0", label: "Raised by 98%", width: "40%", tone: "from-destructive/70 to-destructive/30", drop: "−98%" },
+                  { n: "50,000+", label: "Student founders in India every year" },
+                  { n: "1 in 12", label: "Ever get a real investor meeting" },
+                  { n: "<2%", label: "Actually raise their first cheque" },
                 ].map((s, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 12 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    style={{ width: s.width }}
+                    className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur"
                   >
-                    <div className={`flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-gradient-to-r ${s.tone} px-4 py-3 backdrop-blur`}>
-                      <span className="truncate text-sm font-medium text-white/90">{s.label}</span>
-                      <div className="flex shrink-0 items-center gap-2">
-                        {s.drop && (
-                          <span className="rounded-full bg-black/40 px-2 py-0.5 text-[10px] font-semibold text-white/80">{s.drop}</span>
-                        )}
-                        <span className="font-display text-lg font-bold text-white">{s.n}</span>
-                      </div>
-                    </div>
+                    <div className="font-display text-2xl md:text-3xl font-bold text-white">{s.n}</div>
+                    <div className="mt-1 text-xs leading-snug text-white/70">{s.label}</div>
                   </motion.div>
                 ))}
               </div>
