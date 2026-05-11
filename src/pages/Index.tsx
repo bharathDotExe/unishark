@@ -9,6 +9,7 @@ import {
   Rocket, TrendingUp, Lock, Star, CheckCircle2, Zap, MessageSquare,
   FileText, Eye, Network, BarChart3, Search, Award, Heart, Target,
   Plus, Minus, Mail, Phone, Twitter, Linkedin, Instagram, Quote, IndianRupee,
+  Lightbulb, Wallet,
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.webp";
 import orb from "@/assets/orb.webp";
