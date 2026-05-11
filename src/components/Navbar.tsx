@@ -1,7 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { LogOut, UserCircle2, GraduationCap } from "lucide-react";
+import { LogOut, UserCircle2 } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export default function Navbar() {
   const { user, roles, signOut } = useAuth();
@@ -20,9 +21,16 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="group flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-transform group-hover:scale-110">
-            <GraduationCap className="h-5 w-5" />
-          </span>
+          <img
+            src={logo}
+            alt="UniShark logo"
+            width={36}
+            height={36}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="h-9 w-9 object-contain transition-transform group-hover:scale-110"
+          />
           <span className="font-display text-2xl font-extrabold tracking-[0.18em] text-primary">
             UNISHARK
           </span>
