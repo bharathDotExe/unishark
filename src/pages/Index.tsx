@@ -125,8 +125,8 @@ const Index = () => {
       <section id="problem" className="relative container mx-auto px-4 py-24 md:py-32">
         <motion.div
           variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }}
-          className="relative overflow-hidden rounded-[2.5rem] border border-white/10 shadow-elevated"
-          style={{ background: "var(--gradient-hero)" }}
+          className="relative overflow-hidden rounded-[2.5rem] border border-white/20 shadow-elevated"
+          style={{ background: "linear-gradient(135deg, hsl(252 60% 55%) 0%, hsl(262 80% 68%) 55%, hsl(280 90% 80%) 100%)" }}
         >
           {/* Decorative blobs */}
           <div className="pointer-events-none absolute -left-24 -top-24 h-96 w-96 rounded-full bg-primary-glow/40 blur-3xl" />
