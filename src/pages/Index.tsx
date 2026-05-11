@@ -367,9 +367,10 @@ const Index = () => {
                         loading="lazy"
                         width={1024}
                         height={1024}
-                        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40 mix-blend-screen"
-                       decoding="async" />
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-primary-dark/85 via-primary/40 to-transparent" />
+                        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                        decoding="async"
+                      />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
                     </>
                   )}
                   <div className={`relative inline-flex h-11 w-11 items-center justify-center rounded-xl transition-transform duration-500 group-hover:scale-110 ${f.featured ? "bg-white/15 text-white" : "bg-gradient-to-br from-primary/15 to-accent/15 text-primary"}`}>
