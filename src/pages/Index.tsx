@@ -153,24 +153,43 @@ const Index = () => {
                 India is bursting with student talent — but the path from <span className="font-semibold text-white">idea</span> to <span className="font-semibold text-white">capital</span> is broken. Cold emails. No network. No trust layer.
               </p>
 
-              <div className="mt-10 grid max-w-md grid-cols-3 gap-3">
-                {[
-                  { n: "50,000+", label: "Student founders in India every year" },
-                  { n: "1 in 12", label: "Ever get a real investor meeting" },
-                  { n: "<2%", label: "Actually raise their first cheque" },
-                ].map((s, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur"
-                  >
-                    <div className="font-display text-2xl md:text-3xl font-bold text-white">{s.n}</div>
-                    <div className="mt-1 text-xs leading-snug text-white/70">{s.label}</div>
-                  </motion.div>
-                ))}
+              <div className="relative mt-10 max-w-md">
+                {/* vertical timeline rail */}
+                <div className="pointer-events-none absolute left-[18px] top-3 bottom-3 w-px bg-gradient-to-b from-white/40 via-white/15 to-white/5" />
+                <div className="flex flex-col gap-3">
+                  {[
+                    { Icon: Lightbulb,   label: "Students with ideas", n: "50K",  drop: null,    accent: "text-sky-300" },
+                    { Icon: Users,       label: "Reach an investor",   n: "7.5K", drop: "−85%",  accent: "text-violet-300" },
+                    { Icon: CheckCircle2,label: "Get funded",          n: "<2%",  drop: "−73%",  accent: "text-pink-300" },
+                    { Icon: Wallet,      label: "Raised by 98%",       n: "₹0",   drop: "−98%",  accent: "text-orange-300" },
+                  ].map((s, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -12 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="relative flex items-center gap-4"
+                    >
+                      {/* dot */}
+                      <span className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur">
+                        <s.Icon className={`h-4 w-4 ${s.accent}`} />
+                      </span>
+
+                      <div className="flex flex-1 items-center justify-between gap-3 rounded-xl border border-white/15 bg-white/[0.07] px-4 py-3 backdrop-blur">
+                        <span className="text-sm font-medium text-white/90">{s.label}</span>
+                        <div className="flex shrink-0 items-center gap-2">
+                          {s.drop && (
+                            <span className="rounded-md bg-black/30 px-1.5 py-0.5 text-[10px] font-semibold text-white/70">
+                              {s.drop}
+                            </span>
+                          )}
+                          <span className={`font-display text-lg font-bold ${s.accent}`}>{s.n}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
 
               <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-accent/40 bg-accent/15 px-4 py-2 text-sm font-medium text-white">
