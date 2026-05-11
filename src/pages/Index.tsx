@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import heroBg from "@/assets/hero-bg.webp";
 import orb from "@/assets/orb.webp";
-import funnelArt from "@/assets/funnel-illustration.webp";
 import investorArt from "@/assets/investor-illustration.webp";
 import wizardArt from "@/assets/wizard-illustration.webp";
 
