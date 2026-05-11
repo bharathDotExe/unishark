@@ -4,9 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Navbar from "@/components/Navbar";
+import AuthLayout from "@/components/AuthLayout";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -51,14 +50,14 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative"
-      style={{ backgroundImage: "var(--gradient-mesh)" }}>
-      <Navbar />
-      <div className="container mx-auto px-4 py-12 max-w-md">
-        <Card className="p-8 shadow-elevated border-border/50 backdrop-blur bg-card/80 rounded-2xl">
-          <h1 className="font-display text-3xl font-bold tracking-tight text-gradient">Create your account</h1>
-          <p className="text-sm text-muted-foreground mt-1">Join the curated marketplace.</p>
-          <form onSubmit={onSubmit} className="mt-6 space-y-4">
+    <AuthLayout
+      title="Create your account"
+      subtitle="Join the curated student-founder marketplace."
+      footer={
+        <>Already have an account? <Link to="/login" className="font-medium text-primary hover:underline">Sign in</Link></>
+      }
+    >
+      <form onSubmit={onSubmit} className="space-y-4">
             <div>
               <Label>I am a</Label>
               <RadioGroup value={role} onValueChange={(v) => setRole(v as any)} className="grid grid-cols-2 gap-2 mt-2">
@@ -85,12 +84,7 @@ export default function Signup() {
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account…" : "Create account"}
             </Button>
-          </form>
-          <p className="mt-6 text-sm text-center text-muted-foreground">
-            Already have an account? <Link to="/login" className="text-primary font-medium hover:underline">Sign in</Link>
-          </p>
-        </Card>
-      </div>
-    </div>
+      </form>
+    </AuthLayout>
   );
 }
