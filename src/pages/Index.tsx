@@ -195,78 +195,27 @@ const Index = () => {
                 className="relative mx-auto max-w-md"
               >
                 <div className="absolute inset-0 -z-10 rounded-full bg-gradient-to-br from-primary-glow/40 to-accent/30 blur-3xl" />
-                {/* Hand-built broken bridge diagram */}
-                <div className="relative rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur-md shadow-elevated">
-                  <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-white/70">
-                    <span>Students</span>
-                    <span className="text-accent-glow">/// gap ///</span>
-                    <span>Investors</span>
-                  </div>
-
-                  <svg viewBox="0 0 360 200" className="mt-4 w-full" role="img" aria-label="Broken bridge between students and investors">
-                    <defs>
-                      <linearGradient id="bridgeL" x1="0" x2="1">
-                        <stop offset="0" stopColor="hsl(var(--accent-glow))" />
-                        <stop offset="1" stopColor="hsl(var(--accent))" />
-                      </linearGradient>
-                      <linearGradient id="bridgeR" x1="0" x2="1">
-                        <stop offset="0" stopColor="hsl(var(--primary-glow))" />
-                        <stop offset="1" stopColor="#ffffff" stopOpacity="0.85" />
-                      </linearGradient>
-                    </defs>
-                    {/* Cliffs */}
-                    <path d="M0 150 L120 150 L120 200 L0 200 Z" fill="rgba(0,0,0,0.25)" />
-                    <path d="M240 150 L360 150 L360 200 L240 200 Z" fill="rgba(0,0,0,0.25)" />
-                    {/* Bridge halves – broken in middle */}
-                    <motion.path
-                      d="M20 150 L120 150 L150 165"
-                      stroke="url(#bridgeL)" strokeWidth="6" fill="none" strokeLinecap="round"
-                      initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                    />
-                    <motion.path
-                      d="M210 165 L240 150 L340 150"
-                      stroke="url(#bridgeR)" strokeWidth="6" fill="none" strokeLinecap="round"
-                      initial={{ pathLength: 0 }} whileInView={{ pathLength: 1 }} viewport={{ once: true }}
-                      transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-                    />
-                    {/* Falling chunks */}
-                    <motion.rect x="155" y="170" width="14" height="6" rx="1" fill="hsl(var(--accent))"
-                      animate={{ y: [170, 195, 170], rotate: [0, 25, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    />
-                    <motion.rect x="190" y="172" width="12" height="6" rx="1" fill="hsl(var(--accent-glow))"
-                      animate={{ y: [172, 196, 172], rotate: [0, -20, 0] }}
-                      transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
-                    />
-                    {/* Pillars dashed */}
-                    <line x1="60" y1="150" x2="60" y2="200" stroke="rgba(255,255,255,0.18)" strokeDasharray="3 4" />
-                    <line x1="300" y1="150" x2="300" y2="200" stroke="rgba(255,255,255,0.18)" strokeDasharray="3 4" />
-                    {/* People dots */}
-                    <circle cx="40" cy="135" r="6" fill="#fff" />
-                    <circle cx="62" cy="130" r="6" fill="#fff" opacity="0.85" />
-                    <circle cx="84" cy="135" r="6" fill="#fff" opacity="0.7" />
-                    <circle cx="320" cy="135" r="6" fill="hsl(var(--accent-glow))" />
-                    <circle cx="298" cy="130" r="6" fill="hsl(var(--accent))" />
-                  </svg>
-
-                  <div className="mt-5 grid grid-cols-2 gap-3 text-center">
-                    <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2">
-                      <div className="font-display text-2xl font-bold text-white">50,000+</div>
-                      <div className="text-[11px] uppercase tracking-wider text-white/60">Idea-stage founders</div>
-                    </div>
-                    <div className="rounded-xl border border-accent/30 bg-accent/10 px-3 py-2">
-                      <div className="font-display text-2xl font-bold text-accent-glow">~1,200</div>
-                      <div className="text-[11px] uppercase tracking-wider text-white/60">Active early-stage VCs</div>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 flex items-center justify-between rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-[11px] text-white/70">
-                    <span className="inline-flex items-center gap-1.5"><GraduationCap className="h-3.5 w-3.5 text-primary-glow" /> Idea</span>
-                    <span className="font-mono text-white/40">— — ✕ — —</span>
-                    <span className="inline-flex items-center gap-1.5"><IndianRupee className="h-3.5 w-3.5 text-accent" /> Capital</span>
-                  </div>
-                </div>
+                <motion.img
+                  src={funnelArt}
+                  alt="Broken bridge between students and investors"
+                  width={1024} height={1024} loading="lazy"
+                  className="w-full select-none drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                 decoding="async" />
+                {/* Floating tags */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }}
+                  className="absolute -left-2 top-10 hidden md:flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-primary-dark shadow-elevated"
+                >
+                  <GraduationCap className="h-3.5 w-3.5 text-primary" /> Idea
+                </motion.div>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.55 }}
+                  className="absolute -right-2 bottom-16 hidden md:flex items-center gap-2 rounded-full bg-white/95 px-3 py-1.5 text-xs font-semibold text-primary-dark shadow-elevated"
+                >
+                  <IndianRupee className="h-3.5 w-3.5 text-accent" /> Capital
+                </motion.div>
               </motion.div>
             </div>
           </div>
