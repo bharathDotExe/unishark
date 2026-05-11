@@ -152,27 +152,26 @@ const Index = () => {
                 India is bursting with student talent — but the path from <span className="font-semibold text-white">idea</span> to <span className="font-semibold text-white">capital</span> is broken. Cold emails. No network. No trust layer.
               </p>
 
-              <div className="mt-10 max-w-md space-y-2">
+              <div className="mt-10 flex max-w-md flex-col items-center gap-3">
                 {[
                   { n: "50K", label: "Students with ideas", width: "100%", tone: "from-white/25 to-white/10", drop: null },
-                  { n: "7.5K", label: "Reach an investor", width: "75%", tone: "from-accent/40 to-accent/15", drop: "−85%" },
-                  { n: "<2%", label: "Get funded", width: "50%", tone: "from-destructive/50 to-destructive/20", drop: "−73%" },
-                  { n: "₹0", label: "Raised by 98%", width: "28%", tone: "from-destructive/70 to-destructive/30", drop: "−98%" },
+                  { n: "7.5K", label: "Reach an investor", width: "82%", tone: "from-accent/40 to-accent/15", drop: "−85%" },
+                  { n: "<2%", label: "Get funded", width: "60%", tone: "from-destructive/50 to-destructive/20", drop: "−73%" },
+                  { n: "₹0", label: "Raised by 98%", width: "40%", tone: "from-destructive/70 to-destructive/30", drop: "−98%" },
                 ].map((s, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, scaleX: 0.6 }}
-                    whileInView={{ opacity: 1, scaleX: 1 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                    style={{ width: s.width, transformOrigin: "left" }}
-                    className="mx-auto"
+                    transition={{ delay: i * 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ width: s.width }}
                   >
-                    <div className={`flex items-center justify-between rounded-xl border border-white/15 bg-gradient-to-r ${s.tone} px-4 py-3 backdrop-blur`}>
-                      <span className="text-sm font-medium text-white/90">{s.label}</span>
-                      <div className="flex items-center gap-2">
+                    <div className={`flex items-center justify-between gap-3 rounded-xl border border-white/15 bg-gradient-to-r ${s.tone} px-4 py-3 backdrop-blur`}>
+                      <span className="truncate text-sm font-medium text-white/90">{s.label}</span>
+                      <div className="flex shrink-0 items-center gap-2">
                         {s.drop && (
-                          <span className="hidden sm:inline rounded-full bg-black/30 px-2 py-0.5 text-[10px] font-semibold text-white/80">{s.drop}</span>
+                          <span className="rounded-full bg-black/40 px-2 py-0.5 text-[10px] font-semibold text-white/80">{s.drop}</span>
                         )}
                         <span className="font-display text-lg font-bold text-white">{s.n}</span>
                       </div>
