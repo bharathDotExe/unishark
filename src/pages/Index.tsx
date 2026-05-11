@@ -54,7 +54,7 @@ const Index = () => {
       {/* HERO */}
       <section ref={heroRef} id="home" className="relative h-[100svh] min-h-[680px] w-full overflow-hidden">
         <motion.div style={{ y: yBg }} className="absolute inset-0 -top-20 will-change-transform">
-          <img src={heroBg} alt="" className="h-[120%] w-full object-cover" fetchPriority="high" />
+          <img src={heroBg} alt="" className="h-[120%] w-full object-cover" fetchPriority="high"  decoding="async" />
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(252_60%_10%/0.65)] via-[hsl(262_60%_15%/0.75)] to-[hsl(252_60%_8%/0.96)]" />
         </motion.div>
         <div className="absolute inset-0 grid-bg opacity-30" />
@@ -202,7 +202,7 @@ const Index = () => {
                   className="w-full select-none drop-shadow-[0_30px_60px_rgba(0,0,0,0.45)]"
                   animate={{ y: [0, -10, 0] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                />
+                 decoding="async" />
                 {/* Floating tags */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }}
@@ -294,7 +294,7 @@ const Index = () => {
       {/* HOW IT WORKS */}
       <section id="how" className="relative container mx-auto px-4 py-28 md:py-36">
         <motion.div style={{ y: blobY }} className="pointer-events-none absolute right-0 top-20 -z-10 hidden lg:block">
-          <img src={orb} alt="" className="h-[520px] w-[520px] opacity-70" loading="lazy" />
+          <img src={orb} alt="" className="h-[520px] w-[520px] opacity-70" loading="lazy"  decoding="async" />
         </motion.div>
 
         <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true }} className="mx-auto max-w-2xl text-center">
@@ -368,7 +368,7 @@ const Index = () => {
                         width={1024}
                         height={1024}
                         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40 mix-blend-screen"
-                      />
+                       decoding="async" />
                       <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-primary-dark/85 via-primary/40 to-transparent" />
                     </>
                   )}
@@ -480,7 +480,7 @@ const Index = () => {
                   className="w-full select-none drop-shadow-[0_30px_60px_rgba(0,0,0,0.55)]"
                   animate={{ y: [0, -12, 0] }}
                   transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                />
+                 decoding="async" />
                 <motion.div
                   initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4 }}
                   className="absolute right-0 top-6 flex items-center gap-2 rounded-2xl border border-white/15 bg-white/10 px-3 py-2 text-xs text-white backdrop-blur-md"
