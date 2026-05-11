@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Navbar from "@/components/Navbar";
-import authCharacter from "@/assets/auth-character.png";
+import authCharacter from "@/assets/auth-character.webp";
 
 export default function AuthLayout({
   title,

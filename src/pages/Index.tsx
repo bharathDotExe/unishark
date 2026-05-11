@@ -10,11 +10,11 @@ import {
   FileText, Eye, Network, BarChart3, Search, Award, Heart, Target,
   Plus, Minus, Mail, Phone, Twitter, Linkedin, Instagram, Quote, IndianRupee,
 } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
-import orb from "@/assets/orb.png";
-import funnelArt from "@/assets/funnel-illustration.png";
-import investorArt from "@/assets/investor-illustration.png";
-import wizardArt from "@/assets/wizard-illustration.png";
+import heroBg from "@/assets/hero-bg.webp";
+import orb from "@/assets/orb.webp";
+import funnelArt from "@/assets/funnel-illustration.webp";
+import investorArt from "@/assets/investor-illustration.webp";
+import wizardArt from "@/assets/wizard-illustration.webp";
 
 const fadeUp: any = {
   hidden: { opacity: 0, y: 28 },
