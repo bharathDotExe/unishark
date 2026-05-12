@@ -8,51 +8,62 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* UniShark — Minimalist mono palette */
-    --background: 0 0% 99%;
-    --foreground: 0 0% 9%;
+    /* UniShark — Neo-Brutalism + Minimal SaaS */
+    --background: 44 60% 96%;            /* warm cream */
+    --foreground: 0 0% 6%;
 
-    --surface: 0 0% 97%;
-    --surface-foreground: 0 0% 9%;
+    --surface: 44 70% 92%;
+    --surface-foreground: 0 0% 6%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 9%;
+    --card-foreground: 0 0% 6%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
+    --popover-foreground: 0 0% 6%;
 
-    --primary: 0 0% 9%;
+    --primary: 0 0% 6%;                  /* black */
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 0 0% 9%;
-    --primary-glow: 0 0% 25%;
+    --primary-dark: 0 0% 6%;
+    --primary-glow: 0 0% 20%;
 
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 44 70% 92%;
+    --secondary-foreground: 0 0% 6%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 42%;
+    --muted: 44 40% 90%;
+    --muted-foreground: 0 0% 35%;
 
-    --accent: 0 0% 9%;
-    --accent-foreground: 0 0% 100%;
-    --accent-glow: 0 0% 30%;
+    --accent: 24 95% 64%;                /* punchy orange */
+    --accent-foreground: 0 0% 6%;
+    --accent-glow: 24 100% 75%;
 
-    --success: 142 50% 36%;
+    /* Pastel palette */
+    --pastel-pink: 348 100% 88%;
+    --pastel-yellow: 48 100% 78%;
+    --pastel-mint: 156 65% 80%;
+    --pastel-blue: 212 100% 84%;
+    --pastel-lilac: 270 80% 88%;
+    --pastel-peach: 24 100% 84%;
+
+    --success: 142 60% 40%;
     --success-foreground: 0 0% 100%;
 
-    --destructive: 0 65% 48%;
+    --destructive: 0 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 9%;
+    --border: 0 0% 6%;
+    --input: 0 0% 6%;
+    --ring: 0 0% 6%;
 
-    --radius: 0.5rem;
+    --radius: 1.25rem;
 
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 9%), hsl(0 0% 18%));
-    --gradient-accent: linear-gradient(135deg, hsl(0 0% 9%), hsl(0 0% 25%));
+    --gradient-hero: none;
+    --gradient-accent: none;
     --gradient-mesh: none;
-    --shadow-card: 0 1px 2px hsl(0 0% 0% / 0.04);
-    --shadow-elevated: 0 8px 24px -12px hsl(0 0% 0% / 0.12);
+    --shadow-card: 4px 4px 0 0 hsl(0 0% 6%);
+    --shadow-elevated: 8px 8px 0 0 hsl(0 0% 6%);
+    --shadow-brutal-sm: 3px 3px 0 0 hsl(0 0% 6%);
+    --shadow-brutal: 6px 6px 0 0 hsl(0 0% 6%);
+    --shadow-brutal-lg: 10px 10px 0 0 hsl(0 0% 6%);
 
     --sidebar-background: 0 0% 98%;
 
