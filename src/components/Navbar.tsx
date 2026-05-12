@@ -17,18 +17,19 @@ export default function Navbar() {
   const isStudent = roles.includes("student");
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="font-display text-lg font-semibold tracking-[0.2em] text-foreground">
+    <header className="sticky top-0 z-40 w-full border-b-2 border-foreground bg-background/95 backdrop-blur">
+      <div className="container mx-auto flex h-16 items-center justify-between px-6 max-w-6xl">
+        <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-[0.18em] text-foreground">
+          <span className="inline-flex h-9 w-9 items-center justify-center bg-[hsl(var(--accent))] border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] rounded-xl text-base">🦈</span>
           UNISHARK
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2">
           {!user && (
-            <div className="mr-2 hidden md:flex items-center gap-1 text-sm text-muted-foreground">
-              <a href="#how" className="px-3 py-2 hover:text-foreground transition-colors">How It Works</a>
-              <a href="#investors" className="px-3 py-2 hover:text-foreground transition-colors">For Investors</a>
-              <a href="#students" className="px-3 py-2 hover:text-foreground transition-colors">For Students</a>
-              <a href="#faq" className="px-3 py-2 hover:text-foreground transition-colors">FAQ</a>
+            <div className="mr-2 hidden md:flex items-center gap-1 text-sm font-medium">
+              <a href="#how" className="px-3 py-2 hover:underline underline-offset-4">How</a>
+              <a href="#investors" className="px-3 py-2 hover:underline underline-offset-4">Investors</a>
+              <a href="#students" className="px-3 py-2 hover:underline underline-offset-4">Students</a>
+              <a href="#faq" className="px-3 py-2 hover:underline underline-offset-4">FAQ</a>
             </div>
           )}
           {user ? (
@@ -45,15 +46,15 @@ export default function Navbar() {
               <Button variant="ghost" asChild size="sm">
                 <Link to="/profile"><UserCircle2 className="h-4 w-4 sm:mr-2" /><span className="hidden sm:inline">Profile</span></Link>
               </Button>
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
+              <Button size="sm" onClick={handleSignOut} className="border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] bg-card text-foreground hover:bg-card rounded-full font-bold">
                 <LogOut className="h-4 w-4 sm:mr-2" />
                 <span className="hidden sm:inline">Sign out</span>
               </Button>
             </>
           ) : (
             <>
-              <Button variant="ghost" asChild size="sm"><Link to="/login">Sign in</Link></Button>
-              <Button asChild size="sm"><Link to="/signup">Get started</Link></Button>
+              <Button variant="ghost" asChild size="sm" className="font-bold"><Link to="/login">Sign in</Link></Button>
+              <Button asChild size="sm" className="border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] bg-foreground text-background hover:bg-foreground rounded-full font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"><Link to="/signup">Get started →</Link></Button>
             </>
           )}
         </nav>
