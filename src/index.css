@@ -8,53 +8,51 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* UniShark brand — Bold modern: violet + electric coral on cream */
-    --background: 38 40% 98%;          /* warm off-white */
-    --foreground: 250 35% 12%;         /* near-black indigo */
+    /* UniShark — Minimalist mono palette */
+    --background: 0 0% 99%;
+    --foreground: 0 0% 9%;
 
-    --surface: 250 40% 97%;            /* lavender mist */
-    --surface-foreground: 250 35% 12%;
+    --surface: 0 0% 97%;
+    --surface-foreground: 0 0% 9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 250 35% 12%;
+    --card-foreground: 0 0% 9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 250 35% 12%;
+    --popover-foreground: 0 0% 9%;
 
-    --primary: 262 83% 58%;            /* electric violet #7C3AED */
+    --primary: 0 0% 9%;
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 252 56% 22%;       /* deep indigo */
-    --primary-glow: 280 95% 70%;       /* magenta glow */
+    --primary-dark: 0 0% 9%;
+    --primary-glow: 0 0% 25%;
 
-    --secondary: 252 56% 22%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 95%;
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 250 30% 94%;
-    --muted-foreground: 250 12% 42%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 42%;
 
-    --accent: 12 95% 60%;              /* electric coral #FB5C3C */
+    --accent: 0 0% 9%;
     --accent-foreground: 0 0% 100%;
-    --accent-glow: 38 100% 62%;        /* warm amber */
+    --accent-glow: 0 0% 30%;
 
-    --success: 142 71% 35%;
+    --success: 142 50% 36%;
     --success-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 50%;
+    --destructive: 0 65% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 250 20% 88%;
-    --input: 250 20% 88%;
-    --ring: 262 83% 58%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 0% 9%;
 
-    --radius: 0.625rem;
+    --radius: 0.5rem;
 
-    --gradient-hero: linear-gradient(135deg, hsl(252 56% 22%) 0%, hsl(262 83% 58%) 55%, hsl(280 95% 70%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(12 95% 60%) 0%, hsl(38 100% 62%) 100%);
-    --gradient-mesh: radial-gradient(at 18% 20%, hsl(262 83% 58% / 0.18) 0px, transparent 55%),
-                     radial-gradient(at 82% 10%, hsl(12 95% 60% / 0.16) 0px, transparent 50%),
-                     radial-gradient(at 45% 95%, hsl(280 95% 70% / 0.18) 0px, transparent 55%);
-    --shadow-card: 0 1px 2px 0 hsl(252 56% 22% / 0.05), 0 8px 28px -8px hsl(262 83% 58% / 0.18);
-    --shadow-elevated: 0 20px 60px -20px hsl(262 83% 58% / 0.45);
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 9%), hsl(0 0% 18%));
+    --gradient-accent: linear-gradient(135deg, hsl(0 0% 9%), hsl(0 0% 25%));
+    --gradient-mesh: none;
+    --shadow-card: 0 1px 2px hsl(0 0% 0% / 0.04);
+    --shadow-elevated: 0 8px 24px -12px hsl(0 0% 0% / 0.12);
 
     --sidebar-background: 0 0% 98%;
 
