@@ -20,7 +20,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 w-full border-b-2 border-foreground bg-background/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-6 max-w-6xl">
         <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold tracking-[0.18em] text-foreground">
-          <img src="/favicon.ico" alt="Logo" className="h-8 w-8" />
+          <img src="src/assets/logo.png" alt="Logo" className="h-8 w-8" />
           UNISHARK
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2">
