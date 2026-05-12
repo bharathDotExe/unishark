@@ -144,11 +144,11 @@ export default function PitchForm() {
     <div className="min-h-screen bg-background relative"
       style={{ backgroundImage: "var(--gradient-mesh)" }}>
       <Navbar />
-      <div className="container mx-auto px-4 py-10 max-w-3xl">
+      <div className="container mx-auto px-4 py-8 sm:py-10 max-w-3xl">
         <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back
         </Button>
-        <Card className="p-8 shadow-card">
+        <Card className="p-5 sm:p-8 shadow-card">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold text-primary-dark">Step {step} of 5</h1>
             <span className="text-sm text-muted-foreground">{readonly ? `Status: ${status}` : "Auto-saved"}</span>
@@ -248,7 +248,7 @@ export default function PitchForm() {
             </div>
           )}
 
-          <div className="flex items-center justify-between mt-10 pt-6 border-t border-border">
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-8 pt-6 border-t border-border">
             <Button variant="outline" onClick={prev} disabled={step === 1}>
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>

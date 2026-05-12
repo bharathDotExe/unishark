@@ -130,6 +130,11 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     font-feature-settings: "ss01", "cv11";
+    overflow-x: hidden;
+  }
+
+  html {
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, .font-display {

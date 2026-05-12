@@ -119,11 +119,11 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background" style={{ backgroundImage: "var(--gradient-mesh)" }}>
       <Navbar />
-      <main className="container mx-auto max-w-4xl px-4 py-12">
-        <header className="mb-8 flex items-start justify-between gap-4">
+      <main className="container mx-auto max-w-4xl px-4 py-8 sm:py-12">
+        <header className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <span className="inline-block rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Your profile</span>
-            <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-primary-dark">
+            <h1 className="mt-3 font-display text-3xl sm:text-4xl font-bold tracking-tight text-primary-dark">
               {isStudent ? "Student profile" : isInvestor ? "Investor profile" : "Profile"}
             </h1>
             <p className="mt-2 text-muted-foreground">Keep this fresh — investors and founders see it.</p>

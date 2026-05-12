@@ -47,14 +47,14 @@ const Index = () => {
       <Navbar />
 
       {/* HERO */}
-      <section id="home" className="container mx-auto px-6 pt-16 pb-24 md:pt-24 md:pb-32 max-w-6xl">
+      <section id="home" className="container mx-auto px-4 sm:px-6 pt-12 pb-20 md:pt-24 md:pb-32 max-w-6xl">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           <div className="lg:col-span-7">
             <Pill bg="bg-[hsl(var(--pastel-yellow))]">
               <span className="h-2 w-2 rounded-full bg-foreground animate-pulse" />
               India's student-founder marketplace
             </Pill>
-            <h1 className="mt-6 font-display text-5xl md:text-7xl lg:text-[5.25rem] font-bold tracking-tight leading-[0.98]">
+            <h1 className="mt-6 font-display text-4xl sm:text-5xl md:text-7xl lg:text-[5.25rem] font-bold tracking-tight leading-[1.05] md:leading-[0.98]">
               Where student <span className="inline-block bg-[hsl(var(--pastel-pink))] px-3 -rotate-2 border-2 border-foreground rounded-2xl">founders</span> meet real <span className="inline-block bg-[hsl(var(--pastel-mint))] px-3 rotate-1 border-2 border-foreground rounded-2xl">capital.</span>
             </h1>
             <p className="mt-8 text-lg text-muted-foreground max-w-xl leading-relaxed">
@@ -105,15 +105,15 @@ const Index = () => {
       </section>
 
       {/* PROBLEM */}
-      <section id="problem" className="container mx-auto px-6 py-24 md:py-32 max-w-6xl">
-        <div className="max-w-2xl mb-16">
+      <section id="problem" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
+        <div className="max-w-2xl mb-10 md:mb-16">
           <Pill bg="bg-[hsl(var(--pastel-pink))]">⚠️ The problem</Pill>
-          <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+          <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
             The funnel is <span className="inline-block bg-[hsl(var(--destructive))] text-destructive-foreground px-3 -rotate-2 border-2 border-foreground rounded-2xl">broken.</span>
           </h2>
           <p className="mt-6 text-lg text-muted-foreground">India is bursting with student talent — but the path from idea to capital is broken. Cold emails. No network. No trust layer.</p>
         </div>
-        <div className="grid md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           {[
             { n: "50K", label: "Students with ideas", bg: "bg-[hsl(var(--pastel-yellow))]" },
             { n: "7.5K", label: "Reach an investor", bg: "bg-[hsl(var(--pastel-peach))]" },
@@ -129,11 +129,11 @@ const Index = () => {
       </section>
 
       {/* SOLUTION */}
-      <section id="solution" className="bg-[hsl(var(--surface))] border-y-2 border-foreground py-24 md:py-32">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="max-w-2xl mb-16 text-center mx-auto">
+      <section id="solution" className="bg-[hsl(var(--surface))] border-y-2 border-foreground py-16 md:py-32">
+        <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+          <div className="max-w-2xl mb-10 md:mb-16 text-center mx-auto">
             <Pill bg="bg-[hsl(var(--pastel-mint))]">✨ The solution</Pill>
-            <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">One bridge. Two sides.</h2>
+            <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">One bridge. Two sides.</h2>
             <p className="mt-5 text-lg text-muted-foreground">A curated marketplace built for both — vetted, secure, India-first.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
@@ -167,10 +167,10 @@ const Index = () => {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" className="container mx-auto px-6 py-24 md:py-32 max-w-6xl">
-        <div className="max-w-2xl mb-16">
+      <section id="how" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
+        <div className="max-w-2xl mb-10 md:mb-16">
           <Pill bg="bg-[hsl(var(--pastel-blue))]">🛠 How it works</Pill>
-          <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Three steps. Zero friction.</h2>
+          <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Three steps. Zero friction.</h2>
           <p className="mt-5 text-lg text-muted-foreground">From idea to funded — without the cold-email grind.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
@@ -193,14 +193,14 @@ const Index = () => {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="bg-[hsl(var(--pastel-lilac))] border-y-2 border-foreground py-24 md:py-32">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="max-w-2xl mb-16">
+      <section id="features" className="bg-[hsl(var(--pastel-lilac))] border-y-2 border-foreground py-16 md:py-32">
+        <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+          <div className="max-w-2xl mb-10 md:mb-16">
             <Pill bg="bg-card">⚙️ Key features</Pill>
-            <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Everything you need to ship a round.</h2>
+            <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Everything you need to ship a round.</h2>
             <p className="mt-5 text-lg text-muted-foreground">From draft to deck to term sheet — built into one platform.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {[
               { icon: Rocket, title: "5-step pitch wizard", body: "Auto-save, deck upload, draft anytime.", bg: "bg-[hsl(var(--pastel-pink))]" },
               { icon: MessageSquare, title: "In-app messaging", body: "Talk to investors on the platform.", bg: "bg-[hsl(var(--pastel-yellow))]" },
@@ -222,10 +222,10 @@ const Index = () => {
       </section>
 
       {/* SUCCESS STORIES */}
-      <section id="stories" className="container mx-auto px-6 py-24 md:py-32 max-w-6xl">
-        <div className="max-w-2xl mb-16">
+      <section id="stories" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
+        <div className="max-w-2xl mb-10 md:mb-16">
           <Pill bg="bg-[hsl(var(--pastel-yellow))]">⭐ Success stories</Pill>
-          <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Real founders. Real cheques.</h2>
+          <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Real founders. Real cheques.</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {[
@@ -252,18 +252,18 @@ const Index = () => {
       </section>
 
       {/* INVESTORS */}
-      <section id="investors" className="bg-foreground text-background border-y-2 border-foreground py-24 md:py-32 relative overflow-hidden">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid lg:grid-cols-12 gap-12 items-center">
+      <section id="investors" className="bg-foreground text-background border-y-2 border-foreground py-16 md:py-32 relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             <div className="lg:col-span-7">
               <span className={`inline-flex items-center gap-2 bg-[hsl(var(--accent))] text-foreground border-2 border-background shadow-[3px_3px_0_0_hsl(var(--background))] rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider`}>
                 💼 For investors
               </span>
-              <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
+              <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
                 Where angels find their <span className="inline-block bg-[hsl(var(--accent))] text-foreground px-3 rotate-1 border-2 border-background rounded-2xl">next bet.</span>
               </h2>
               <p className="mt-5 text-lg text-background/70 max-w-xl">Curated, vetted, India-first deal flow — without the inbox noise.</p>
-              <div className="mt-10 grid grid-cols-2 gap-4">
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {[
                   { icon: ShieldCheck, t: "Pre-vetted founders" },
                   { icon: Search, t: "Quality deal flow" },
@@ -300,13 +300,13 @@ const Index = () => {
       </section>
 
       {/* STUDENTS */}
-      <section id="students" className="container mx-auto px-6 py-24 md:py-32 max-w-6xl">
-        <div className="max-w-2xl mb-16">
+      <section id="students" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
+        <div className="max-w-2xl mb-10 md:mb-16">
           <Pill bg="bg-[hsl(var(--pastel-mint))]">🎓 For students</Pill>
-          <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Why founders pick UniShark.</h2>
+          <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Why founders pick UniShark.</h2>
           <p className="mt-5 text-lg text-muted-foreground">Built by founders, for founders. We obsess over your time and your idea.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {[
             { icon: Target, t: "Direct investor access", b: "150+ verified angels actively browsing.", bg: "bg-[hsl(var(--pastel-pink))]" },
             { icon: Lock, t: "Idea protection", b: "Watermarked pitches. Legal IP shield.", bg: "bg-[hsl(var(--pastel-yellow))]" },
@@ -330,9 +330,9 @@ const Index = () => {
       </section>
 
       {/* STATS */}
-      <section className="bg-[hsl(var(--accent))] border-y-2 border-foreground py-20">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="bg-[hsl(var(--accent))] border-y-2 border-foreground py-14 md:py-20">
+        <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
             {[
               { k: "₹12Cr+", v: "Capital intent" },
               { k: "150+", v: "Verified angels" },
@@ -353,10 +353,10 @@ const Index = () => {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="container mx-auto px-6 py-24 md:py-32 max-w-4xl">
-        <div className="text-center mb-16">
+      <section id="faq" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-4xl">
+        <div className="text-center mb-10 md:mb-16">
           <Pill bg="bg-[hsl(var(--pastel-yellow))]">❓ FAQ</Pill>
-          <h2 className="mt-6 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Questions, answered.</h2>
+          <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Questions, answered.</h2>
         </div>
         <div className="space-y-4">
           {faqs.map((f, i) => {
@@ -365,7 +365,7 @@ const Index = () => {
             return (
               <div key={f.q} className={`${bgs[i]} ${brutalBorder} ${brutalShadow} rounded-2xl overflow-hidden`}>
                 <button onClick={() => setOpenFaq(open ? null : i)} className="flex w-full items-center justify-between gap-4 p-6 text-left">
-                  <span className="font-display text-lg md:text-xl font-bold">{f.q}</span>
+                  <span className="font-display text-base md:text-xl font-bold">{f.q}</span>
                   <span className={`flex h-9 w-9 shrink-0 items-center justify-center bg-foreground text-background ${brutalBorder} rounded-full transition-transform ${open ? "rotate-180" : ""}`}>
                     {open ? <Minus className="h-4 w-4" strokeWidth={3} /> : <Plus className="h-4 w-4" strokeWidth={3} />}
                   </span>
@@ -387,14 +387,14 @@ const Index = () => {
       </section>
 
       {/* CTA */}
-      <section className="container mx-auto px-6 pb-24 max-w-6xl">
-        <div className={`bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadowLg} rounded-[32px] p-12 md:p-20 text-center relative overflow-hidden`}>
+      <section className="container mx-auto px-4 sm:px-6 pb-16 md:pb-24 max-w-6xl">
+        <div className={`bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadowLg} rounded-[24px] sm:rounded-[32px] p-8 sm:p-12 md:p-20 text-center relative overflow-hidden`}>
           <div className="absolute top-6 left-6 text-4xl rotate-[-15deg]">🚀</div>
           <div className="absolute top-10 right-8 text-4xl rotate-12">✨</div>
           <div className="absolute bottom-8 left-10 text-4xl rotate-12">💸</div>
           <div className="absolute bottom-10 right-6 text-4xl -rotate-12">🎯</div>
           <Sparkles className="mx-auto h-8 w-8" strokeWidth={2.5} />
-          <h2 className="mt-4 font-display text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Ready to get funded?</h2>
+          <h2 className="mt-4 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Ready to get funded?</h2>
           <p className="mt-5 text-lg font-medium max-w-xl mx-auto">Join 500+ founders and 150+ investors building the future on UniShark.</p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-foreground text-background hover:bg-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))]`}>
@@ -412,7 +412,7 @@ const Index = () => {
 
       {/* FOOTER */}
       <footer className="bg-foreground text-background border-t-2 border-foreground">
-        <div className="container mx-auto grid gap-10 px-6 py-16 md:grid-cols-5 max-w-6xl">
+        <div className="container mx-auto grid gap-8 px-4 sm:px-6 py-12 md:py-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-5 max-w-6xl">
           <div className="md:col-span-2">
             <div className="font-display text-2xl font-bold tracking-[0.18em]">UNISHARK 🦈</div>
             <p className="mt-4 max-w-sm text-sm text-background/70">India's first curated marketplace for student founders & angel investors.</p>
