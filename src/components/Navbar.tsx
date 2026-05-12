@@ -2,7 +2,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { LogOut, UserCircle2 } from "lucide-react";
-import logo from "@/assets/logo.webp";
 
 export default function Navbar() {
   const { user, roles, signOut } = useAuth();
@@ -20,20 +19,8 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="group flex items-center gap-2.5">
-          <img
-            src={logo}
-            alt="UniShark logo"
-            width={36}
-            height={36}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            className="h-9 w-9 object-contain transition-transform group-hover:scale-110"
-          />
-          <span className="font-display text-2xl font-extrabold tracking-[0.18em] text-primary">
-            UNISHARK
-          </span>
+        <Link to="/" className="font-display text-lg font-semibold tracking-[0.2em] text-foreground">
+          UNISHARK
         </Link>
         <nav className="flex items-center gap-1 sm:gap-2">
           {!user && (
