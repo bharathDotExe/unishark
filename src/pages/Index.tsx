@@ -238,17 +238,18 @@ const Index = () => {
       {/* SOLUTION */}
       <section id="solution" className="bg-[hsl(var(--surface))] border-y-2 border-foreground py-16 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
-          <div className="max-w-2xl mb-10 md:mb-16 text-center mx-auto">
+          <Reveal className="max-w-2xl mb-10 md:mb-16 text-center mx-auto">
             <Pill bg="bg-[hsl(var(--pastel-mint))]"><Sparkles className="h-3.5 w-3.5" strokeWidth={2.5} /> The solution</Pill>
             <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">One bridge. Two sides.</h2>
             <p className="mt-5 text-lg text-muted-foreground">A curated marketplace built for both — vetted, secure, India-first.</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8">
+          </Reveal>
+          <StaggerGroup className="grid md:grid-cols-2 gap-8">
             {[
               { title: "For Students", Icon: GraduationCap, tag: "Free to apply", role: "student", bg: "bg-[hsl(var(--pastel-pink))]", items: ["Reach 150+ verified angels", "Pitch wizard & deck templates", "Legal docs (SAFE, NDA, TS)", "Idea protection with watermarks"] },
               { title: "For Investors", Icon: Briefcase, tag: "Curated deal flow", role: "investor", bg: "bg-[hsl(var(--pastel-mint))]", items: ["Pre-vetted deal flow", "Easy browsing & filters", "Portfolio tracking dashboard", "Syndicate with other angels"] },
             ].map((s, i) => (
-              <Card key={s.title} bg={s.bg} className={`p-8 md:p-10 ${i ? "md:rotate-1" : "md:-rotate-1"}`}>
+              <StaggerItem key={s.title}>
+              <Card bg={s.bg} className={`p-8 md:p-10 ${i ? "md:rotate-1" : "md:-rotate-1"}`}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className={`inline-flex h-12 w-12 items-center justify-center bg-card ${brutalBorder} rounded-2xl`}>
@@ -270,25 +271,27 @@ const Index = () => {
                   <Link to={`/signup?role=${s.role}`}>Get started <ArrowRight className="ml-1 h-4 w-4" /></Link>
                 </Button>
               </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGroup>
         </div>
       </section>
 
       {/* HOW IT WORKS */}
       <section id="how" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
-        <div className="max-w-2xl mb-10 md:mb-16">
+        <Reveal className="max-w-2xl mb-10 md:mb-16">
           <Pill bg="bg-[hsl(var(--pastel-blue))]"><Wrench className="h-3.5 w-3.5" strokeWidth={2.5} /> How it works</Pill>
           <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Three steps. Zero friction.</h2>
           <p className="mt-5 text-lg text-muted-foreground">From idea to funded — without the cold-email grind.</p>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8">
+        </Reveal>
+        <StaggerGroup className="grid md:grid-cols-3 gap-8">
           {[
             { n: "01", title: "Pitch", body: "Submit your startup idea in our 5-minute form. We vet it for quality. Go live.", time: "5 min", Icon: PencilLine, bg: "bg-[hsl(var(--pastel-yellow))]" },
             { n: "02", title: "Match", body: "Verified investors discover your pitch. Bookmark, message, request the deck.", time: "48 hrs", Icon: Handshake, bg: "bg-[hsl(var(--pastel-peach))]" },
             { n: "03", title: "Close", body: "Chat in-app, share legal docs, get introduced. We support you to term sheet.", time: "2-4 wks", Icon: Rocket, bg: "bg-[hsl(var(--pastel-mint))]" },
           ].map((it, i) => (
-            <Card key={it.n} bg={it.bg} className={`p-8 ${i === 1 ? "md:translate-y-6" : ""}`}>
+            <StaggerItem key={it.n}>
+            <Card bg={it.bg} className={`p-8 ${i === 1 ? "md:translate-y-6" : ""}`}>
               <div className="flex items-baseline justify-between">
                 <span className="font-display text-5xl font-bold tracking-tight">{it.n}</span>
                 <span className={`bg-card ${brutalBorder} rounded-full px-3 py-1 text-xs font-bold inline-flex items-center gap-1`}><Zap className="h-3 w-3" strokeWidth={3} /> {it.time}</span>
@@ -299,8 +302,9 @@ const Index = () => {
               <h3 className="mt-4 font-display text-2xl font-bold">{it.title}</h3>
               <p className="mt-3 text-sm font-medium leading-relaxed">{it.body}</p>
             </Card>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </section>
 
       {/* FEATURES */}
@@ -319,14 +323,27 @@ const Index = () => {
               { icon: Lock, title: "Idea protection", body: "Watermarked decks. Traceable downloads.", bg: "bg-[hsl(var(--pastel-blue))]" },
               { icon: BarChart3, title: "Investor analytics", body: "Track views, bookmarks, intros.", bg: "bg-[hsl(var(--pastel-peach))]" },
               { icon: ShieldCheck, title: "Vetted only", body: "100% manual review.", bg: "bg-card" },
-            ].map((f) => (
-              <Card key={f.title} bg={f.bg} className="p-6">
-                <div className={`inline-flex h-12 w-12 items-center justify-center bg-foreground text-background ${brutalBorder} rounded-2xl`}>
-                  <f.icon className="h-5 w-5" strokeWidth={2.5} />
-                </div>
-                <h3 className="mt-5 font-display text-lg font-bold">{f.title}</h3>
-                <p className="mt-2 text-sm font-medium text-muted-foreground">{f.body}</p>
-              </Card>
+            ].map((f, i) => (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, y: 24, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: (i % 3) * 0.08, ease: EASE as any }}
+                whileHover={{ y: -4 }}
+              >
+                <Card bg={f.bg} className="p-6 group">
+                  <motion.div
+                    whileHover={{ rotate: -8, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 12 }}
+                    className={`inline-flex h-12 w-12 items-center justify-center bg-foreground text-background ${brutalBorder} rounded-2xl`}
+                  >
+                    <f.icon className="h-5 w-5" strokeWidth={2.5} />
+                  </motion.div>
+                  <h3 className="mt-5 font-display text-lg font-bold">{f.title}</h3>
+                  <p className="mt-2 text-sm font-medium text-muted-foreground">{f.body}</p>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
