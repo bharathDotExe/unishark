@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
+import { motion, useScroll, useSpring, useInView, useMotionValue, useTransform, animate, useReducedMotion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,72 @@ const brutalShadow = "shadow-[6px_6px_0_0_hsl(var(--foreground))]";
 const brutalShadowSm = "shadow-[3px_3px_0_0_hsl(var(--foreground))]";
 const brutalShadowLg = "shadow-[10px_10px_0_0_hsl(var(--foreground))]";
 
+// ——— Motion helpers ———
+const fadeUp = {
+  hidden: { opacity: 0, y: 28 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+};
+const stagger = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
+};
+
+const Reveal = ({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) => (
+  <motion.div
+    initial="hidden"
+    whileInView="show"
+    viewport={{ once: true, margin: "-80px" }}
+    variants={{ hidden: { opacity: 0, y: 32 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] } } }}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
+const StaggerGroup = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
+  <motion.div
+    initial="hidden"
+    whileInView="show"
+    viewport={{ once: true, margin: "-60px" }}
+    variants={stagger}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
+const StaggerItem = ({ children, className = "" }: { children: ReactNode; className?: string }) => (
+  <motion.div variants={fadeUp} className={className}>
+    {children}
+  </motion.div>
+);
+
+// Count-up number for stats
+function CountUp({ value }: { value: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
+  const reduce = useReducedMotion();
+  // Parse leading number (handles ₹85L, 50K, <2%, ₹0, 19, 100%, etc.)
+  const match = value.match(/([^\d.]*)([\d.]+)(.*)/);
+  useEffect(() => {
+    if (!inView || !ref.current || !match || reduce) return;
+    const target = parseFloat(match[2]);
+    const prefix = match[1] ?? "";
+    const suffix = match[3] ?? "";
+    const controls = animate(0, target, {
+      duration: 1.4,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (v) => {
+        if (!ref.current) return;
+        const display = target % 1 === 0 ? Math.round(v).toString() : v.toFixed(1);
+        ref.current.textContent = `${prefix}${display}${suffix}`;
+      },
+    });
+    return () => controls.stop();
+  }, [inView, match, reduce]);
+  return <span ref={ref}>{value}</span>;
+}
+
 const Card = ({ className = "", children, bg = "bg-card" }: any) => (
   <div className={`${bg} ${brutalBorder} ${brutalShadow} rounded-[28px] transition-all duration-200 hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] ${className}`}>
     {children}
@@ -43,9 +110,28 @@ const Pill = ({ children, bg = "bg-card" }: any) => (
 
 const Index = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 20, mass: 0.3 });
+
+  // Hero parallax tilt on mouse
+  const heroX = useMotionValue(0);
+  const heroY = useMotionValue(0);
+  const tiltX = useTransform(heroY, [-50, 50], [6, -6]);
+  const tiltY = useTransform(heroX, [-50, 50], [-6, 6]);
+  const handleHeroMouse = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    heroX.set(e.clientX - rect.left - rect.width / 2);
+    heroY.set(e.clientY - rect.top - rect.height / 2);
+  };
+  const resetHero = () => { heroX.set(0); heroY.set(0); };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      {/* Scroll progress bar */}
+      <motion.div
+        style={{ scaleX, transformOrigin: "0% 50%" }}
+        className="fixed top-0 left-0 right-0 h-1.5 bg-foreground z-50"
+      />
       <Navbar />
 
       {/* HERO */}
