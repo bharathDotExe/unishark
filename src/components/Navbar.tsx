@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { LogOut, UserCircle2, Menu, X } from "lucide-react";
+import { ThemeToggle } from "./ThemeToggle";
 import logo from "@/assets/logo.png";
 
 export default function Navbar() {
@@ -23,8 +24,11 @@ export default function Navbar() {
   const isStudent = roles.includes("student");
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b-2 border-foreground bg-background/95 backdrop-blur">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 max-w-6xl">
+    <>
+      <div className="fixed top-[-50px] left-1/2 -translate-x-1/2 w-[80%] max-w-[800px] h-[150px] bg-[hsl(var(--pastel-blue))] opacity-40 filter blur-[60px] pointer-events-none z-40 rounded-full dark:opacity-10" />
+      <div className="fixed top-0 left-0 right-0 z-50 p-4 pointer-events-none">
+        <header className="pointer-events-auto mx-auto max-w-6xl rounded-full border-2 border-foreground bg-background/40 backdrop-blur-xl shadow-[6px_6px_0_0_hsl(var(--foreground))] transition-all">
+        <div className="flex h-16 items-center justify-between px-4 sm:px-6">
         <Link to="/" onClick={closeMobile} className="flex items-center gap-2 font-display text-lg font-bold tracking-[0.18em] text-foreground">
           <img src={logo} alt="Logo" className="h-8 w-8" />
           UNISHARK
@@ -65,6 +69,9 @@ export default function Navbar() {
               <Button asChild size="sm" className="border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] bg-foreground text-background hover:bg-foreground rounded-full font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"><Link to="/signup">Get started →</Link></Button>
             </>
           )}
+          <div className="ml-2 pl-2 border-l-2 border-foreground/20">
+            <ThemeToggle />
+          </div>
         </nav>
 
         {/* Mobile hamburger */}
@@ -78,9 +85,12 @@ export default function Navbar() {
         </button>
       </div>
 
+      </header>
+    </div>
+
       {/* Mobile nav drawer */}
       {mobileOpen && (
-        <div className="md:hidden border-t-2 border-foreground bg-background/98 px-4 py-4 flex flex-col gap-2">
+        <div className="fixed top-24 left-4 right-4 z-50 md:hidden border-2 border-foreground bg-background/95 backdrop-blur rounded-[24px] shadow-[6px_6px_0_0_hsl(var(--foreground))] px-4 py-4 flex flex-col gap-2">
           {!user && (
             <>
               <a href="#how" onClick={closeMobile} className="px-3 py-3 font-medium hover:bg-muted rounded-xl">How it works</a>
@@ -114,8 +124,13 @@ export default function Navbar() {
               <Link to="/signup" onClick={closeMobile} className="flex items-center justify-center px-3 py-3 font-bold bg-foreground text-background border-2 border-foreground rounded-xl">Get started →</Link>
             </>
           )}
+          <div className="border-t-2 border-foreground/10 my-2" />
+          <div className="flex items-center justify-between px-3 py-2">
+            <span className="font-bold">Theme</span>
+            <ThemeToggle />
+          </div>
         </div>
       )}
-    </header>
+    </>
   );
 }

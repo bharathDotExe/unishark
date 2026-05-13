@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { motion, useScroll, useSpring, useInView, useMotionValue, useTransform, animate, useReducedMotion, type Variants } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import MagneticButton from "@/components/MagneticButton";
 import { Button } from "@/components/ui/button";
 import {
   ShieldCheck, ArrowRight, GraduationCap, Briefcase,
@@ -137,6 +138,11 @@ const Index = () => {
 
       {/* HERO */}
       <section id="home" className="relative container mx-auto px-4 sm:px-6 pt-12 pb-20 md:pt-24 md:pb-32 max-w-6xl">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_30%,black_40%,transparent_100%)]">
+          <motion.div animate={{ y: [0, -20, 0], x: [0, 20, 0] }} transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }} className="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[hsl(var(--pastel-pink))] rounded-full filter blur-[100px] opacity-30 dark:opacity-10" />
+          <motion.div animate={{ y: [0, 30, 0], x: [0, -30, 0] }} transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }} className="absolute top-[20%] -right-[10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-[hsl(var(--pastel-mint))] rounded-full filter blur-[100px] opacity-30 dark:opacity-10" />
+          <motion.div animate={{ y: [0, -40, 0], x: [0, 40, 0] }} transition={{ repeat: Infinity, duration: 12, ease: "easeInOut" }} className="absolute -bottom-[10%] left-[20%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] bg-[hsl(var(--pastel-blue))] rounded-full filter blur-[100px] opacity-30 dark:opacity-10" />
+        </div>
         <div className="absolute inset-0 dotted-bg opacity-60 -z-0 pointer-events-none [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,black_40%,transparent_80%)]" />
         <Sparkles className="absolute top-10 right-1/3 h-5 w-5 text-foreground sparkle hidden md:block" />
         <Sparkles className="absolute bottom-24 left-10 h-6 w-6 text-foreground sparkle hidden md:block" style={{ animationDelay: "1s" }} />
@@ -156,12 +162,16 @@ const Index = () => {
               50,000 ideas a year. Less than 2% get funded. UniShark is the curated bridge — vetted founders, verified investors, zero cold emails.
             </motion.p>
             <motion.div variants={fadeUp} className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-foreground text-background hover:bg-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-all`}>
-                <Link to="/signup?role=student"><GraduationCap className="mr-2 h-5 w-5" /> I'm a Student</Link>
-              </Button>
-              <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-[hsl(var(--accent))] text-foreground hover:bg-[hsl(var(--accent))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-all`}>
-                <Link to="/signup?role=investor"><Briefcase className="mr-2 h-5 w-5" /> I'm an Investor</Link>
-              </Button>
+              <MagneticButton>
+                <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-foreground text-background hover:bg-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-all`}>
+                  <Link to="/signup?role=student"><GraduationCap className="mr-2 h-5 w-5" /> I'm a Student</Link>
+                </Button>
+              </MagneticButton>
+              <MagneticButton>
+                <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-[hsl(var(--accent))] text-foreground hover:bg-[hsl(var(--accent))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-all`}>
+                  <Link to="/signup?role=investor"><Briefcase className="mr-2 h-5 w-5" /> I'm an Investor</Link>
+                </Button>
+              </MagneticButton>
             </motion.div>
             <motion.div variants={fadeUp} className="mt-8 flex items-center gap-4 text-sm">
               <div className="flex -space-x-2">
