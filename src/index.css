@@ -192,4 +192,28 @@ All colors MUST be HSL.
     50% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
   }
   .blob { animation: blob 14s ease-in-out infinite; }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(var(--tw-rotate, 0deg)); }
+    50% { transform: rotate(calc(var(--tw-rotate, 0deg) + 4deg)) translateY(-3px); }
+  }
+  .wiggle { animation: wiggle 4s ease-in-out infinite; }
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.4; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.15); }
+  }
+  .sparkle { animation: sparkle 2.4s ease-in-out infinite; }
+  @keyframes shimmer-bg {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+  .dotted-bg {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.12) 1.2px, transparent 1.2px);
+    background-size: 22px 22px;
+  }
+  .grid-paper {
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
 }

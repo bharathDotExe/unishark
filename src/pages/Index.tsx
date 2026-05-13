@@ -47,7 +47,11 @@ const Index = () => {
       <Navbar />
 
       {/* HERO */}
-      <section id="home" className="container mx-auto px-4 sm:px-6 pt-12 pb-20 md:pt-24 md:pb-32 max-w-6xl">
+      <section id="home" className="relative container mx-auto px-4 sm:px-6 pt-12 pb-20 md:pt-24 md:pb-32 max-w-6xl">
+        <div className="absolute inset-0 dotted-bg opacity-60 -z-0 pointer-events-none [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,black_40%,transparent_80%)]" />
+        <Sparkles className="absolute top-10 right-1/3 h-5 w-5 text-foreground sparkle hidden md:block" />
+        <Sparkles className="absolute bottom-24 left-10 h-6 w-6 text-foreground sparkle hidden md:block" style={{ animationDelay: "1s" }} />
+        <div className="relative">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           <div className="lg:col-span-7">
             <Pill bg="bg-[hsl(var(--pastel-yellow))]">
@@ -82,25 +86,28 @@ const Index = () => {
             <div className={`relative bg-[hsl(var(--pastel-lilac))] ${brutalBorder} ${brutalShadowLg} rounded-[32px] p-4 rotate-2`}>
               <img src={brutalHero} alt="Student founder pitching" width={1024} height={1024} className="w-full rounded-[20px] border-2 border-foreground" fetchPriority="high" decoding="async" />
             </div>
-            <div className={`absolute -top-6 -left-6 bg-[hsl(var(--pastel-yellow))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 -rotate-6 hidden md:block`}>
+            <div className={`absolute -top-6 -left-6 bg-[hsl(var(--pastel-yellow))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 -rotate-6 hidden md:block wiggle`}>
               <div className="text-xs font-bold uppercase tracking-wider">Funded</div>
               <div className="font-display text-2xl font-bold">₹85L 🚀</div>
             </div>
-            <div className={`absolute -bottom-4 -right-2 bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 rotate-3 hidden md:block`}>
+            <div className={`absolute -bottom-4 -right-2 bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 rotate-3 hidden md:block wiggle`} style={{ animationDelay: "1.2s" }}>
               <div className="text-xs font-bold uppercase tracking-wider">48 hr review</div>
               <div className="font-display text-base font-bold">⚡ Lightning fast</div>
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* COLLEGES */}
-      <section className={`bg-[hsl(var(--pastel-blue))] border-y-2 border-foreground py-8`}>
-        <p className="text-center text-xs uppercase tracking-[0.25em] font-bold mb-4">⭐ Founders & angels from</p>
-        <div className="container mx-auto max-w-6xl px-6 flex flex-wrap justify-center gap-3">
-          {colleges.map((c, i) => (
-            <span key={c} className={`bg-card ${brutalBorder} ${brutalShadowSm} rounded-full px-4 py-1.5 text-sm font-bold ${i % 2 ? "rotate-1" : "-rotate-1"}`}>{c}</span>
-          ))}
+      <section className={`bg-[hsl(var(--pastel-blue))] border-y-2 border-foreground py-8 overflow-hidden`}>
+        <p className="text-center text-xs uppercase tracking-[0.25em] font-bold mb-5">⭐ Founders & angels from</p>
+        <div className="relative [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
+          <div className="flex gap-3 marquee w-max">
+            {[...colleges, ...colleges, ...colleges].map((c, i) => (
+              <span key={i} className={`bg-card ${brutalBorder} ${brutalShadowSm} rounded-full px-4 py-1.5 text-sm font-bold whitespace-nowrap ${i % 2 ? "rotate-1" : "-rotate-1"}`}>{c}</span>
+            ))}
+          </div>
         </div>
       </section>
 
