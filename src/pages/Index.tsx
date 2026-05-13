@@ -7,6 +7,8 @@ import {
   Rocket, Lock, CheckCircle2, MessageSquare, Sparkles,
   FileText, Network, BarChart3, Search, Award, Heart, Target,
   Plus, Minus, Mail, Phone, Twitter, Linkedin, Instagram, Users, Star,
+  AlertTriangle, Wrench, Settings2, HelpCircle, Zap, PencilLine, Handshake,
+  TrendingUp, Banknote,
 } from "lucide-react";
 import brutalHero from "@/assets/brutal-hero.webp";
 import brutalInvestor from "@/assets/brutal-investor.webp";
@@ -88,11 +90,11 @@ const Index = () => {
             </div>
             <div className={`absolute -top-6 -left-6 bg-[hsl(var(--pastel-yellow))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 -rotate-6 hidden md:block wiggle`}>
               <div className="text-xs font-bold uppercase tracking-wider">Funded</div>
-              <div className="font-display text-2xl font-bold">₹85L 🚀</div>
+              <div className="font-display text-2xl font-bold flex items-center gap-1.5">₹85L <Rocket className="h-5 w-5" strokeWidth={2.5} /></div>
             </div>
             <div className={`absolute -bottom-4 -right-2 bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 rotate-3 hidden md:block wiggle`} style={{ animationDelay: "1.2s" }}>
               <div className="text-xs font-bold uppercase tracking-wider">48 hr review</div>
-              <div className="font-display text-base font-bold">⚡ Lightning fast</div>
+              <div className="font-display text-base font-bold flex items-center gap-1.5"><Zap className="h-4 w-4" strokeWidth={2.5} /> Lightning fast</div>
             </div>
           </div>
         </div>
@@ -101,7 +103,7 @@ const Index = () => {
 
       {/* COLLEGES */}
       <section className={`bg-[hsl(var(--pastel-blue))] border-y-2 border-foreground py-8 overflow-hidden`}>
-        <p className="text-center text-xs uppercase tracking-[0.25em] font-bold mb-5">⭐ Founders & angels from</p>
+        <p className="text-center text-xs uppercase tracking-[0.25em] font-bold mb-5 flex items-center justify-center gap-2"><Star className="h-3.5 w-3.5 fill-foreground" strokeWidth={2.5} /> Founders & angels from <Star className="h-3.5 w-3.5 fill-foreground" strokeWidth={2.5} /></p>
         <div className="relative [mask-image:linear-gradient(90deg,transparent,black_10%,black_90%,transparent)]">
           <div className="flex gap-3 marquee w-max">
             {[...colleges, ...colleges, ...colleges].map((c, i) => (
@@ -114,7 +116,7 @@ const Index = () => {
       {/* PROBLEM */}
       <section id="problem" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
         <div className="max-w-2xl mb-10 md:mb-16">
-          <Pill bg="bg-[hsl(var(--pastel-pink))]">⚠️ The problem</Pill>
+          <Pill bg="bg-[hsl(var(--pastel-pink))]"><AlertTriangle className="h-3.5 w-3.5" strokeWidth={2.5} /> The problem</Pill>
           <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
             The funnel is <span className="inline-block bg-[hsl(var(--destructive))] text-destructive-foreground px-3 -rotate-2 border-2 border-foreground rounded-2xl">broken.</span>
           </h2>
@@ -139,19 +141,21 @@ const Index = () => {
       <section id="solution" className="bg-[hsl(var(--surface))] border-y-2 border-foreground py-16 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
           <div className="max-w-2xl mb-10 md:mb-16 text-center mx-auto">
-            <Pill bg="bg-[hsl(var(--pastel-mint))]">✨ The solution</Pill>
+            <Pill bg="bg-[hsl(var(--pastel-mint))]"><Sparkles className="h-3.5 w-3.5" strokeWidth={2.5} /> The solution</Pill>
             <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">One bridge. Two sides.</h2>
             <p className="mt-5 text-lg text-muted-foreground">A curated marketplace built for both — vetted, secure, India-first.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             {[
-              { title: "For Students", emoji: "🎓", tag: "Free to apply", role: "student", bg: "bg-[hsl(var(--pastel-pink))]", items: ["Reach 150+ verified angels", "Pitch wizard & deck templates", "Legal docs (SAFE, NDA, TS)", "Idea protection with watermarks"] },
-              { title: "For Investors", emoji: "💼", tag: "Curated deal flow", role: "investor", bg: "bg-[hsl(var(--pastel-mint))]", items: ["Pre-vetted deal flow", "Easy browsing & filters", "Portfolio tracking dashboard", "Syndicate with other angels"] },
+              { title: "For Students", Icon: GraduationCap, tag: "Free to apply", role: "student", bg: "bg-[hsl(var(--pastel-pink))]", items: ["Reach 150+ verified angels", "Pitch wizard & deck templates", "Legal docs (SAFE, NDA, TS)", "Idea protection with watermarks"] },
+              { title: "For Investors", Icon: Briefcase, tag: "Curated deal flow", role: "investor", bg: "bg-[hsl(var(--pastel-mint))]", items: ["Pre-vetted deal flow", "Easy browsing & filters", "Portfolio tracking dashboard", "Syndicate with other angels"] },
             ].map((s, i) => (
               <Card key={s.title} bg={s.bg} className={`p-8 md:p-10 ${i ? "md:rotate-1" : "md:-rotate-1"}`}>
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <span className={`inline-flex h-12 w-12 items-center justify-center bg-card ${brutalBorder} rounded-2xl text-2xl`}>{s.emoji}</span>
+                    <span className={`inline-flex h-12 w-12 items-center justify-center bg-card ${brutalBorder} rounded-2xl`}>
+                      <s.Icon className="h-6 w-6" strokeWidth={2.5} />
+                    </span>
                     <h3 className="font-display text-2xl md:text-3xl font-bold">{s.title}</h3>
                   </div>
                   <span className={`bg-card ${brutalBorder} rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider`}>{s.tag}</span>
@@ -176,22 +180,24 @@ const Index = () => {
       {/* HOW IT WORKS */}
       <section id="how" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
         <div className="max-w-2xl mb-10 md:mb-16">
-          <Pill bg="bg-[hsl(var(--pastel-blue))]">🛠 How it works</Pill>
+          <Pill bg="bg-[hsl(var(--pastel-blue))]"><Wrench className="h-3.5 w-3.5" strokeWidth={2.5} /> How it works</Pill>
           <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Three steps. Zero friction.</h2>
           <p className="mt-5 text-lg text-muted-foreground">From idea to funded — without the cold-email grind.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {[
-            { n: "01", title: "Pitch", body: "Submit your startup idea in our 5-minute form. We vet it for quality. Go live.", time: "5 min", emoji: "✏️", bg: "bg-[hsl(var(--pastel-yellow))]" },
-            { n: "02", title: "Match", body: "Verified investors discover your pitch. Bookmark, message, request the deck.", time: "48 hrs", emoji: "🤝", bg: "bg-[hsl(var(--pastel-peach))]" },
-            { n: "03", title: "Close", body: "Chat in-app, share legal docs, get introduced. We support you to term sheet.", time: "2-4 wks", emoji: "🚀", bg: "bg-[hsl(var(--pastel-mint))]" },
+            { n: "01", title: "Pitch", body: "Submit your startup idea in our 5-minute form. We vet it for quality. Go live.", time: "5 min", Icon: PencilLine, bg: "bg-[hsl(var(--pastel-yellow))]" },
+            { n: "02", title: "Match", body: "Verified investors discover your pitch. Bookmark, message, request the deck.", time: "48 hrs", Icon: Handshake, bg: "bg-[hsl(var(--pastel-peach))]" },
+            { n: "03", title: "Close", body: "Chat in-app, share legal docs, get introduced. We support you to term sheet.", time: "2-4 wks", Icon: Rocket, bg: "bg-[hsl(var(--pastel-mint))]" },
           ].map((it, i) => (
             <Card key={it.n} bg={it.bg} className={`p-8 ${i === 1 ? "md:translate-y-6" : ""}`}>
               <div className="flex items-baseline justify-between">
                 <span className="font-display text-5xl font-bold tracking-tight">{it.n}</span>
-                <span className={`bg-card ${brutalBorder} rounded-full px-3 py-1 text-xs font-bold`}>⚡ {it.time}</span>
+                <span className={`bg-card ${brutalBorder} rounded-full px-3 py-1 text-xs font-bold inline-flex items-center gap-1`}><Zap className="h-3 w-3" strokeWidth={3} /> {it.time}</span>
               </div>
-              <div className="mt-6 text-4xl">{it.emoji}</div>
+              <div className={`mt-6 inline-flex h-14 w-14 items-center justify-center bg-foreground text-background ${brutalBorder} rounded-2xl`}>
+                <it.Icon className="h-7 w-7" strokeWidth={2.5} />
+              </div>
               <h3 className="mt-4 font-display text-2xl font-bold">{it.title}</h3>
               <p className="mt-3 text-sm font-medium leading-relaxed">{it.body}</p>
             </Card>
@@ -203,7 +209,7 @@ const Index = () => {
       <section id="features" className="bg-[hsl(var(--pastel-lilac))] border-y-2 border-foreground py-16 md:py-32">
         <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
           <div className="max-w-2xl mb-10 md:mb-16">
-            <Pill bg="bg-card">⚙️ Key features</Pill>
+            <Pill bg="bg-card"><Settings2 className="h-3.5 w-3.5" strokeWidth={2.5} /> Key features</Pill>
             <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Everything you need to ship a round.</h2>
             <p className="mt-5 text-lg text-muted-foreground">From draft to deck to term sheet — built into one platform.</p>
           </div>
@@ -231,7 +237,7 @@ const Index = () => {
       {/* SUCCESS STORIES */}
       <section id="stories" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
         <div className="max-w-2xl mb-10 md:mb-16">
-          <Pill bg="bg-[hsl(var(--pastel-yellow))]">⭐ Success stories</Pill>
+          <Pill bg="bg-[hsl(var(--pastel-yellow))]"><Star className="h-3.5 w-3.5 fill-foreground" strokeWidth={2.5} /> Success stories</Pill>
           <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Real founders. Real cheques.</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
@@ -264,7 +270,7 @@ const Index = () => {
           <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
             <div className="lg:col-span-7">
               <span className={`inline-flex items-center gap-2 bg-[hsl(var(--accent))] text-foreground border-2 border-background shadow-[3px_3px_0_0_hsl(var(--background))] rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-wider`}>
-                💼 For investors
+                <Briefcase className="h-3.5 w-3.5" strokeWidth={2.5} /> For investors
               </span>
               <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">
                 Where angels find their <span className="inline-block bg-[hsl(var(--accent))] text-foreground px-3 rotate-1 border-2 border-background rounded-2xl">next bet.</span>
@@ -309,7 +315,7 @@ const Index = () => {
       {/* STUDENTS */}
       <section id="students" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
         <div className="max-w-2xl mb-10 md:mb-16">
-          <Pill bg="bg-[hsl(var(--pastel-mint))]">🎓 For students</Pill>
+          <Pill bg="bg-[hsl(var(--pastel-mint))]"><GraduationCap className="h-3.5 w-3.5" strokeWidth={2.5} /> For students</Pill>
           <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Why founders pick UniShark.</h2>
           <p className="mt-5 text-lg text-muted-foreground">Built by founders, for founders. We obsess over your time and your idea.</p>
         </div>
@@ -362,7 +368,7 @@ const Index = () => {
       {/* FAQ */}
       <section id="faq" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-4xl">
         <div className="text-center mb-10 md:mb-16">
-          <Pill bg="bg-[hsl(var(--pastel-yellow))]">❓ FAQ</Pill>
+          <Pill bg="bg-[hsl(var(--pastel-yellow))]"><HelpCircle className="h-3.5 w-3.5" strokeWidth={2.5} /> FAQ</Pill>
           <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Questions, answered.</h2>
         </div>
         <div className="space-y-4">
@@ -396,10 +402,10 @@ const Index = () => {
       {/* CTA */}
       <section className="container mx-auto px-4 sm:px-6 pb-16 md:pb-24 max-w-6xl">
         <div className={`bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadowLg} rounded-[24px] sm:rounded-[32px] p-8 sm:p-12 md:p-20 text-center relative overflow-hidden`}>
-          <div className="absolute top-6 left-6 text-4xl rotate-[-15deg]">🚀</div>
-          <div className="absolute top-10 right-8 text-4xl rotate-12">✨</div>
-          <div className="absolute bottom-8 left-10 text-4xl rotate-12">💸</div>
-          <div className="absolute bottom-10 right-6 text-4xl -rotate-12">🎯</div>
+          <Rocket className="absolute top-6 left-6 h-9 w-9 -rotate-[15deg]" strokeWidth={2.5} />
+          <Sparkles className="absolute top-10 right-8 h-9 w-9 rotate-12 sparkle" strokeWidth={2.5} />
+          <Banknote className="absolute bottom-8 left-10 h-9 w-9 rotate-12" strokeWidth={2.5} />
+          <Target className="absolute bottom-10 right-6 h-9 w-9 -rotate-12" strokeWidth={2.5} />
           <Sparkles className="mx-auto h-8 w-8" strokeWidth={2.5} />
           <h2 className="mt-4 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Ready to get funded?</h2>
           <p className="mt-5 text-lg font-medium max-w-xl mx-auto">Join 500+ founders and 150+ investors building the future on UniShark.</p>
@@ -421,7 +427,7 @@ const Index = () => {
       <footer className="bg-foreground text-background border-t-2 border-foreground">
         <div className="container mx-auto grid gap-8 px-4 sm:px-6 py-12 md:py-16 grid-cols-1 sm:grid-cols-2 md:grid-cols-5 max-w-6xl">
           <div className="md:col-span-2">
-            <div className="font-display text-2xl font-bold tracking-[0.18em]">UNISHARK 🦈</div>
+            <div className="font-display text-2xl font-bold tracking-[0.18em]">UNISHARK</div>
             <p className="mt-4 max-w-sm text-sm text-background/70">India's first curated marketplace for student founders & angel investors.</p>
             <div className="mt-6 flex gap-3">
               {[Twitter, Linkedin, Instagram].map((I, i) => (
