@@ -141,50 +141,52 @@ const Index = () => {
         <Sparkles className="absolute top-10 right-1/3 h-5 w-5 text-foreground sparkle hidden md:block" />
         <Sparkles className="absolute bottom-24 left-10 h-6 w-6 text-foreground sparkle hidden md:block" style={{ animationDelay: "1s" }} />
         <div className="relative">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <motion.div initial="hidden" animate="show" variants={stagger} className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           <div className="lg:col-span-7">
+            <motion.div variants={fadeUp}>
             <Pill bg="bg-[hsl(var(--pastel-yellow))]">
               <span className="h-2 w-2 rounded-full bg-foreground animate-pulse" />
               India's student-founder marketplace
             </Pill>
-            <h1 className="mt-6 font-display text-4xl sm:text-5xl md:text-7xl lg:text-[5.25rem] font-bold tracking-tight leading-[1.05] md:leading-[0.98]">
+            </motion.div>
+            <motion.h1 variants={fadeUp} className="mt-6 font-display text-4xl sm:text-5xl md:text-7xl lg:text-[5.25rem] font-bold tracking-tight leading-[1.05] md:leading-[0.98]">
               Where student <span className="inline-block bg-[hsl(var(--pastel-pink))] px-3 -rotate-2 border-2 border-foreground rounded-2xl">founders</span> meet real <span className="inline-block bg-[hsl(var(--pastel-mint))] px-3 rotate-1 border-2 border-foreground rounded-2xl">capital.</span>
-            </h1>
-            <p className="mt-8 text-lg text-muted-foreground max-w-xl leading-relaxed">
+            </motion.h1>
+            <motion.p variants={fadeUp} className="mt-8 text-lg text-muted-foreground max-w-xl leading-relaxed">
               50,000 ideas a year. Less than 2% get funded. UniShark is the curated bridge — vetted founders, verified investors, zero cold emails.
-            </p>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-foreground text-background hover:bg-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))]`}>
+            </motion.p>
+            <motion.div variants={fadeUp} className="mt-10 flex flex-col sm:flex-row gap-4">
+              <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-foreground text-background hover:bg-foreground hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-all`}>
                 <Link to="/signup?role=student"><GraduationCap className="mr-2 h-5 w-5" /> I'm a Student</Link>
               </Button>
-              <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-[hsl(var(--accent))] text-foreground hover:bg-[hsl(var(--accent))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))]`}>
+              <Button asChild size="lg" className={`h-14 rounded-full px-8 text-base font-bold ${brutalBorder} ${brutalShadow} bg-[hsl(var(--accent))] text-foreground hover:bg-[hsl(var(--accent))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-all`}>
                 <Link to="/signup?role=investor"><Briefcase className="mr-2 h-5 w-5" /> I'm an Investor</Link>
               </Button>
-            </div>
-            <div className="mt-8 flex items-center gap-4 text-sm">
+            </motion.div>
+            <motion.div variants={fadeUp} className="mt-8 flex items-center gap-4 text-sm">
               <div className="flex -space-x-2">
                 {["bg-[hsl(var(--pastel-pink))]", "bg-[hsl(var(--pastel-mint))]", "bg-[hsl(var(--pastel-blue))]", "bg-[hsl(var(--pastel-yellow))]"].map((c, i) => (
                   <span key={i} className={`h-8 w-8 rounded-full ${c} border-2 border-foreground`} />
                 ))}
               </div>
               <span className="text-muted-foreground"><span className="font-bold text-foreground">500+ founders</span> & <span className="font-bold text-foreground">150+ angels</span> already in</span>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="lg:col-span-5 relative">
-            <div className={`relative bg-[hsl(var(--pastel-lilac))] ${brutalBorder} ${brutalShadowLg} rounded-[32px] p-4 rotate-2`}>
+          <motion.div variants={fadeUp} className="lg:col-span-5 relative" onMouseMove={handleHeroMouse} onMouseLeave={resetHero}>
+            <motion.div style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 1000 }} className={`relative bg-[hsl(var(--pastel-lilac))] ${brutalBorder} ${brutalShadowLg} rounded-[32px] p-4 rotate-2 will-change-transform`}>
               <img src={brutalHero} alt="Student founder pitching" width={1024} height={1024} className="w-full rounded-[20px] border-2 border-foreground" fetchPriority="high" decoding="async" />
-            </div>
-            <div className={`absolute -top-6 -left-6 bg-[hsl(var(--pastel-yellow))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 -rotate-6 hidden md:block wiggle`}>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, scale: 0.6, rotate: -20 }} animate={{ opacity: 1, scale: 1, rotate: -6 }} transition={{ delay: 0.5, type: "spring", stiffness: 180, damping: 14 }} className={`absolute -top-6 -left-6 bg-[hsl(var(--pastel-yellow))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 hidden md:block wiggle`}>
               <div className="text-xs font-bold uppercase tracking-wider">Funded</div>
               <div className="font-display text-2xl font-bold flex items-center gap-1.5">₹85L <Rocket className="h-5 w-5" strokeWidth={2.5} /></div>
-            </div>
-            <div className={`absolute -bottom-4 -right-2 bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 rotate-3 hidden md:block wiggle`} style={{ animationDelay: "1.2s" }}>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, scale: 0.6, rotate: 20 }} animate={{ opacity: 1, scale: 1, rotate: 3 }} transition={{ delay: 0.7, type: "spring", stiffness: 180, damping: 14 }} className={`absolute -bottom-4 -right-2 bg-[hsl(var(--pastel-mint))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 hidden md:block`}>
               <div className="text-xs font-bold uppercase tracking-wider">48 hr review</div>
               <div className="font-display text-base font-bold flex items-center gap-1.5"><Zap className="h-4 w-4" strokeWidth={2.5} /> Lightning fast</div>
-            </div>
-          </div>
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
         </div>
       </section>
 
@@ -216,10 +218,19 @@ const Index = () => {
             { n: "<2%", label: "Get funded", bg: "bg-[hsl(var(--pastel-pink))]" },
             { n: "₹0", label: "Raised by 98%", bg: "bg-[hsl(var(--pastel-lilac))]" },
           ].map((s, i) => (
-            <Card key={s.label} bg={s.bg} className={`p-6 ${i % 2 ? "rotate-1" : "-rotate-1"}`}>
-              <div className="font-display text-5xl font-bold tracking-tight">{s.n}</div>
-              <div className="mt-3 text-sm font-medium">{s.label}</div>
-            </Card>
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: i * 0.08, ease: EASE as any }}
+              whileHover={{ y: -6, rotate: i % 2 ? 2 : -2 }}
+            >
+              <Card bg={s.bg} className={`p-6 ${i % 2 ? "rotate-1" : "-rotate-1"}`}>
+                <div className="font-display text-5xl font-bold tracking-tight"><CountUp value={s.n} /></div>
+                <div className="mt-3 text-sm font-medium">{s.label}</div>
+              </Card>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -442,11 +453,19 @@ const Index = () => {
               { k: "19", v: "Days to close" },
               { k: "100%", v: "Manually vetted" },
               { k: "3%", v: "Success fee only" },
-            ].map((s) => (
-              <div key={s.v} className={`bg-card ${brutalBorder} ${brutalShadow} rounded-2xl p-5 text-center hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-all`}>
-                <div className="font-display text-3xl md:text-4xl font-bold tracking-tight">{s.k}</div>
+            ].map((s, i) => (
+              <motion.div
+                key={s.v}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.05, ease: EASE as any }}
+                whileHover={{ y: -4, x: -2 }}
+                className={`bg-card ${brutalBorder} ${brutalShadow} rounded-2xl p-5 text-center hover:shadow-[10px_10px_0_0_hsl(var(--foreground))] transition-shadow`}
+              >
+                <div className="font-display text-3xl md:text-4xl font-bold tracking-tight"><CountUp value={s.k} /></div>
                 <div className="mt-1 text-xs uppercase tracking-wider font-bold text-muted-foreground">{s.v}</div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
