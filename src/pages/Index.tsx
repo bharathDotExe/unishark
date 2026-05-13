@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef, ReactNode } from "react";
-import { motion, useScroll, useSpring, useInView, useMotionValue, useTransform, animate, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useSpring, useInView, useMotionValue, useTransform, animate, useReducedMotion, type Variants } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,11 +31,12 @@ const brutalShadowSm = "shadow-[3px_3px_0_0_hsl(var(--foreground))]";
 const brutalShadowLg = "shadow-[10px_10px_0_0_hsl(var(--foreground))]";
 
 // ——— Motion helpers ———
-const fadeUp = {
+const EASE = [0.22, 1, 0.36, 1] as const;
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE as any } },
 };
-const stagger = {
+const stagger: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08, delayChildren: 0.05 } },
 };
@@ -45,7 +46,7 @@ const Reveal = ({ children, className = "", delay = 0 }: { children: ReactNode; 
     initial="hidden"
     whileInView="show"
     viewport={{ once: true, margin: "-80px" }}
-    variants={{ hidden: { opacity: 0, y: 32 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] } } }}
+    variants={{ hidden: { opacity: 0, y: 32 }, show: { opacity: 1, y: 0, transition: { duration: 0.7, delay, ease: EASE as any } } }}
     className={className}
   >
     {children}
@@ -84,7 +85,7 @@ function CountUp({ value }: { value: string }) {
     const suffix = match[3] ?? "";
     const controls = animate(0, target, {
       duration: 1.4,
-      ease: [0.22, 1, 0.36, 1],
+      ease: EASE as any,
       onUpdate: (v) => {
         if (!ref.current) return;
         const display = target % 1 === 0 ? Math.round(v).toString() : v.toFixed(1);
