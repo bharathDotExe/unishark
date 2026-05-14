@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index.tsx";
 import Signup from "./pages/Signup.tsx";
+import VerifyOtp from "./pages/VerifyOtp.tsx";
 import Login from "./pages/Login.tsx";
 import Dashboard from "./pages/Dashboard.tsx";
 import PitchForm from "./pages/PitchForm.tsx";
@@ -36,6 +37,7 @@ const App = () => (
             {/* Public */}
             <Route path="/" element={<Index />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/login" element={<Login />} />
 
             {/* Onboarding — requires auth but not a specific role yet */}
