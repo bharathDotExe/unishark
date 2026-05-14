@@ -18,6 +18,13 @@ const COLLEGES = [
 ];
 
 const YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year", "Alumni"] as const;
+const YEAR_TO_DB = {
+  "1st Year": "FIRST_YEAR",
+  "2nd Year": "SECOND_YEAR",
+  "3rd Year": "THIRD_YEAR",
+  "4th Year": "FOURTH_YEAR",
+  Alumni: "ALUMNI",
+} as const;
 
 const SKILL_OPTIONS = [
   "Web Development", "Mobile Development", "AI/ML", "Blockchain",
@@ -87,18 +94,17 @@ export default function StudentOnboarding() {
     setLoading(true);
     try {
       // Upsert student profile into Supabase
+      const { error: profileError } = await supabase.from("profiles").update({
+        full_name: fullName,
+      }).eq("id", user.id);
+      if (profileError) throw profileError;
+
       const { error } = await supabase.from("student_profiles").upsert({
         user_id: user.id,
-        full_name: fullName,
         college,
-        year,
-        city,
+        year: YEAR_TO_DB[year as keyof typeof YEAR_TO_DB],
         linkedin_url: linkedinUrl || null,
-        contact_number: contactNumber || null,
-        skills,
-        startup_interests: startupInterests,
-        industries_interest: industriesInterest || null,
-        profile_complete: true,
+        skills: { skills, startupInterests, industriesInterest, city, contactNumber },
       }, { onConflict: "user_id" });
 
       if (error) throw error;
