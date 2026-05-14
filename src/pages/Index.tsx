@@ -185,7 +185,7 @@ const Index = () => {
 
           <motion.div variants={fadeUp} className="lg:col-span-5 relative" onMouseMove={handleHeroMouse} onMouseLeave={resetHero}>
             <motion.div style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 1000 }} className={`relative bg-[hsl(var(--pastel-lilac))] ${brutalBorder} ${brutalShadowLg} rounded-[32px] p-4 rotate-2 will-change-transform`}>
-              <img src={brutalHero} alt="Student founder pitching" width={1024} height={1024} className="w-full rounded-[20px] border-2 border-foreground" fetchPriority="high" decoding="async" />
+              <img src={brutalHero} alt="Student founder pitching" width={1024} height={1024} className="w-full rounded-[20px] border-2 border-foreground" decoding="async" />
             </motion.div>
             <motion.div initial={{ opacity: 0, scale: 0.6, rotate: -20 }} animate={{ opacity: 1, scale: 1, rotate: -6 }} transition={{ delay: 0.5, type: "spring", stiffness: 180, damping: 14 }} className={`absolute -top-6 -left-6 bg-[hsl(var(--pastel-yellow))] ${brutalBorder} ${brutalShadow} rounded-2xl px-4 py-3 hidden md:block wiggle`}>
               <div className="text-xs font-bold uppercase tracking-wider">Funded</div>
