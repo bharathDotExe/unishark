@@ -36,19 +36,24 @@ export default function Signup() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/`,
+          emailRedirectTo: `${window.location.origin}/verify-otp`,
           data: { role },
         },
       });
-      if (error) { toast.error(error.message); return; }
-
-      // Attempt to insert user row (may already exist if trigger does it)
-      if (data.user) {
-        await supabase.from("user_roles").insert({ user_id: data.user.id, role }).catch(() => {});
+      if (error) {
+        const isRateLimited = error.message.toLowerCase().includes("rate limit");
+        toast.error(isRateLimited ? "Too many emails were requested. Please wait a few minutes, then try again." : error.message);
+        return;
       }
 
-      toast.success("Account created! Let's build your profile.");
-      navigate(role === "student" ? "/onboarding/student" : "/onboarding/investor");
+      if (data.session) {
+        toast.success("Account created! Let's build your profile.");
+        navigate(role === "student" ? "/onboarding/student" : "/onboarding/investor");
+        return;
+      }
+
+      toast.success("Check your email for the verification code.");
+      navigate(`/verify-otp?email=${encodeURIComponent(email)}&role=${role}`);
     } catch (err: any) {
       toast.error(err.message || "Signup failed");
     } finally {

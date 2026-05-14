@@ -105,28 +105,32 @@ export default function InvestorOnboarding() {
 
     setLoading(true);
     try {
+      const { error: profileError } = await supabase.from("profiles").update({
+        full_name: fullName,
+      }).eq("id", user.id);
+      if (profileError) throw profileError;
+
       const { error } = await supabase.from("investor_profiles").upsert({
         user_id: user.id,
-        full_name: fullName,
-        company_fund_name: companyFundName || null,
-        bio: bio || null,
-        contact_number: contactNumber,
-        city,
         linkedin_url: linkedinUrl,
-        investment_experience: investmentExperience,
-        ticket_size_min: Number(ticketSizeMin),
-        ticket_size_max: Number(ticketSizeMax),
-        preferred_stages: preferredStages,
-        investment_sectors: investmentSectors,
-        preferred_sectors: preferredSectors || null,
-        total_investments_count: Number(totalInvestmentsCount),
-        reference_founder_1_name: ref1Name,
-        reference_founder_1_email: ref1Email,
-        reference_founder_2_name: ref2Name,
-        reference_founder_2_email: ref2Email,
-        past_investments: pastInvestments ? { notes: pastInvestments } : null,
-        verification_status: "PENDING",
-        profile_complete: true,
+        ticket_size_min: ticketSizeMin,
+        ticket_size_max: ticketSizeMax,
+        sectors: investmentSectors,
+        past_investments: {
+          companyFundName,
+          bio,
+          contactNumber,
+          city,
+          investmentExperience,
+          preferredStages,
+          preferredSectors,
+          totalInvestmentsCount: Number(totalInvestmentsCount),
+          referenceFounder1Name: ref1Name,
+          referenceFounder1Email: ref1Email,
+          referenceFounder2Name: ref2Name,
+          referenceFounder2Email: ref2Email,
+          notes: pastInvestments,
+        },
       }, { onConflict: "user_id" });
 
       if (error) throw error;
