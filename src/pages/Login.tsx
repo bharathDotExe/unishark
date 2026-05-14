@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import AuthLayout from "@/components/AuthLayout";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -95,6 +96,15 @@ export default function Login() {
         >
           {loading ? "Signing in…" : "Sign in →"}
         </Button>
+
+        <div className="relative my-2">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
+          <div className="relative flex justify-center text-xs uppercase tracking-wider">
+            <span className="bg-background px-2 text-muted-foreground">or</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton />
       </form>
     </AuthLayout>
   );

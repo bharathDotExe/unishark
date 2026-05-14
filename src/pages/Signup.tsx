@@ -9,6 +9,7 @@ import AuthLayout from "@/components/AuthLayout";
 import { toast } from "sonner";
 import { signupSchema } from "@/lib/validations/auth";
 import { Eye, EyeOff, GraduationCap, Briefcase } from "lucide-react";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 export default function Signup() {
   const [params] = useSearchParams();
@@ -205,6 +206,15 @@ export default function Signup() {
         >
           {loading ? "Creating account…" : "Create account →"}
         </Button>
+
+        <div className="relative my-2">
+          <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-border" /></div>
+          <div className="relative flex justify-center text-xs uppercase tracking-wider">
+            <span className="bg-background px-2 text-muted-foreground">or</span>
+          </div>
+        </div>
+
+        <GoogleSignInButton intendedRole={role} label={`Sign up with Google as ${role === "investor" ? "Investor" : "Founder"}`} />
       </form>
     </AuthLayout>
   );
