@@ -9,17 +9,8 @@ export default function AuthCallback() {
   useEffect(() => {
     let cancelled = false;
 
-    const run = async () => {
-      // Wait briefly for Supabase to process the OAuth hash
-      const { data: { session }, error } = await supabase.auth.getSession();
+    const proceed = async (userId: string) => {
       if (cancelled) return;
-      if (error || !session?.user) {
-        toast.error("Sign-in failed. Please try again.");
-        navigate("/login");
-        return;
-      }
-
-      const userId = session.user.id;
       const intendedRole = localStorage.getItem("unishark_intended_role") as
         | "student"
         | "investor"
@@ -41,20 +32,49 @@ export default function AuthCallback() {
         return;
       }
 
-      // First-time Google user: assign role and send to onboarding
       const role = intendedRole ?? "student";
       const { error: roleErr } = await supabase
         .from("user_roles")
         .insert({ user_id: userId, role });
       if (roleErr && !roleErr.message.toLowerCase().includes("duplicate")) {
-        toast.error("Could not set up your account. Please contact support.");
-        navigate("/login");
-        return;
+        console.error("Role insert error:", roleErr);
+        // Don't block — onboarding can retry. Continue to onboarding.
       }
 
       localStorage.removeItem("unishark_intended_role");
       toast.success("Account ready! Let's build your profile.");
       navigate(role === "investor" ? "/onboarding/investor" : "/onboarding/student");
+    };
+
+    const run = async () => {
+      // Try existing session first
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await proceed(session.user.id);
+        return;
+      }
+
+      // Otherwise wait for SIGNED_IN (Supabase processes the URL hash async)
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, s) => {
+          if (cancelled) return;
+          if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && s?.user) {
+            subscription.unsubscribe();
+            await proceed(s.user.id);
+          }
+        }
+      );
+
+      // Safety timeout
+      setTimeout(() => {
+        if (cancelled) return;
+        supabase.auth.getSession().then(({ data: { session: s2 } }) => {
+          if (s2?.user) return;
+          subscription.unsubscribe();
+          toast.error("Sign-in failed. Please try again.");
+          navigate("/login");
+        });
+      }, 5000);
     };
 
     run();
