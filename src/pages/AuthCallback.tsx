@@ -8,13 +8,40 @@ export default function AuthCallback() {
 
   useEffect(() => {
     let cancelled = false;
+    let completed = false;
+    let subscription: { unsubscribe: () => void } | null = null;
+
+    const getIntendedRole = () => {
+      const params = new URLSearchParams(window.location.search);
+      const roleFromUrl = params.get("role");
+      if (roleFromUrl === "student" || roleFromUrl === "investor") return roleFromUrl;
+
+      const roleFromStorage = localStorage.getItem("unishark_intended_role");
+      if (roleFromStorage === "student" || roleFromStorage === "investor") return roleFromStorage;
+
+      return null;
+    };
+
+    const ensureRoleProfile = async (userId: string, role: "student" | "investor") => {
+      const { error: roleErr } = await supabase
+        .from("user_roles")
+        .insert({ user_id: userId, role });
+
+      if (roleErr && !roleErr.message.toLowerCase().includes("duplicate")) {
+        console.error("Role insert error:", roleErr);
+      }
+
+      const { error: profileErr } = role === "investor"
+        ? await supabase.from("investor_profiles").upsert({ user_id: userId }, { onConflict: "user_id" })
+        : await supabase.from("student_profiles").upsert({ user_id: userId }, { onConflict: "user_id" });
+
+      if (profileErr) console.error("Profile upsert error:", profileErr);
+    };
 
     const proceed = async (userId: string) => {
-      if (cancelled) return;
-      const intendedRole = localStorage.getItem("unishark_intended_role") as
-        | "student"
-        | "investor"
-        | null;
+      if (cancelled || completed) return;
+      completed = true;
+      const intendedRole = getIntendedRole();
 
       const { data: rolesData } = await supabase
         .from("user_roles")
@@ -22,6 +49,17 @@ export default function AuthCallback() {
         .eq("user_id", userId);
 
       const roles = (rolesData ?? []).map((r) => r.role);
+
+      if (intendedRole) {
+        if (!roles.includes(intendedRole)) {
+          await ensureRoleProfile(userId, intendedRole);
+        }
+
+        localStorage.removeItem("unishark_intended_role");
+        toast.success("Account ready! Let's build your profile.");
+        navigate(intendedRole === "investor" ? "/onboarding/investor" : "/onboarding/student");
+        return;
+      }
 
       if (roles.length > 0) {
         localStorage.removeItem("unishark_intended_role");
@@ -32,53 +70,58 @@ export default function AuthCallback() {
         return;
       }
 
-      const role = intendedRole ?? "student";
-      const { error: roleErr } = await supabase
-        .from("user_roles")
-        .insert({ user_id: userId, role });
-      if (roleErr && !roleErr.message.toLowerCase().includes("duplicate")) {
-        console.error("Role insert error:", roleErr);
-        // Don't block — onboarding can retry. Continue to onboarding.
-      }
+      const role = "student";
+      await ensureRoleProfile(userId, role);
 
       localStorage.removeItem("unishark_intended_role");
       toast.success("Account ready! Let's build your profile.");
-      navigate(role === "investor" ? "/onboarding/investor" : "/onboarding/student");
+      navigate("/onboarding/student");
     };
 
     const run = async () => {
-      // Try existing session first
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        await proceed(session.user.id);
+      const queryParams = new URLSearchParams(window.location.search);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+      const authError = queryParams.get("error_description") || hashParams.get("error_description");
+
+      if (authError) {
+        toast.error(authError);
+        navigate("/login");
         return;
       }
 
-      // Otherwise wait for SIGNED_IN (Supabase processes the URL hash async)
-      const { data: { subscription } } = supabase.auth.onAuthStateChange(
-        async (event, s) => {
-          if (cancelled) return;
-          if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && s?.user) {
-            subscription.unsubscribe();
-            await proceed(s.user.id);
-          }
+      const authListener = supabase.auth.onAuthStateChange(async (event, s) => {
+        if (cancelled) return;
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && s?.user) {
+          subscription?.unsubscribe();
+          await proceed(s.user.id);
         }
-      );
+      });
+      subscription = authListener.data.subscription;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        subscription.unsubscribe();
+        await proceed(session.user.id);
+        return;
+      }
 
       // Safety timeout
       setTimeout(() => {
         if (cancelled) return;
         supabase.auth.getSession().then(({ data: { session: s2 } }) => {
           if (s2?.user) return;
-          subscription.unsubscribe();
+          subscription?.unsubscribe();
           toast.error("Sign-in failed. Please try again.");
           navigate("/login");
         });
-      }, 5000);
+      }, 10000);
     };
 
     run();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      subscription?.unsubscribe();
+    };
   }, [navigate]);
 
   return (
