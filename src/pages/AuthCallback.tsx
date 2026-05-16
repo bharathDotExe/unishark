@@ -75,7 +75,7 @@ export default function AuthCallback() {
 
       localStorage.removeItem("unishark_intended_role");
       toast.success("Account ready! Let's build your profile.");
-      navigate(role === "investor" ? "/onboarding/investor" : "/onboarding/student");
+      navigate("/onboarding/student");
     };
 
     const run = async () => {
