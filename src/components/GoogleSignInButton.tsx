@@ -3,6 +3,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
 
+const STABLE_PREVIEW_ORIGIN = "https://id-preview--b4006390-c22b-4fd9-8b3a-8eaf1eafda1d.lovable.app";
+
+function getAuthCallbackUrl(intendedRole?: "student" | "investor") {
+  const origin = window.location.hostname.endsWith(".lovableproject.com")
+    ? STABLE_PREVIEW_ORIGIN
+    : window.location.origin;
+  const callbackUrl = new URL("/auth/callback", origin);
+
+  if (intendedRole) {
+    callbackUrl.searchParams.set("role", intendedRole);
+  }
+
+  return callbackUrl.toString();
+}
+
 interface Props {
   /** Role to assign on first-ever sign-in. Omit on the Login page. */
   intendedRole?: "student" | "investor";
@@ -21,7 +36,7 @@ export default function GoogleSignInButton({ intendedRole, label = "Continue wit
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: getAuthCallbackUrl(intendedRole),
         },
       });
       if (error) toast.error(error.message);
