@@ -15,7 +15,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="container mx-auto flex items-center justify-center px-6 py-16 md:py-24">
+      <div className="container mx-auto flex items-center justify-center px-6 pt-32 pb-16 md:pt-40 md:pb-24">
         <div className="w-full max-w-md relative">
           <div className="absolute -top-4 -left-4 h-12 w-12 bg-[hsl(var(--pastel-yellow))] border-2 border-foreground rounded-full -z-0" />
           <div className="absolute -bottom-4 -right-4 h-16 w-16 bg-[hsl(var(--pastel-pink))] border-2 border-foreground rounded-2xl rotate-12 -z-0" />

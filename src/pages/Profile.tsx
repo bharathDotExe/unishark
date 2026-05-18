@@ -119,7 +119,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background" style={{ backgroundImage: "var(--gradient-mesh)" }}>
       <Navbar />
-      <main className="container mx-auto max-w-4xl px-4 py-8 sm:py-12">
+      <main className="container mx-auto max-w-4xl px-4 pt-28 pb-8 sm:pt-32 sm:pb-12">
         <header className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
           <div>
             <span className="inline-block rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">Your profile</span>

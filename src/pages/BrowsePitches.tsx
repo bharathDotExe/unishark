@@ -39,7 +39,7 @@ export default function BrowsePitches() {
     <div className="min-h-screen bg-background relative"
       style={{ backgroundImage: "var(--gradient-mesh)" }}>
       <Navbar />
-      <div className="container mx-auto px-4 py-8 sm:py-10">
+      <div className="container mx-auto px-4 pt-28 pb-8 sm:pt-32 sm:pb-10">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-primary-dark">Discover pitches</h1>
           <p className="text-muted-foreground mt-1">Hand-vetted founders building the next wave of Indian startups.</p>

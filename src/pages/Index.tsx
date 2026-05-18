@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { motion, useScroll, useSpring, useInView, useMotionValue, useTransform, animate, useReducedMotion, type Variants } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import PhoneShowcase from "@/components/PhoneShowcase";
 import MagneticButton from "@/components/MagneticButton";
 import { Button } from "@/components/ui/button";
 import {
@@ -137,7 +138,7 @@ const Index = () => {
       <Navbar />
 
       {/* HERO */}
-      <section id="home" className="relative container mx-auto px-4 sm:px-6 pt-12 pb-20 md:pt-24 md:pb-32 max-w-6xl">
+      <section id="home" className="relative container mx-auto px-4 sm:px-6 pt-28 pb-20 md:pt-36 md:pb-32 max-w-6xl">
         <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_30%,black_40%,transparent_100%)]">
           <motion.div animate={{ y: [0, -20, 0], x: [0, 20, 0] }} transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }} className="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] max-w-[600px] max-h-[600px] bg-[hsl(var(--pastel-pink))] rounded-full filter blur-[100px] opacity-30 dark:opacity-10" />
           <motion.div animate={{ y: [0, 30, 0], x: [0, -30, 0] }} transition={{ repeat: Infinity, duration: 15, ease: "easeInOut" }} className="absolute top-[20%] -right-[10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-[hsl(var(--pastel-mint))] rounded-full filter blur-[100px] opacity-30 dark:opacity-10" />
@@ -199,6 +200,7 @@ const Index = () => {
         </motion.div>
         </div>
       </section>
+
 
       {/* COLLEGES */}
       <section className={`bg-[hsl(var(--pastel-blue))] border-y-2 border-foreground py-8 overflow-hidden`}>
@@ -288,34 +290,7 @@ const Index = () => {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" className="container mx-auto px-4 sm:px-6 py-16 md:py-32 max-w-6xl">
-        <Reveal className="max-w-2xl mb-10 md:mb-16">
-          <Pill bg="bg-[hsl(var(--pastel-blue))]"><Wrench className="h-3.5 w-3.5" strokeWidth={2.5} /> How it works</Pill>
-          <h2 className="mt-6 font-display text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight leading-[1.05]">Three steps. Zero friction.</h2>
-          <p className="mt-5 text-lg text-muted-foreground">From idea to funded — without the cold-email grind.</p>
-        </Reveal>
-        <StaggerGroup className="grid md:grid-cols-3 gap-8">
-          {[
-            { n: "01", title: "Pitch", body: "Submit your startup idea in our 5-minute form. We vet it for quality. Go live.", time: "5 min", Icon: PencilLine, bg: "bg-[hsl(var(--pastel-yellow))]" },
-            { n: "02", title: "Match", body: "Verified investors discover your pitch. Bookmark, message, request the deck.", time: "48 hrs", Icon: Handshake, bg: "bg-[hsl(var(--pastel-peach))]" },
-            { n: "03", title: "Close", body: "Chat in-app, share legal docs, get introduced. We support you to term sheet.", time: "2-4 wks", Icon: Rocket, bg: "bg-[hsl(var(--pastel-mint))]" },
-          ].map((it, i) => (
-            <StaggerItem key={it.n}>
-            <Card bg={it.bg} className={`p-8 ${i === 1 ? "md:translate-y-6" : ""}`}>
-              <div className="flex items-baseline justify-between">
-                <span className="font-display text-5xl font-bold tracking-tight">{it.n}</span>
-                <span className={`bg-card ${brutalBorder} rounded-full px-3 py-1 text-xs font-bold inline-flex items-center gap-1`}><Zap className="h-3 w-3" strokeWidth={3} /> {it.time}</span>
-              </div>
-              <div className={`mt-6 inline-flex h-14 w-14 items-center justify-center bg-foreground text-background ${brutalBorder} rounded-2xl`}>
-                <it.Icon className="h-7 w-7" strokeWidth={2.5} />
-              </div>
-              <h3 className="mt-4 font-display text-2xl font-bold">{it.title}</h3>
-              <p className="mt-3 text-sm font-medium leading-relaxed">{it.body}</p>
-            </Card>
-            </StaggerItem>
-          ))}
-        </StaggerGroup>
-      </section>
+      <PhoneShowcase />
 
       {/* FEATURES */}
       <section id="features" className="bg-[hsl(var(--pastel-lilac))] border-y-2 border-foreground py-16 md:py-32">

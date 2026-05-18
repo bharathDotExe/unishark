@@ -155,7 +155,7 @@ export default function InvestorOnboarding() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <main className="container mx-auto max-w-2xl px-4 py-10 md:py-16">
+      <main className="container mx-auto max-w-2xl px-4 pt-28 pb-10 md:pt-32 md:pb-16">
         {/* Progress Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-4">

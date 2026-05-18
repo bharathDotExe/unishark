@@ -81,7 +81,7 @@ export default function PitchDetail() {
 
   if (!pitch) return (
     <div className="min-h-screen bg-background relative"
-      style={{ backgroundImage: "var(--gradient-mesh)" }}><Navbar /><div className="container py-10 text-muted-foreground">Loading…</div></div>
+      style={{ backgroundImage: "var(--gradient-mesh)" }}><Navbar /><div className="container pt-28 pb-10 text-muted-foreground">Loading…</div></div>
   );
 
   const canMessage = !!user && (isInvestor || isOwner) && pitch.status === "APPROVED";
@@ -90,7 +90,7 @@ export default function PitchDetail() {
     <div className="min-h-screen bg-background relative"
       style={{ backgroundImage: "var(--gradient-mesh)" }}>
       <Navbar />
-      <div className="container mx-auto px-4 py-10 max-w-4xl">
+      <div className="container mx-auto px-4 pt-28 pb-10 max-w-4xl">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4"><ArrowLeft className="mr-2 h-4 w-4" /> Back</Button>
 
         <Card className="p-8 shadow-card">

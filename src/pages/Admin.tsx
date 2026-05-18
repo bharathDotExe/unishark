@@ -59,7 +59,7 @@ export default function Admin() {
     <div className="min-h-screen bg-background relative"
       style={{ backgroundImage: "var(--gradient-mesh)" }}>
       <Navbar />
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto px-4 pt-28 pb-10">
         <h1 className="text-3xl font-bold text-primary-dark">Admin</h1>
         <p className="text-muted-foreground mt-1">Manual vetting keeps the bar high.</p>
 
