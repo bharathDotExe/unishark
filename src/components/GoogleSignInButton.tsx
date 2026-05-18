@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { lovableAuth } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -34,18 +33,13 @@ export default function GoogleSignInButton({ intendedRole, label = "Continue wit
       if (intendedRole) {
         localStorage.setItem("unishark_intended_role", intendedRole);
       }
-      const result = await lovableAuth.signInWithOAuth("google", {
-        redirect_uri: getAuthCallbackUrl(intendedRole),
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: getAuthCallbackUrl(intendedRole),
+        },
       });
-
-      if (result.redirected) return;
-      if (result.error) {
-        toast.error(result.error.message);
-        return;
-      }
-
-      await supabase.auth.setSession(result.tokens);
-      window.location.href = getAuthCallbackUrl(intendedRole);
+      if (error) toast.error(error.message);
     } catch (err: any) {
       toast.error(err.message || "Google sign-in failed");
     } finally {
