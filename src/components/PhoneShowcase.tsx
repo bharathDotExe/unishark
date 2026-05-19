@@ -286,6 +286,60 @@ export default function PhoneShowcase() {
                           >
                             <Check className="w-2.5 h-2.5" strokeWidth={3} /> Term sheet ready
                           </motion.div>
+
+                          {/* Handshake — deal closed */}
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.1, duration: 0.5 }}
+                            className={`mt-1.5 bg-[hsl(var(--pastel-pink))] ${brutalBorder} rounded-lg p-2 ${brutalShadowSm} flex items-center justify-center gap-1 relative overflow-hidden`}
+                          >
+                            {/* founder */}
+                            <motion.div
+                              initial={{ x: -30, opacity: 0 }}
+                              animate={{ x: 0, opacity: 1 }}
+                              transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
+                              className="flex flex-col items-center"
+                            >
+                              <div className={`w-6 h-6 rounded-full bg-[hsl(var(--pastel-yellow))] ${brutalBorder} flex items-center justify-center`}>
+                                <User className="w-3 h-3" strokeWidth={2.5} />
+                              </div>
+                              <span className="text-[6.5px] font-bold mt-0.5">Founder</span>
+                            </motion.div>
+
+                            {/* hands meeting */}
+                            <motion.div
+                              initial={{ scale: 0, rotate: -20 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ delay: 1.55, type: "spring", stiffness: 260 }}
+                              className="relative"
+                            >
+                              <Handshake className="w-6 h-6" strokeWidth={2.5} />
+                              {/* spark dots */}
+                              {[0, 1, 2, 3].map((i) => (
+                                <motion.span
+                                  key={i}
+                                  initial={{ opacity: 0, scale: 0 }}
+                                  animate={{ opacity: [0, 1, 0], scale: [0, 1, 0], x: Math.cos((i / 4) * Math.PI * 2) * 14, y: Math.sin((i / 4) * Math.PI * 2) * 14 }}
+                                  transition={{ delay: 1.7, duration: 0.7, repeat: Infinity, repeatDelay: 0.6 }}
+                                  className="absolute top-1/2 left-1/2 w-1 h-1 bg-foreground rounded-full"
+                                />
+                              ))}
+                            </motion.div>
+
+                            {/* investor */}
+                            <motion.div
+                              initial={{ x: 30, opacity: 0 }}
+                              animate={{ x: 0, opacity: 1 }}
+                              transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
+                              className="flex flex-col items-center"
+                            >
+                              <div className={`w-6 h-6 rounded-full bg-[hsl(var(--pastel-blue))] ${brutalBorder} flex items-center justify-center`}>
+                                <User className="w-3 h-3" strokeWidth={2.5} />
+                              </div>
+                              <span className="text-[6.5px] font-bold mt-0.5">Investor</span>
+                            </motion.div>
+                          </motion.div>
                         </motion.div>
                       )}
                     </AnimatePresence>
