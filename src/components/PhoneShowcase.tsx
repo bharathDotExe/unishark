@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
-import { Rocket, Handshake, Zap, Wrench, PencilLine, Mail, Sparkles, Check, TrendingUp, Bell } from "lucide-react";
+import { Rocket, Handshake, Zap, Wrench, PencilLine, Mail, Sparkles, Check, TrendingUp, Bell, User } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const brutalBorder = "border-2 border-foreground";
@@ -17,12 +17,12 @@ const STEPS = [
 
 // Phase timing (ms)
 const PHASES = [
-  { id: "logo-in",   d: 900 },   // 0 — logo sits in card
-  { id: "morph",     d: 900 },   // 1 — logo morphs into phone
-  { id: "clutter",   d: 1600 },  // 2 — messy cold-email inbox + spam bubbles
-  { id: "shatter",   d: 1300 },  // 3 — pink overlay sweeps + shatters into pieces
-  { id: "clean",     d: 1800 },  // 4 — clean Unishark pitch feed shown
-  { id: "collapse",  d: 800 },   // 5 — phone shrinks back to logo
+  { id: "logo-in",   d: 1600 },  // 0 — logo sits in card (read the brand)
+  { id: "morph",     d: 1400 },  // 1 — logo morphs into phone
+  { id: "clutter",   d: 3200 },  // 2 — messy cold-email inbox + spam bubbles (read pain)
+  { id: "shatter",   d: 1800 },  // 3 — overlay sweeps + shatters
+  { id: "clean",     d: 3800 },  // 4 — clean Unishark pitch feed + handshake
+  { id: "collapse",  d: 1200 },  // 5 — phone shrinks back to logo
 ];
 
 export default function PhoneShowcase() {
@@ -112,7 +112,7 @@ export default function PhoneShowcase() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            className={`relative w-[320px] sm:w-[360px] aspect-[3/3.4] ${brutalBorder} ${brutalShadow} rounded-[28px] bg-[hsl(var(--pastel-mint))] overflow-hidden`}
+            className={`relative w-[320px] sm:w-[360px] aspect-[3/4.2] ${brutalBorder} ${brutalShadow} rounded-[28px] bg-[hsl(var(--pastel-mint))] overflow-hidden`}
           >
             {/* faint grid */}
             <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, hsl(0 0% 6%) 1px, transparent 0)", backgroundSize: "18px 18px" }} />
@@ -146,7 +146,7 @@ export default function PhoneShowcase() {
                   transition={{ type: "spring", stiffness: 140, damping: 18 }}
                   className="absolute inset-0 flex items-center justify-center z-10"
                 >
-                  <div className="relative w-[58%] aspect-[9/17] bg-white border-[6px] border-foreground rounded-[2rem] overflow-hidden shadow-[6px_6px_0_0_hsl(var(--foreground))]">
+                  <div className="relative w-[56%] aspect-[9/19] bg-white border-[6px] border-foreground rounded-[2rem] overflow-hidden shadow-[6px_6px_0_0_hsl(var(--foreground))]">
                     {/* notch */}
                     <div className="absolute top-0 inset-x-0 h-4 bg-foreground rounded-b-2xl w-20 mx-auto z-50 flex items-center justify-center">
                       <div className="w-8 h-1 bg-background/30 rounded-full" />
