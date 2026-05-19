@@ -29,8 +29,8 @@ export default function Navbar() {
       <div className="fixed top-0 left-0 right-0 z-50 p-4 pointer-events-none">
         <header className="pointer-events-auto mx-auto max-w-6xl rounded-full border-2 border-foreground bg-background/40 backdrop-blur-xl shadow-[6px_6px_0_0_hsl(var(--foreground))] transition-all">
         <div className="flex h-16 items-center justify-between px-4 sm:px-6">
-        <Link to="/" onClick={closeMobile} className="flex items-center gap-2 font-display text-lg font-bold tracking-[0.18em] text-foreground">
-          <img src={logo} alt="Logo" className="h-8 w-8" />
+        <Link to="/" onClick={closeMobile} className="flex items-center gap-3 font-display text-lg font-bold tracking-[0.18em] text-foreground">
+          <img src={logo} alt="Logo" className="h-12 w-12 rounded-xl" />
           UNISHARK
         </Link>
 
