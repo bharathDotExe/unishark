@@ -12,6 +12,7 @@ import { Search, ArrowRight, Eye } from "lucide-react";
 type Row = {
   id: string; title: string; one_liner: string | null; problem: string | null;
   stage: string | null; funding_ask: string | null; view_count: number;
+  thumbnail_url: string | null;
 };
 
 export default function BrowsePitches() {
@@ -22,7 +23,7 @@ export default function BrowsePitches() {
 
   useEffect(() => {
     let q = supabase.from("pitches")
-      .select("id,title,one_liner,problem,stage,funding_ask,view_count")
+      .select("id,title,one_liner,problem,stage,funding_ask,view_count,thumbnail_url")
       .eq("status", "APPROVED")
       .order("created_at", { ascending: false }).limit(50);
     if (stage !== "ALL") q = q.eq("stage", stage as any);
@@ -72,6 +73,18 @@ export default function BrowsePitches() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((p) => (
               <Card key={p.id} className="p-6 shadow-card hover:shadow-elevated transition-all flex flex-col">
+                {/* Thumbnail Image */}
+                <div className="w-full aspect-[16/9] rounded-lg border-2 border-foreground overflow-hidden bg-background mb-4 shadow-[3px_3px_0_0_hsl(var(--foreground))] relative">
+                  {p.thumbnail_url ? (
+                    <img src={p.thumbnail_url} alt={p.title} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-muted/40 font-mono text-center select-none">
+                      <span className="text-2xl font-black text-foreground/20">{p.title.slice(0, 2).toUpperCase()}</span>
+                      <span className="text-[10px] text-muted-foreground font-semibold mt-1 tracking-wider uppercase">UniShark Startup</span>
+                    </div>
+                  )}
+                </div>
+
                 <div className="flex items-center gap-2 mb-3">
                   {p.stage && <Badge variant="outline">{p.stage}</Badge>}
                   <span className="text-xs text-muted-foreground flex items-center gap-1 ml-auto">

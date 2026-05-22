@@ -16,6 +16,7 @@ type Pitch = {
   funding_ask: string | null;
   view_count: number;
   updated_at: string;
+  thumbnail_url: string | null;
 };
 
 const statusStyle: Record<string, string> = {
@@ -32,7 +33,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("pitches").select("id,title,status,stage,funding_ask,view_count,updated_at")
+    supabase.from("pitches").select("id,title,status,stage,funding_ask,view_count,updated_at,thumbnail_url")
       .eq("user_id", user.id).order("updated_at", { ascending: false })
       .then(({ data }) => { setPitches((data ?? []) as Pitch[]); setLoading(false); });
   }, [user]);
@@ -65,21 +66,34 @@ export default function Dashboard() {
           <div className="grid gap-4">
             {pitches.map((p) => (
               <Card key={p.id} className="p-6 shadow-card hover:shadow-elevated transition-shadow">
-                <div className="flex items-start justify-between flex-wrap gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-lg text-primary-dark truncate">{p.title || "Untitled pitch"}</h3>
-                      <Badge className={statusStyle[p.status]} variant="outline">{p.status}</Badge>
-                      {p.stage && <Badge variant="outline">{p.stage}</Badge>}
-                    </div>
-                    <div className="flex gap-4 text-sm text-muted-foreground mt-2">
-                      {p.funding_ask && <span>Asking {p.funding_ask}</span>}
-                      <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {p.view_count} views</span>
-                    </div>
+                <div className="flex items-start gap-4 flex-col sm:flex-row">
+                  {/* Thumbnail Preview */}
+                  <div className="w-20 h-20 rounded-lg border-2 border-foreground overflow-hidden bg-background shrink-0 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
+                    {p.thumbnail_url ? (
+                      <img src={p.thumbnail_url} alt={p.title} className="w-full h-full object-cover animate-fade-in" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-muted/40 font-mono select-none">
+                        <span className="text-xl font-black text-foreground/20">{(p.title || "UN").slice(0, 2).toUpperCase()}</span>
+                      </div>
+                    )}
                   </div>
-                  <Button asChild variant="outline">
-                    <Link to={`/pitches/${p.id}/edit`}>{p.status === "DRAFT" ? "Continue editing" : "View"}</Link>
-                  </Button>
+
+                  <div className="flex-1 min-w-0 flex items-start justify-between flex-wrap gap-4 w-full">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-lg text-primary-dark truncate">{p.title || "Untitled pitch"}</h3>
+                        <Badge className={statusStyle[p.status]} variant="outline">{p.status}</Badge>
+                        {p.stage && <Badge variant="outline">{p.stage}</Badge>}
+                      </div>
+                      <div className="flex gap-4 text-sm text-muted-foreground mt-2">
+                        {p.funding_ask && <span>Asking {p.funding_ask}</span>}
+                        <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {p.view_count} views</span>
+                      </div>
+                    </div>
+                    <Button asChild variant="outline" className="border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[1px] hover:translate-y-[1px]">
+                      <Link to={`/pitches/${p.id}/edit`}>{p.status === "DRAFT" ? "Continue editing" : "View"}</Link>
+                    </Button>
+                  </div>
                 </div>
               </Card>
             ))}

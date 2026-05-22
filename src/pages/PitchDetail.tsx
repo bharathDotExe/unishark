@@ -102,6 +102,12 @@ export default function PitchDetail() {
           <h1 className="text-3xl font-bold text-primary-dark">{pitch.title}</h1>
           {pitch.one_liner && <p className="text-lg text-muted-foreground mt-2">{pitch.one_liner}</p>}
 
+          {pitch.thumbnail_url && (
+            <div className="w-full aspect-[21/9] rounded-xl border-2 border-foreground overflow-hidden bg-background mt-6 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+              <img src={pitch.thumbnail_url} alt={pitch.title} className="w-full h-full object-cover animate-fade-in" />
+            </div>
+          )}
+
           <div className="grid gap-6 mt-8">
             <Section label="Problem">{pitch.problem}</Section>
             <Section label="Solution">{pitch.solution}</Section>
