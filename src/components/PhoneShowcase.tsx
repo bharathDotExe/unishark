@@ -266,8 +266,8 @@ export default function PhoneShowcase() {
                           </motion.div>
 
                           {[
-                            { n: "Arjun · Blume Angel", tag: "Bookmarked", c: "bg-[hsl(var(--pastel-blue))]", d: 0.3 },
-                            { n: "Neha · ex-Razorpay",  tag: "Wants deck",  c: "bg-[hsl(var(--pastel-mint))]", d: 0.45 },
+                            { n: "Arjun · Blume Angel", tag: "Bookmarked", c: "bg-[hsl(var(--pastel-blue))]", d: 0.45 },
+                            { n: "Neha · ex-Razorpay",  tag: "Wants deck",  c: "bg-[hsl(var(--pastel-mint))]", d: 0.65 },
                           ].map((it) => (
                             <motion.div
                               key={it.n}
