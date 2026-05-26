@@ -305,7 +305,7 @@ export default function PhoneShowcase() {
                                 loading="lazy"
                                 initial={{ scale: 0.6, opacity: 0, y: 8 }}
                                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                                transition={{ delay: 1.3, type: "spring", stiffness: 200, damping: 16 }}
+                                transition={{ delay: 1.9, type: "spring", stiffness: 200, damping: 16 }}
                                 className="h-full w-auto object-contain drop-shadow-[2px_2px_0_hsl(var(--foreground))]"
                               />
                               {[0, 1, 2, 3, 4].map((i) => (
