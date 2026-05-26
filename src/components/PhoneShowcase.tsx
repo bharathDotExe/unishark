@@ -318,7 +318,7 @@ export default function PhoneShowcase() {
                                     x: Math.cos((i / 5) * Math.PI * 2) * 30,
                                     y: Math.sin((i / 5) * Math.PI * 2) * 22 - 6,
                                   }}
-                                  transition={{ delay: 1.7 + i * 0.05, duration: 0.9, repeat: Infinity, repeatDelay: 0.5 }}
+                                  transition={{ delay: 2.5 + i * 0.07, duration: 1.2, repeat: Infinity, repeatDelay: 0.7 }}
                                   className="absolute top-1/2 left-1/2 w-1 h-1 bg-foreground rounded-full"
                                 />
                               ))}
