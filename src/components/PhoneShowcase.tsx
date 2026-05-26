@@ -18,12 +18,12 @@ const STEPS = [
 
 // Phase timing (ms)
 const PHASES = [
-  { id: "logo-in",   d: 1600 },  // 0 — logo sits in card (read the brand)
-  { id: "morph",     d: 1400 },  // 1 — logo morphs into phone
-  { id: "clutter",   d: 3200 },  // 2 — messy cold-email inbox + spam bubbles (read pain)
-  { id: "shatter",   d: 1800 },  // 3 — overlay sweeps + shatters
-  { id: "clean",     d: 3800 },  // 4 — clean Unishark pitch feed + handshake
-  { id: "collapse",  d: 1200 },  // 5 — phone shrinks back to logo
+  { id: "logo-in",   d: 2300 },  // 0 — logo sits in card (read the brand)
+  { id: "morph",     d: 2000 },  // 1 — logo morphs into phone
+  { id: "clutter",   d: 4600 },  // 2 — messy cold-email inbox + spam bubbles (read pain)
+  { id: "shatter",   d: 2600 },  // 3 — overlay sweeps + shatters
+  { id: "clean",     d: 5400 },  // 4 — clean Unishark pitch feed + handshake
+  { id: "collapse",  d: 1800 },  // 5 — phone shrinks back to logo
 ];
 
 export default function PhoneShowcase() {
