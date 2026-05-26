@@ -254,7 +254,7 @@ export default function PhoneShowcase() {
                           <motion.div
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.15 }}
+                            transition={{ delay: 0.22 }}
                             className={`bg-[hsl(var(--pastel-yellow))] ${brutalBorder} rounded-lg p-1.5 mb-1 ${brutalShadowSm}`}
                           >
                             <div className="flex items-center gap-1 mb-0.5">
