@@ -18,12 +18,12 @@ const STEPS = [
 
 // Phase timing (ms)
 const PHASES = [
-  { id: "logo-in",   d: 1600 },  // 0 — logo sits in card (read the brand)
-  { id: "morph",     d: 1400 },  // 1 — logo morphs into phone
-  { id: "clutter",   d: 3200 },  // 2 — messy cold-email inbox + spam bubbles (read pain)
-  { id: "shatter",   d: 1800 },  // 3 — overlay sweeps + shatters
-  { id: "clean",     d: 3800 },  // 4 — clean Unishark pitch feed + handshake
-  { id: "collapse",  d: 1200 },  // 5 — phone shrinks back to logo
+  { id: "logo-in",   d: 2300 },  // 0 — logo sits in card (read the brand)
+  { id: "morph",     d: 2000 },  // 1 — logo morphs into phone
+  { id: "clutter",   d: 4600 },  // 2 — messy cold-email inbox + spam bubbles (read pain)
+  { id: "shatter",   d: 2600 },  // 3 — overlay sweeps + shatters
+  { id: "clean",     d: 5400 },  // 4 — clean Unishark pitch feed + handshake
+  { id: "collapse",  d: 1800 },  // 5 — phone shrinks back to logo
 ];
 
 export default function PhoneShowcase() {
@@ -181,7 +181,7 @@ export default function PhoneShowcase() {
                               key={i}
                               initial={{ opacity: 0, x: -8 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.1 + i * 0.12 }}
+                              transition={{ delay: 0.15 + i * 0.18 }}
                               className={`${m.c} border border-foreground/40 rounded-md px-1.5 py-1 mb-1 flex items-center gap-1.5`}
                             >
                               <Mail className="w-2.5 h-2.5 flex-shrink-0" strokeWidth={2.5} />
@@ -254,7 +254,7 @@ export default function PhoneShowcase() {
                           <motion.div
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.15 }}
+                            transition={{ delay: 0.22 }}
                             className={`bg-[hsl(var(--pastel-yellow))] ${brutalBorder} rounded-lg p-1.5 mb-1 ${brutalShadowSm}`}
                           >
                             <div className="flex items-center gap-1 mb-0.5">
@@ -266,8 +266,8 @@ export default function PhoneShowcase() {
                           </motion.div>
 
                           {[
-                            { n: "Arjun · Blume Angel", tag: "Bookmarked", c: "bg-[hsl(var(--pastel-blue))]", d: 0.3 },
-                            { n: "Neha · ex-Razorpay",  tag: "Wants deck",  c: "bg-[hsl(var(--pastel-mint))]", d: 0.45 },
+                            { n: "Arjun · Blume Angel", tag: "Bookmarked", c: "bg-[hsl(var(--pastel-blue))]", d: 0.45 },
+                            { n: "Neha · ex-Razorpay",  tag: "Wants deck",  c: "bg-[hsl(var(--pastel-mint))]", d: 0.65 },
                           ].map((it) => (
                             <motion.div
                               key={it.n}
@@ -284,7 +284,7 @@ export default function PhoneShowcase() {
                           <motion.div
                             initial={{ opacity: 0, scale: 0.7 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.7, type: "spring", stiffness: 240 }}
+                            transition={{ delay: 1.0, type: "spring", stiffness: 240 }}
                             className={`mt-1 bg-foreground text-background rounded-full flex items-center justify-center gap-1 py-1 text-[8px] font-bold ${brutalShadowSm}`}
                           >
                             <Check className="w-2.5 h-2.5" strokeWidth={3} /> Term sheet signed
@@ -294,7 +294,7 @@ export default function PhoneShowcase() {
                           <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.1, duration: 0.5 }}
+                            transition={{ delay: 1.6, duration: 0.6 }}
                             className={`mt-1.5 bg-[hsl(var(--pastel-pink))] ${brutalBorder} rounded-lg p-1.5 ${brutalShadowSm} relative overflow-hidden`}
                           >
                             <div className="text-[8px] font-bold uppercase tracking-wider text-center mb-0.5">Funded ✦ ₹25L raised</div>
@@ -305,7 +305,7 @@ export default function PhoneShowcase() {
                                 loading="lazy"
                                 initial={{ scale: 0.6, opacity: 0, y: 8 }}
                                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                                transition={{ delay: 1.3, type: "spring", stiffness: 200, damping: 16 }}
+                                transition={{ delay: 1.9, type: "spring", stiffness: 200, damping: 16 }}
                                 className="h-full w-auto object-contain drop-shadow-[2px_2px_0_hsl(var(--foreground))]"
                               />
                               {[0, 1, 2, 3, 4].map((i) => (
@@ -318,7 +318,7 @@ export default function PhoneShowcase() {
                                     x: Math.cos((i / 5) * Math.PI * 2) * 30,
                                     y: Math.sin((i / 5) * Math.PI * 2) * 22 - 6,
                                   }}
-                                  transition={{ delay: 1.7 + i * 0.05, duration: 0.9, repeat: Infinity, repeatDelay: 0.5 }}
+                                  transition={{ delay: 2.5 + i * 0.07, duration: 1.2, repeat: Infinity, repeatDelay: 0.7 }}
                                   className="absolute top-1/2 left-1/2 w-1 h-1 bg-foreground rounded-full"
                                 />
                               ))}
@@ -340,19 +340,19 @@ export default function PhoneShowcase() {
               {phase === 2 && (
                 <>
                   {[
-                    { l: "-5%", t: "12%", d: 0.1 },
-                    { l: "78%", t: "18%", d: 0.25 },
-                    { l: "-2%", t: "55%", d: 0.4 },
-                    { l: "82%", t: "60%", d: 0.55 },
-                    { l: "8%",  t: "82%", d: 0.7 },
-                    { l: "70%", t: "85%", d: 0.85 },
+                    { l: "-5%", t: "12%", d: 0.15 },
+                    { l: "78%", t: "18%", d: 0.35 },
+                    { l: "-2%", t: "55%", d: 0.55 },
+                    { l: "82%", t: "60%", d: 0.75 },
+                    { l: "8%",  t: "82%", d: 0.95 },
+                    { l: "70%", t: "85%", d: 1.15 },
                   ].map((b, i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
                       exit={{ opacity: 0, scale: 0 }}
-                      transition={{ delay: b.d, y: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
+                      transition={{ delay: b.d, y: { duration: 3, repeat: Infinity, ease: "easeInOut" } }}
                       className={`absolute w-10 h-10 bg-white ${brutalBorder} rounded-full flex items-center justify-center ${brutalShadowSm} z-30`}
                       style={{ left: b.l, top: b.t }}
                     >
