@@ -181,7 +181,7 @@ export default function PhoneShowcase() {
                               key={i}
                               initial={{ opacity: 0, x: -8 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.1 + i * 0.12 }}
+                              transition={{ delay: 0.15 + i * 0.18 }}
                               className={`${m.c} border border-foreground/40 rounded-md px-1.5 py-1 mb-1 flex items-center gap-1.5`}
                             >
                               <Mail className="w-2.5 h-2.5 flex-shrink-0" strokeWidth={2.5} />
