@@ -352,7 +352,7 @@ export default function PhoneShowcase() {
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
                       exit={{ opacity: 0, scale: 0 }}
-                      transition={{ delay: b.d, y: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
+                      transition={{ delay: b.d, y: { duration: 3, repeat: Infinity, ease: "easeInOut" } }}
                       className={`absolute w-10 h-10 bg-white ${brutalBorder} rounded-full flex items-center justify-center ${brutalShadowSm} z-30`}
                       style={{ left: b.l, top: b.t }}
                     >
