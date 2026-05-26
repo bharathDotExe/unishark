@@ -1,17 +1,19 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, ArrowRight, Send, Upload, Save } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { 
+  ArrowLeft, ArrowRight, Upload, Save, Send, AlertCircle, CheckCircle2, 
+  HelpCircle, Trash2, Plus, Sparkles, RefreshCw, FileText
+} from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type TeamMember = { name: string; role: string; linkedinUrl?: string };
 
@@ -27,11 +29,19 @@ type Draft = {
   funding_ask: string;
   team_members: TeamMember[];
   deck_url: string;
+  
+  // Custom structured fields
+  target_market: string;
+  competitors: string;
+  advantage: string;
+  use_of_funds: string;
+  funding_status: "BOOTSTRAPPED" | "PRE_SEED" | "SEED" | "SERIES_A" | "";
 };
 
 const empty: Draft = {
   title: "", one_liner: "", problem: "", solution: "", market_size: "", traction: "",
   stage: "", funding_ask: "", team_members: [{ name: "", role: "", linkedinUrl: "" }], deck_url: "",
+  target_market: "", competitors: "", advantage: "", use_of_funds: "", funding_status: "",
 };
 
 const STORAGE_KEY = "unishark.pitch.draft";
@@ -40,11 +50,14 @@ export default function PitchForm() {
   const { user } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState<Draft>(empty);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState<string>("DRAFT");
+  const [dragActive, setDragActive] = useState(false);
 
   // load existing or autosaved draft
   useEffect(() => {
@@ -52,13 +65,56 @@ export default function PitchForm() {
       supabase.from("pitches").select("*").eq("id", id).maybeSingle().then(({ data }) => {
         if (data) {
           setStatus(data.status);
+          
+          let parsedMarketSize = data.market_size ?? "";
+          let targetMarket = "";
+          let competitors = "";
+          let advantage = "";
+          
+          if (parsedMarketSize.trim().startsWith("{")) {
+            try {
+              const parsed = JSON.parse(parsedMarketSize);
+              parsedMarketSize = parsed.market_size ?? "";
+              targetMarket = parsed.target_market ?? "";
+              competitors = parsed.competitors ?? "";
+              advantage = parsed.advantage ?? "";
+            } catch (e) {
+              console.error("Error parsing market_size", e);
+            }
+          }
+
+          let parsedFundingAsk = data.funding_ask ?? "";
+          let useOfFunds = "";
+          let fundingStatus = "";
+
+          if (parsedFundingAsk.trim().startsWith("{")) {
+            try {
+              const parsed = JSON.parse(parsedFundingAsk);
+              parsedFundingAsk = parsed.funding_ask ?? "";
+              useOfFunds = parsed.use_of_funds ?? "";
+              fundingStatus = parsed.funding_status ?? "";
+            } catch (e) {
+              console.error("Error parsing funding_ask", e);
+            }
+          }
+
           setDraft({
-            id: data.id, title: data.title ?? "", one_liner: data.one_liner ?? "",
-            problem: data.problem ?? "", solution: data.solution ?? "",
-            market_size: data.market_size ?? "", traction: data.traction ?? "",
-            stage: (data.stage as any) ?? "", funding_ask: data.funding_ask ?? "",
-            team_members: (data.team_members as any) ?? [{ name: "", role: "" }],
+            id: data.id, 
+            title: data.title ?? "", 
+            one_liner: data.one_liner ?? "",
+            problem: data.problem ?? "", 
+            solution: data.solution ?? "",
+            market_size: parsedMarketSize, 
+            traction: data.traction ?? "",
+            stage: (data.stage as any) ?? "", 
+            funding_ask: parsedFundingAsk,
+            team_members: (data.team_members as any) ?? [{ name: "", role: "", linkedinUrl: "" }],
             deck_url: data.deck_url ?? "",
+            target_market: targetMarket,
+            competitors: competitors,
+            advantage: advantage,
+            use_of_funds: useOfFunds,
+            funding_status: fundingStatus as any,
           });
         }
       });
@@ -78,20 +134,35 @@ export default function PitchForm() {
   const persist = async (submit: boolean): Promise<string | null> => {
     if (!user) return null;
     setSaving(true);
+
+    const serializedMarketSize = JSON.stringify({
+      market_size: draft.market_size,
+      target_market: draft.target_market,
+      competitors: draft.competitors,
+      advantage: draft.advantage,
+    });
+
+    const serializedFundingAsk = JSON.stringify({
+      funding_ask: draft.funding_ask,
+      use_of_funds: draft.use_of_funds,
+      funding_status: draft.funding_status,
+    });
+
     const payload = {
       user_id: user.id,
       title: draft.title.slice(0, 100),
-      one_liner: draft.one_liner,
-      problem: draft.problem,
-      solution: draft.solution,
-      market_size: draft.market_size,
+      one_liner: draft.one_liner.slice(0, 150),
+      problem: draft.problem.slice(0, 500),
+      solution: draft.solution.slice(0, 500),
+      market_size: serializedMarketSize,
       traction: draft.traction,
       stage: (draft.stage || null) as any,
-      funding_ask: draft.funding_ask,
+      funding_ask: serializedFundingAsk,
       team_members: draft.team_members as any,
       deck_url: draft.deck_url,
       status: (submit ? "SUBMITTED" : "DRAFT") as any,
     };
+
     let pitchId = draft.id;
     if (pitchId) {
       const { error } = await supabase.from("pitches").update(payload).eq("id", pitchId);
@@ -108,162 +179,623 @@ export default function PitchForm() {
 
   const handleUpload = async (file: File) => {
     if (!user) return;
-    if (file.type !== "application/pdf") { toast.error("PDF only."); return; }
-    if (file.size > 5 * 1024 * 1024) { toast.error("Max 5MB."); return; }
+    if (file.type !== "application/pdf") { toast.error("Please upload a PDF file only."); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Max file size is 5MB."); return; }
     setUploading(true);
     const path = `${user.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
     const { error } = await supabase.storage.from("pitch-decks").upload(path, file, { upsert: false, contentType: "application/pdf" });
     setUploading(false);
     if (error) { toast.error(error.message); return; }
     set("deck_url", path);
-    toast.success("Deck uploaded");
+    toast.success("Pitch deck PDF uploaded successfully!");
+  };
+
+  // Drag and Drop handlers
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleUpload(e.dataTransfer.files[0]);
+    }
+  };
+
+  // Validation routines per step
+  const validateStep = (s: number): boolean => {
+    switch (s) {
+      case 1:
+        if (!draft.title.trim()) { toast.error("Pitch Title is required."); return false; }
+        if (!draft.one_liner.trim()) { toast.error("One-Liner description is required."); return false; }
+        if (!draft.stage) { toast.error("Please select your Startup Stage."); return false; }
+        return true;
+      case 2:
+        if (!draft.problem.trim()) { toast.error("Problem Statement is required."); return false; }
+        if (!draft.solution.trim()) { toast.error("Your Solution description is required."); return false; }
+        if (!draft.target_market.trim()) { toast.error("Target Market is required."); return false; }
+        return true;
+      case 3:
+        if (!draft.market_size.trim()) { toast.error("Market Size details are required."); return false; }
+        if (!draft.competitors.trim()) { toast.error("Competitors list is required."); return false; }
+        if (!draft.advantage.trim()) { toast.error("Your Competitive Advantage is required."); return false; }
+        return true;
+      case 4:
+        if (!draft.funding_ask.trim()) { toast.error("Funding Ask amount is required."); return false; }
+        if (!draft.use_of_funds.trim()) { toast.error("Use of Funds details are required."); return false; }
+        if (!draft.funding_status) { toast.error("Please select your Current Funding Status."); return false; }
+        return true;
+      case 5:
+        const validMembers = draft.team_members.filter(m => m.name.trim() && m.role.trim());
+        if (validMembers.length === 0) { toast.error("At least one valid Team Member (Name & Role) is required."); return false; }
+        if (!draft.deck_url) { toast.error("Please upload your Pitch Deck PDF (max 5MB)."); return false; }
+        return true;
+      default:
+        return true;
+    }
   };
 
   const next = async () => {
+    if (!validateStep(step)) return;
     await persist(false);
     setStep((s) => Math.min(5, s + 1));
   };
+  
   const prev = () => setStep((s) => Math.max(1, s - 1));
 
   const submit = async () => {
-    if (!draft.title || !draft.problem || !draft.solution) {
-      toast.error("Title, problem and solution are required.");
-      setStep(1); return;
+    // Validate final step and overall completeness
+    for (let i = 1; i <= 5; i++) {
+      if (!validateStep(i)) {
+        setStep(i);
+        return;
+      }
     }
+    
     const pid = await persist(true);
     if (pid) {
       localStorage.removeItem(STORAGE_KEY);
-      toast.success("Submitted! Our team will review within 48h.");
-      navigate("/dashboard");
+      toast.success("Pitch submitted! We'll review and approve within 24 hours");
+      navigate(`/pitches/${pid}`);
     }
   };
 
   const readonly = status !== "DRAFT" && status !== "REJECTED";
 
-  return (
-    <div className="min-h-screen bg-background relative"
-      style={{ backgroundImage: "var(--gradient-mesh)" }}>
-      <Navbar />
-      <div className="container mx-auto px-4 pt-28 pb-8 sm:pt-32 sm:pb-10 max-w-3xl">
-        <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
-        </Button>
-        <Card className="p-5 sm:p-8 shadow-card">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-bold text-primary-dark">Step {step} of 5</h1>
-            <span className="text-sm text-muted-foreground">{readonly ? `Status: ${status}` : "Auto-saved"}</span>
-          </div>
-          <Progress value={step * 20} className="mb-8" />
-
-          {step === 1 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="title">Title *</Label>
-                <Input id="title" maxLength={100} value={draft.title} onChange={(e) => set("title", e.target.value)} disabled={readonly} placeholder="e.g. ShelfSense — AI inventory for Indian kiranas" />
-              </div>
-              <div>
-                <Label htmlFor="oneliner">One-liner</Label>
-                <Input id="oneliner" maxLength={140} value={draft.one_liner} onChange={(e) => set("one_liner", e.target.value)} disabled={readonly} placeholder="Stripe for offline retail." />
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="problem">Problem *</Label>
-                <Textarea id="problem" rows={5} value={draft.problem} onChange={(e) => set("problem", e.target.value)} disabled={readonly} />
-              </div>
-              <div>
-                <Label htmlFor="solution">Solution *</Label>
-                <Textarea id="solution" rows={5} value={draft.solution} onChange={(e) => set("solution", e.target.value)} disabled={readonly} />
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="market">Market size</Label>
-                <Textarea id="market" rows={3} value={draft.market_size} onChange={(e) => set("market_size", e.target.value)} disabled={readonly} placeholder="TAM, SAM, SOM" />
-              </div>
-              <div>
-                <Label htmlFor="traction">Traction (optional)</Label>
-                <Textarea id="traction" rows={4} value={draft.traction} onChange={(e) => set("traction", e.target.value)} disabled={readonly} placeholder="MRR, users, partnerships" />
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="space-y-4">
-              <Label>Team members</Label>
-              {draft.team_members.map((m, i) => (
-                <div key={i} className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <Input placeholder="Name" value={m.name} onChange={(e) => {
-                    const arr = [...draft.team_members]; arr[i] = { ...arr[i], name: e.target.value }; set("team_members", arr);
-                  }} disabled={readonly} />
-                  <Input placeholder="Role" value={m.role} onChange={(e) => {
-                    const arr = [...draft.team_members]; arr[i] = { ...arr[i], role: e.target.value }; set("team_members", arr);
-                  }} disabled={readonly} />
-                  <Input placeholder="LinkedIn URL" value={m.linkedinUrl ?? ""} onChange={(e) => {
-                    const arr = [...draft.team_members]; arr[i] = { ...arr[i], linkedinUrl: e.target.value }; set("team_members", arr);
-                  }} disabled={readonly} />
-                </div>
-              ))}
-              {!readonly && (
-                <Button type="button" variant="outline" size="sm" onClick={() => set("team_members", [...draft.team_members, { name: "", role: "" }])}>
-                  Add member
-                </Button>
-              )}
-            </div>
-          )}
-
-          {step === 5 && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="stage">Stage *</Label>
-                <Select value={draft.stage} onValueChange={(v) => set("stage", v as any)} disabled={readonly}>
-                  <SelectTrigger><SelectValue placeholder="Select stage" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="IDEA">Idea</SelectItem>
-                    <SelectItem value="MVP">MVP</SelectItem>
-                    <SelectItem value="REVENUE">Revenue</SelectItem>
-                    <SelectItem value="GROWTH">Growth</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="ask">Funding ask</Label>
-                <Input id="ask" value={draft.funding_ask} onChange={(e) => set("funding_ask", e.target.value)} disabled={readonly} placeholder="₹1 Crore" />
-              </div>
-              <div>
-                <Label>Pitch deck (PDF, max 5MB)</Label>
-                <div className="mt-2 flex items-center gap-3">
-                  <Input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} disabled={readonly || uploading} />
-                </div>
-                {draft.deck_url && (
-                  <p className="text-sm text-success mt-2 flex items-center gap-1"><Upload className="h-3.5 w-3.5" /> Deck uploaded</p>
+  // Neobrutalistic Custom Progress Bar renderer
+  const renderProgress = () => {
+    return (
+      <div className="border-2 border-foreground rounded-2xl bg-muted/30 p-4 mb-8 flex flex-col gap-3 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
+        <div className="flex items-center justify-between text-sm font-bold text-foreground">
+          <span>PROGRESS:</span>
+          <span>STEP {step} OF 5</span>
+        </div>
+        <div className="flex items-center justify-between gap-1 flex-wrap sm:flex-nowrap">
+          {[1, 2, 3, 4, 5].map((s) => {
+            const isActive = s === step;
+            const isCompleted = s < step;
+            return (
+              <button
+                key={s}
+                disabled={readonly}
+                onClick={() => {
+                  // Only allow jumping back, or jumping forward if validated
+                  if (s < step) setStep(s);
+                  else if (s > step && validateStep(step)) {
+                    persist(false).then(() => setStep(Math.min(s, step + 1)));
+                  }
+                }}
+                className={cn(
+                  "flex-1 py-2 px-3 border-2 border-foreground rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5",
+                  isActive 
+                    ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] translate-y-[-1px]" 
+                    : isCompleted 
+                      ? "bg-[hsl(var(--pastel-mint))] text-foreground" 
+                      : "bg-background text-muted-foreground opacity-60 hover:opacity-100"
                 )}
+              >
+                <span>Step {s}</span>
+                {isCompleted ? "██" : isActive ? "██░░" : "░░░░"}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-background relative pb-20" style={{ backgroundImage: "var(--gradient-mesh)" }}>
+      <div className="container mx-auto px-4 pt-8 pb-8 sm:pt-12 sm:pb-10 max-w-3xl">
+        <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-6 hover:bg-muted border border-foreground/10 rounded-xl">
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
+        </Button>
+        
+        <Card className="p-6 sm:p-10 border-2 border-foreground shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px]">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-4 border-b border-foreground/10 pb-4">
+            <div>
+              <span className="text-xs uppercase tracking-widest font-extrabold text-[hsl(var(--pastel-pink))] bg-[hsl(var(--pastel-pink))]/10 border border-[hsl(var(--pastel-pink))]/20 px-2.5 py-1 rounded-full mb-1 inline-block">
+                STUDENT USER JOURNEY
+              </span>
+              <h1 className="text-3xl font-display font-extrabold text-foreground tracking-wide mt-1">Submit Your Pitch</h1>
+            </div>
+            <span className="text-sm font-bold bg-muted/60 border border-foreground/10 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+              {readonly ? (
+                <>🔒 Status: <Badge variant="outline" className="border-foreground/20 font-bold bg-background">{status}</Badge></>
+              ) : (
+                <><Sparkles className="h-4 w-4 text-[hsl(var(--pastel-blue))]" /> Auto-saving draft...</>
+              )}
+            </span>
+          </div>
+
+          {renderProgress()}
+
+          {/* STEP 1: BASIC INFO */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <Label htmlFor="title" className="font-bold text-foreground">Pitch Title *</Label>
+                  <span className={cn(
+                    "text-xs font-bold", 
+                    draft.title.length >= 90 ? "text-destructive" : draft.title.length >= 70 ? "text-amber-500" : "text-muted-foreground"
+                  )}>
+                    ({draft.title.length}/100)
+                  </span>
+                </div>
+                <Input 
+                  id="title" 
+                  maxLength={100} 
+                  value={draft.title} 
+                  onChange={(e) => set("title", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="e.g. AI Resume Builder"
+                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground"
+                />
+                <p className="text-xs text-muted-foreground font-semibold mt-1">Tip: Choose a simple, recognizable name like "AI Resume Builder" or "EdTech Platform"</p>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <Label htmlFor="oneliner" className="font-bold text-foreground">One-Liner Description *</Label>
+                  <span className={cn(
+                    "text-xs font-bold", 
+                    draft.one_liner.length >= 135 ? "text-destructive" : draft.one_liner.length >= 110 ? "text-amber-500" : "text-muted-foreground"
+                  )}>
+                    ({draft.one_liner.length}/150)
+                  </span>
+                </div>
+                <Input 
+                  id="oneliner" 
+                  maxLength={150} 
+                  value={draft.one_liner} 
+                  onChange={(e) => set("one_liner", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="e.g. Describe what your startup does in 1 sentence."
+                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground"
+                />
+                <p className="text-xs text-muted-foreground font-semibold mt-1">Tip: What is your primary elevator pitch? (Max 150 chars)</p>
+              </div>
+
+              <div>
+                <Label className="font-bold text-foreground block mb-2">Startup Stage *</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { val: "IDEA", label: "Idea", desc: "No product yet" },
+                    { val: "MVP", label: "MVP", desc: "Built but no users" },
+                    { val: "REVENUE", label: "Revenue", desc: "First sales" },
+                    { val: "GROWTH", label: "Growth", desc: "Scaling, 100k+ revenue" },
+                  ].map((s) => (
+                    <button
+                      key={s.val}
+                      type="button"
+                      disabled={readonly}
+                      onClick={() => set("stage", s.val as any)}
+                      className={cn(
+                        "p-4 border-2 border-foreground rounded-xl text-left transition-all flex flex-col gap-0.5",
+                        draft.stage === s.val 
+                          ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] translate-y-[-1px] font-bold" 
+                          : "bg-background text-muted-foreground hover:bg-muted"
+                      )}
+                    >
+                      <span className="font-bold text-foreground">{s.label}</span>
+                      <span className="text-xs">{s.desc}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-8 pt-6 border-t border-border">
-            <Button variant="outline" onClick={prev} disabled={step === 1}>
+          {/* STEP 2: PROBLEM & SOLUTION */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <Label htmlFor="problem" className="font-bold text-foreground">Problem Statement *</Label>
+                  <span className={cn(
+                    "text-xs font-bold", 
+                    draft.problem.length >= 450 ? "text-destructive" : draft.problem.length >= 400 ? "text-amber-500" : "text-muted-foreground"
+                  )}>
+                    ({draft.problem.length}/500)
+                  </span>
+                </div>
+                <Textarea 
+                  id="problem" 
+                  maxLength={500}
+                  rows={5} 
+                  value={draft.problem} 
+                  onChange={(e) => set("problem", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="Describe the main pain point."
+                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground resize-none"
+                />
+                <p className="text-xs text-muted-foreground font-semibold mt-1">Example: "Students struggle to build resumes that impress recruiters. Most resume builders are clunky and outdated."</p>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <Label htmlFor="solution" className="font-bold text-foreground">Your Solution *</Label>
+                  <span className={cn(
+                    "text-xs font-bold", 
+                    draft.solution.length >= 450 ? "text-destructive" : draft.solution.length >= 400 ? "text-amber-500" : "text-muted-foreground"
+                  )}>
+                    ({draft.solution.length}/500)
+                  </span>
+                </div>
+                <Textarea 
+                  id="solution" 
+                  maxLength={500}
+                  rows={5} 
+                  value={draft.solution} 
+                  onChange={(e) => set("solution", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="How does your startup solve this problem?"
+                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground resize-none"
+                />
+                <p className="text-xs text-muted-foreground font-semibold mt-1">Example: "We built an AI-powered resume builder that analyzes job descriptions and tailors resumes in seconds."</p>
+              </div>
+
+              <div>
+                <Label htmlFor="target_market" className="font-bold text-foreground">Target Market *</Label>
+                <Input 
+                  id="target_market" 
+                  value={draft.target_market} 
+                  onChange={(e) => set("target_market", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="e.g. Engineering students, first-time job seekers"
+                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: TRACTION & MARKET */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="traction" className="font-bold text-foreground">Current Traction (optional)</Label>
+                <Textarea 
+                  id="traction" 
+                  rows={3} 
+                  value={draft.traction} 
+                  onChange={(e) => set("traction", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="e.g. 500 beta users, $5k MRR, 20% weekly growth"
+                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground mt-1 resize-none"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="market_size" className="font-bold text-foreground">Market Size *</Label>
+                <Input 
+                  id="market_size" 
+                  value={draft.market_size} 
+                  onChange={(e) => set("market_size", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="e.g. $10 Billion TAM"
+                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="competitors" className="font-bold text-foreground">Competitors *</Label>
+                <Input 
+                  id="competitors" 
+                  value={draft.competitors} 
+                  onChange={(e) => set("competitors", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="e.g. LinkedIn, Indeed, Canva Resumes"
+                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="advantage" className="font-bold text-foreground">Your Advantage *</Label>
+                <Input 
+                  id="advantage" 
+                  value={draft.advantage} 
+                  onChange={(e) => set("advantage", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="e.g. AI-powered, 10x faster, 90% accuracy"
+                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: FUNDRAISING */}
+          {step === 4 && (
+            <div className="space-y-6">
+              <div>
+                <Label htmlFor="ask" className="font-bold text-foreground">Funding Ask *</Label>
+                <div className="relative mt-1">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none font-bold text-foreground">
+                    ₹
+                  </div>
+                  <Input 
+                    id="ask" 
+                    value={draft.funding_ask} 
+                    onChange={(e) => set("funding_ask", e.target.value)} 
+                    disabled={readonly} 
+                    placeholder="e.g. 1 Crore (10 Million Rupees)" 
+                    className="border-2 border-foreground rounded-xl h-12 pl-8 focus-visible:ring-0 focus-visible:border-foreground"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground font-semibold mt-1">Specify how much you are raising from angel investors.</p>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <Label htmlFor="use_of_funds" className="font-bold text-foreground">Use of Funds *</Label>
+                  <span className={cn(
+                    "text-xs font-bold", 
+                    draft.use_of_funds.length >= 270 ? "text-destructive" : draft.use_of_funds.length >= 220 ? "text-amber-500" : "text-muted-foreground"
+                  )}>
+                    ({draft.use_of_funds.length}/300)
+                  </span>
+                </div>
+                <Textarea 
+                  id="use_of_funds" 
+                  maxLength={300}
+                  rows={3} 
+                  value={draft.use_of_funds} 
+                  onChange={(e) => set("use_of_funds", e.target.value)} 
+                  disabled={readonly} 
+                  placeholder="Explain allocation of the funds."
+                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground resize-none"
+                />
+                <p className="text-xs text-muted-foreground font-semibold mt-1">Example: "40% Product Dev, 35% Marketing, 25% Ops"</p>
+              </div>
+
+              <div>
+                <Label className="font-bold text-foreground block mb-2">Current Funding Status *</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {[
+                    { val: "BOOTSTRAPPED", label: "Bootstrapped", desc: "No external funding" },
+                    { val: "PRE_SEED", label: "Pre-seed", desc: "$0-100k raised" },
+                    { val: "SEED", label: "Seed", desc: "$100k-1M raised" },
+                    { val: "SERIES_A", label: "Series A+", desc: ">$1M raised" },
+                  ].map((s) => (
+                    <button
+                      key={s.val}
+                      type="button"
+                      disabled={readonly}
+                      onClick={() => set("funding_status", s.val as any)}
+                      className={cn(
+                        "p-4 border-2 border-foreground rounded-xl text-left transition-all flex flex-col gap-0.5",
+                        draft.funding_status === s.val 
+                          ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] translate-y-[-1px] font-bold" 
+                          : "bg-background text-muted-foreground hover:bg-muted"
+                      )}
+                    >
+                      <span className="font-bold text-foreground">{s.label}</span>
+                      <span className="text-xs">{s.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5: TEAM & DOCUMENTS */}
+          {step === 5 && (
+            <div className="space-y-6">
+              <div>
+                <Label className="font-bold text-foreground block mb-3">Team Members *</Label>
+                <div className="space-y-4">
+                  {draft.team_members.map((m, i) => (
+                    <div key={i} className="p-4 border-2 border-foreground rounded-2xl bg-muted/10 relative">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="font-bold text-sm">Member {i + 1} {i === 0 ? "(Required)" : "(Optional)"}</span>
+                        {draft.team_members.length > 1 && !readonly && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const arr = draft.team_members.filter((_, idx) => idx !== i);
+                              set("team_members", arr);
+                            }}
+                            className="text-xs font-bold text-destructive hover:underline"
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                        <div>
+                          <Label className="text-xs font-bold mb-1 block">Full Name</Label>
+                          <Input 
+                            placeholder="Name" 
+                            value={m.name} 
+                            onChange={(e) => {
+                              const arr = [...draft.team_members]; arr[i] = { ...arr[i], name: e.target.value }; set("team_members", arr);
+                            }} 
+                            disabled={readonly} 
+                            className="border-2 border-foreground rounded-xl h-10"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs font-bold mb-1 block">Role</Label>
+                          <Input 
+                            placeholder="Role (e.g. CEO, CTO)" 
+                            value={m.role} 
+                            onChange={(e) => {
+                              const arr = [...draft.team_members]; arr[i] = { ...arr[i], role: e.target.value }; set("team_members", arr);
+                            }} 
+                            disabled={readonly} 
+                            className="border-2 border-foreground rounded-xl h-10"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-bold mb-1 block">LinkedIn Profile URL</Label>
+                        <Input 
+                          placeholder="LinkedIn URL" 
+                          value={m.linkedinUrl ?? ""} 
+                          onChange={(e) => {
+                            const arr = [...draft.team_members]; arr[i] = { ...arr[i], linkedinUrl: e.target.value }; set("team_members", arr);
+                          }} 
+                          disabled={readonly} 
+                          className="border-2 border-foreground rounded-xl h-10"
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  {!readonly && (
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => set("team_members", [...draft.team_members, { name: "", role: "", linkedinUrl: "" }])}
+                      className="border-2 border-dashed border-foreground/30 hover:border-foreground bg-background hover:bg-muted font-bold rounded-xl flex items-center justify-center gap-1 w-full"
+                    >
+                      <Plus className="h-4 w-4" /> Add More Members
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label className="font-bold text-foreground block mb-2">Pitch Deck (PDF, max 5MB) *</Label>
+                
+                {/* Drag and Drop area */}
+                <div 
+                  onDragEnter={handleDrag}
+                  onDragOver={handleDrag}
+                  onDragLeave={handleDrag}
+                  onDrop={handleDrop}
+                  onClick={() => !readonly && !uploading && fileInputRef.current?.click()}
+                  className={cn(
+                    "border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center",
+                    dragActive 
+                      ? "border-primary bg-[hsl(var(--pastel-blue))]/10 scale-[0.99]" 
+                      : "border-foreground/30 bg-muted/5 hover:bg-muted/15 hover:border-foreground/60",
+                    readonly && "cursor-not-allowed opacity-70"
+                  )}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="application/pdf"
+                    onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
+                    disabled={readonly || uploading}
+                    className="hidden"
+                  />
+                  
+                  {uploading ? (
+                    <>
+                      <RefreshCw className="h-10 w-10 text-foreground animate-spin mb-3" />
+                      <p className="font-bold text-foreground text-sm">Uploading deck PDF...</p>
+                    </>
+                  ) : draft.deck_url ? (
+                    <>
+                      <CheckCircle2 className="h-10 w-10 text-success mb-3" />
+                      <p className="font-bold text-success text-sm flex items-center gap-1 justify-center">
+                        <FileText className="h-4 w-4 text-foreground" /> Pitch deck uploaded successfully!
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">Click or drag here to replace the current file</p>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-10 w-10 text-muted-foreground mb-3" />
+                      <p className="font-bold text-foreground text-sm">
+                        <span className="underline">Choose File</span> or Drag & Drop here
+                      </p>
+                      <p className="text-xs text-muted-foreground/80 mt-1 max-w-sm">
+                        PDF format only (Max 5MB). Your deck should include: Problem, Solution, Market, Traction, Team, Financials, and Ask.
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <Label className="font-bold text-foreground block mb-2">Additional Documents (optional)</Label>
+                <div className="flex gap-2">
+                  <Input 
+                    type="file" 
+                    accept=".pdf,.doc,.docx,.xls,.xlsx" 
+                    disabled={readonly}
+                    className="border-2 border-foreground rounded-xl file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-2 file:border-foreground file:text-xs file:font-bold file:bg-[hsl(var(--pastel-blue))] hover:file:opacity-90 cursor-pointer"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground font-semibold mt-1">Upload Business Plan, Financial Projections, or technical charts if available.</p>
+              </div>
+            </div>
+          )}
+
+          {/* BACK | SAVE AS DRAFT | NEXT/SUBMIT FOOTER */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-8 pt-6 border-t border-foreground/10">
+            <Button 
+              variant="outline" 
+              onClick={prev} 
+              disabled={step === 1}
+              className="border-2 border-foreground bg-background hover:bg-muted shadow-[2px_2px_0_0_hsl(var(--foreground))] font-bold rounded-xl transition-all"
+            >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
+            
             <div className="flex gap-2">
               {!readonly && (
-                <Button variant="ghost" onClick={() => persist(false).then(() => toast.success("Saved as draft"))} disabled={saving}>
-                  <Save className="mr-2 h-4 w-4" /> Save draft
+                <Button 
+                  variant="outline" 
+                  onClick={() => persist(false).then(() => toast.success("Draft saved successfully!"))} 
+                  disabled={saving}
+                  className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-xl"
+                >
+                  <Save className="mr-2 h-4 w-4" /> Save as Draft
                 </Button>
               )}
+              
               {step < 5 ? (
-                <Button onClick={next}>Next <ArrowRight className="ml-2 h-4 w-4" /></Button>
-              ) : (
-                !readonly && <Button onClick={submit} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                  <Send className="mr-2 h-4 w-4" /> Submit for review
+                <Button 
+                  onClick={next}
+                  className="border-2 border-foreground bg-foreground text-background hover:bg-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] font-bold rounded-xl hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+                >
+                  Continue to Next <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
+              ) : (
+                !readonly && (
+                  <Button 
+                    onClick={submit} 
+                    disabled={saving}
+                    className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-extrabold rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+                  >
+                    {saving ? (
+                      <><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
+                    ) : (
+                      <><Send className="mr-2 h-4 w-4" /> Submit Pitch</>
+                    )}
+                  </Button>
+                )
               )}
             </div>
           </div>

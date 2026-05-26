@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, ReactNode } from "react";
 import { motion, useScroll, useSpring, useInView, useMotionValue, useTransform, animate, useReducedMotion, type Variants } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import PhoneShowcase from "@/components/PhoneShowcase";
 import MagneticButton from "@/components/MagneticButton";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
 import {
   ShieldCheck, ArrowRight, GraduationCap, Briefcase,
   Rocket, Lock, CheckCircle2, MessageSquare, Sparkles,
@@ -112,9 +114,23 @@ const Pill = ({ children, bg = "bg-card" }: any) => (
 );
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, roles, loading } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 20, mass: 0.3 });
+
+  useEffect(() => {
+    if (!loading && user) {
+      if (roles.includes("student")) {
+        navigate("/dashboard", { replace: true });
+      } else if (roles.includes("investor")) {
+        navigate("/pitches", { replace: true });
+      } else if (roles.includes("admin")) {
+        navigate("/admin", { replace: true });
+      }
+    }
+  }, [user, roles, loading, navigate]);
 
   // Hero parallax tilt on mouse
   const heroX = useMotionValue(0);
