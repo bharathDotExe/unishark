@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Rocket, Handshake, Zap, Wrench, PencilLine, Mail, Sparkles, Check, TrendingUp, Bell, User } from "lucide-react";
 import logo from "@/assets/logo.png";
+import handshakeCartoon from "@/assets/handshake-cartoon.png";
 
 const brutalBorder = "border-2 border-foreground";
 const brutalShadow = "shadow-[6px_6px_0_0_hsl(var(--foreground))]";
@@ -17,12 +18,12 @@ const STEPS = [
 
 // Phase timing (ms)
 const PHASES = [
-  { id: "logo-in",   d: 1600 },  // 0 — logo sits in card (read the brand)
-  { id: "morph",     d: 1400 },  // 1 — logo morphs into phone
-  { id: "clutter",   d: 3200 },  // 2 — messy cold-email inbox + spam bubbles (read pain)
-  { id: "shatter",   d: 1800 },  // 3 — overlay sweeps + shatters
-  { id: "clean",     d: 3800 },  // 4 — clean Unishark pitch feed + handshake
-  { id: "collapse",  d: 1200 },  // 5 — phone shrinks back to logo
+  { id: "logo-in",   d: 2300 },  // 0 — logo sits in card (read the brand)
+  { id: "morph",     d: 2000 },  // 1 — logo morphs into phone
+  { id: "clutter",   d: 4600 },  // 2 — messy cold-email inbox + spam bubbles (read pain)
+  { id: "shatter",   d: 2600 },  // 3 — overlay sweeps + shatters
+  { id: "clean",     d: 5400 },  // 4 — clean Unishark pitch feed + handshake
+  { id: "collapse",  d: 1800 },  // 5 — phone shrinks back to logo
 ];
 
 export default function PhoneShowcase() {
@@ -167,19 +168,20 @@ export default function PhoneShowcase() {
                           exit={{ opacity: 0 }}
                           className={`absolute inset-0 pt-6 px-2 ${PHONE_BG} ${INK}`}
                         >
-                          <div className="text-[9px] font-bold uppercase tracking-wider opacity-60 mb-1.5 px-1">Inbox · cold pitching</div>
+                          <div className="text-[9px] font-bold uppercase tracking-wider opacity-60 mb-1 px-1">The old way</div>
+                          <div className="text-[10px] font-bold leading-tight mb-1.5 px-1">Cold-emailing 100s of investors</div>
                           {[
-                            { from: "rejected@vc.com", t: "Not a fit", c: "bg-[hsl(0_80%_92%)]" },
-                            { from: "noreply@fund.io", t: "We'll pass", c: "bg-[hsl(0_80%_92%)]" },
-                            { from: "auto@angel.co",   t: "Unsubscribed", c: "bg-[hsl(0_80%_92%)]" },
-                            { from: "spam@bot.xyz",    t: "RE: RE: RE:",  c: "bg-[hsl(0_80%_92%)]" },
-                            { from: "ghost@vc.fund",   t: "—",            c: "bg-[hsl(0_80%_92%)]" },
+                            { from: "Sequoia VC",   t: "Not a fit right now", c: "bg-[hsl(0_80%_92%)]" },
+                            { from: "Accel Fund",   t: "We'll pass, thanks", c: "bg-[hsl(0_80%_92%)]" },
+                            { from: "Blume Angel",  t: "No reply · 14 days", c: "bg-[hsl(0_80%_92%)]" },
+                            { from: "Y Combinator", t: "Rejected",           c: "bg-[hsl(0_80%_92%)]" },
+                            { from: "Tiger Global", t: "Ignored",            c: "bg-[hsl(0_80%_92%)]" },
                           ].map((m, i) => (
                             <motion.div
                               key={i}
                               initial={{ opacity: 0, x: -8 }}
                               animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: 0.1 + i * 0.12 }}
+                              transition={{ delay: 0.15 + i * 0.18 }}
                               className={`${m.c} border border-foreground/40 rounded-md px-1.5 py-1 mb-1 flex items-center gap-1.5`}
                             >
                               <Mail className="w-2.5 h-2.5 flex-shrink-0" strokeWidth={2.5} />
@@ -240,40 +242,41 @@ export default function PhoneShowcase() {
                           exit={{ opacity: 0 }}
                           className={`absolute inset-0 pt-6 px-2 ${PHONE_BG} ${INK}`}
                         >
-                          <div className="flex items-center justify-between px-1 mb-1.5">
+                          <div className="flex items-center justify-between px-1 mb-1">
                             <div className="flex items-center gap-1">
                               <img src={logo} alt="" className="w-3 h-3 object-contain" />
                               <span className="font-display font-bold text-[9px] tracking-tight">UNISHARK</span>
                             </div>
-                            <span className="text-[7px] font-bold opacity-60">3 matches</span>
+                            <span className="text-[7px] font-bold opacity-60">Investors viewing</span>
                           </div>
+                          <div className="text-[8px] font-bold leading-tight px-1 mb-1.5 opacity-80">Pitch once. Get matched with verified investors.</div>
 
                           <motion.div
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.15 }}
-                            className={`bg-[hsl(var(--pastel-yellow))] ${brutalBorder} rounded-lg p-1.5 mb-1.5 ${brutalShadowSm}`}
+                            transition={{ delay: 0.22 }}
+                            className={`bg-[hsl(var(--pastel-yellow))] ${brutalBorder} rounded-lg p-1.5 mb-1 ${brutalShadowSm}`}
                           >
                             <div className="flex items-center gap-1 mb-0.5">
                               <Sparkles className="w-2 h-2" strokeWidth={3} />
-                              <span className="text-[8px] font-bold uppercase tracking-wider">New match</span>
+                              <span className="text-[8px] font-bold uppercase tracking-wider">Investor interested</span>
                             </div>
                             <div className="text-[9px] font-bold leading-tight">Priya Mehta · Sequoia Scout</div>
-                            <div className="text-[7.5px] opacity-70">"Loved your deck — let's chat."</div>
+                            <div className="text-[7.5px] opacity-70">"Love your pitch — let's talk funding."</div>
                           </motion.div>
 
                           {[
-                            { n: "Arjun · Blume",   tag: "Bookmarked", c: "bg-[hsl(var(--pastel-blue))]", d: 0.3 },
-                            { n: "Neha · ex-Razorpay", tag: "Messaged",  c: "bg-[hsl(var(--pastel-mint))]", d: 0.45 },
+                            { n: "Arjun · Blume Angel", tag: "Bookmarked", c: "bg-[hsl(var(--pastel-blue))]", d: 0.45 },
+                            { n: "Neha · ex-Razorpay",  tag: "Wants deck",  c: "bg-[hsl(var(--pastel-mint))]", d: 0.65 },
                           ].map((it) => (
                             <motion.div
                               key={it.n}
                               initial={{ opacity: 0, x: -6 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: it.d }}
-                              className={`bg-white ${brutalBorder} rounded-lg p-1.5 mb-1 flex items-center justify-between ${brutalShadowSm}`}
+                              className={`bg-white ${brutalBorder} rounded-md p-1 mb-1 flex items-center justify-between ${brutalShadowSm}`}
                             >
-                              <span className="text-[8.5px] font-bold truncate">{it.n}</span>
+                              <span className="text-[8px] font-bold truncate">{it.n}</span>
                               <span className={`${it.c} border border-foreground rounded-full px-1.5 text-[7px] font-bold`}>{it.tag}</span>
                             </motion.div>
                           ))}
@@ -281,64 +284,45 @@ export default function PhoneShowcase() {
                           <motion.div
                             initial={{ opacity: 0, scale: 0.7 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.7, type: "spring", stiffness: 240 }}
-                            className={`mt-1.5 bg-foreground text-background rounded-full flex items-center justify-center gap-1 py-1 text-[8px] font-bold ${brutalShadowSm}`}
+                            transition={{ delay: 1.0, type: "spring", stiffness: 240 }}
+                            className={`mt-1 bg-foreground text-background rounded-full flex items-center justify-center gap-1 py-1 text-[8px] font-bold ${brutalShadowSm}`}
                           >
-                            <Check className="w-2.5 h-2.5" strokeWidth={3} /> Term sheet ready
+                            <Check className="w-2.5 h-2.5" strokeWidth={3} /> Term sheet signed
                           </motion.div>
 
                           {/* Handshake — deal closed */}
                           <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.1, duration: 0.5 }}
-                            className={`mt-1.5 bg-[hsl(var(--pastel-pink))] ${brutalBorder} rounded-lg p-2 ${brutalShadowSm} flex items-center justify-center gap-1 relative overflow-hidden`}
+                            transition={{ delay: 1.6, duration: 0.6 }}
+                            className={`mt-1.5 bg-[hsl(var(--pastel-pink))] ${brutalBorder} rounded-lg p-1.5 ${brutalShadowSm} relative overflow-hidden`}
                           >
-                            {/* founder */}
-                            <motion.div
-                              initial={{ x: -30, opacity: 0 }}
-                              animate={{ x: 0, opacity: 1 }}
-                              transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
-                              className="flex flex-col items-center"
-                            >
-                              <div className={`w-6 h-6 rounded-full bg-[hsl(var(--pastel-yellow))] ${brutalBorder} flex items-center justify-center`}>
-                                <User className="w-3 h-3" strokeWidth={2.5} />
-                              </div>
-                              <span className="text-[6.5px] font-bold mt-0.5">Founder</span>
-                            </motion.div>
-
-                            {/* hands meeting */}
-                            <motion.div
-                              initial={{ scale: 0, rotate: -20 }}
-                              animate={{ scale: 1, rotate: 0 }}
-                              transition={{ delay: 1.55, type: "spring", stiffness: 260 }}
-                              className="relative"
-                            >
-                              <Handshake className="w-6 h-6" strokeWidth={2.5} />
-                              {/* spark dots */}
-                              {[0, 1, 2, 3].map((i) => (
+                            <div className="text-[8px] font-bold uppercase tracking-wider text-center mb-0.5">Funded ✦ ₹25L raised</div>
+                            <div className="relative h-24 flex items-end justify-center">
+                              <motion.img
+                                src={handshakeCartoon}
+                                alt="Founder and investor shaking hands"
+                                loading="lazy"
+                                initial={{ scale: 0.6, opacity: 0, y: 8 }}
+                                animate={{ scale: 1, opacity: 1, y: 0 }}
+                                transition={{ delay: 1.9, type: "spring", stiffness: 200, damping: 16 }}
+                                className="h-full w-auto object-contain drop-shadow-[2px_2px_0_hsl(var(--foreground))]"
+                              />
+                              {[0, 1, 2, 3, 4].map((i) => (
                                 <motion.span
                                   key={i}
                                   initial={{ opacity: 0, scale: 0 }}
-                                  animate={{ opacity: [0, 1, 0], scale: [0, 1, 0], x: Math.cos((i / 4) * Math.PI * 2) * 14, y: Math.sin((i / 4) * Math.PI * 2) * 14 }}
-                                  transition={{ delay: 1.7, duration: 0.7, repeat: Infinity, repeatDelay: 0.6 }}
+                                  animate={{
+                                    opacity: [0, 1, 0],
+                                    scale: [0, 1.2, 0],
+                                    x: Math.cos((i / 5) * Math.PI * 2) * 30,
+                                    y: Math.sin((i / 5) * Math.PI * 2) * 22 - 6,
+                                  }}
+                                  transition={{ delay: 2.5 + i * 0.07, duration: 1.2, repeat: Infinity, repeatDelay: 0.7 }}
                                   className="absolute top-1/2 left-1/2 w-1 h-1 bg-foreground rounded-full"
                                 />
                               ))}
-                            </motion.div>
-
-                            {/* investor */}
-                            <motion.div
-                              initial={{ x: 30, opacity: 0 }}
-                              animate={{ x: 0, opacity: 1 }}
-                              transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
-                              className="flex flex-col items-center"
-                            >
-                              <div className={`w-6 h-6 rounded-full bg-[hsl(var(--pastel-blue))] ${brutalBorder} flex items-center justify-center`}>
-                                <User className="w-3 h-3" strokeWidth={2.5} />
-                              </div>
-                              <span className="text-[6.5px] font-bold mt-0.5">Investor</span>
-                            </motion.div>
+                            </div>
                           </motion.div>
                         </motion.div>
                       )}
@@ -356,19 +340,19 @@ export default function PhoneShowcase() {
               {phase === 2 && (
                 <>
                   {[
-                    { l: "-5%", t: "12%", d: 0.1 },
-                    { l: "78%", t: "18%", d: 0.25 },
-                    { l: "-2%", t: "55%", d: 0.4 },
-                    { l: "82%", t: "60%", d: 0.55 },
-                    { l: "8%",  t: "82%", d: 0.7 },
-                    { l: "70%", t: "85%", d: 0.85 },
+                    { l: "-5%", t: "12%", d: 0.15 },
+                    { l: "78%", t: "18%", d: 0.35 },
+                    { l: "-2%", t: "55%", d: 0.55 },
+                    { l: "82%", t: "60%", d: 0.75 },
+                    { l: "8%",  t: "82%", d: 0.95 },
+                    { l: "70%", t: "85%", d: 1.15 },
                   ].map((b, i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0, scale: 0 }}
                       animate={{ opacity: 1, scale: 1, y: [0, -6, 0] }}
                       exit={{ opacity: 0, scale: 0 }}
-                      transition={{ delay: b.d, y: { duration: 2, repeat: Infinity, ease: "easeInOut" } }}
+                      transition={{ delay: b.d, y: { duration: 3, repeat: Infinity, ease: "easeInOut" } }}
                       className={`absolute w-10 h-10 bg-white ${brutalBorder} rounded-full flex items-center justify-center ${brutalShadowSm} z-30`}
                       style={{ left: b.l, top: b.t }}
                     >
@@ -382,7 +366,15 @@ export default function PhoneShowcase() {
             {/* phase label */}
             <div className="absolute bottom-3 inset-x-0 flex justify-center z-40 pointer-events-none">
               <div className={`bg-foreground text-background rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider`}>
-                {phase <= 1 ? "Pitch" : phase <= 3 ? "Cut the noise" : phase === 4 ? "Match" : "Close"}
+                {phase <= 1
+                  ? "Step 1 · Submit pitch"
+                  : phase === 2
+                  ? "The problem · cold pitching fails"
+                  : phase === 3
+                  ? "Unishark cuts the noise"
+                  : phase === 4
+                  ? "Step 2 · Match with investors"
+                  : "Step 3 · Close the deal"}
               </div>
             </div>
           </motion.div>
