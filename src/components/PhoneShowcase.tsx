@@ -294,7 +294,7 @@ export default function PhoneShowcase() {
                           <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 1.1, duration: 0.5 }}
+                            transition={{ delay: 1.6, duration: 0.6 }}
                             className={`mt-1.5 bg-[hsl(var(--pastel-pink))] ${brutalBorder} rounded-lg p-1.5 ${brutalShadowSm} relative overflow-hidden`}
                           >
                             <div className="text-[8px] font-bold uppercase tracking-wider text-center mb-0.5">Funded ✦ ₹25L raised</div>
