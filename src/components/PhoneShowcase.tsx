@@ -284,7 +284,7 @@ export default function PhoneShowcase() {
                           <motion.div
                             initial={{ opacity: 0, scale: 0.7 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.7, type: "spring", stiffness: 240 }}
+                            transition={{ delay: 1.0, type: "spring", stiffness: 240 }}
                             className={`mt-1 bg-foreground text-background rounded-full flex items-center justify-center gap-1 py-1 text-[8px] font-bold ${brutalShadowSm}`}
                           >
                             <Check className="w-2.5 h-2.5" strokeWidth={3} /> Term sheet signed
