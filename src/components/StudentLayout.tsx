@@ -97,7 +97,7 @@ export default function StudentLayout({ children }: { children?: React.ReactNode
   );
 
   return (
-    <div className="min-h-screen bg-background flex w-full relative" style={{ backgroundImage: "var(--gradient-mesh)" }}>
+    <div className="app-shell min-h-screen bg-background flex w-full relative">
       {/* Mobile Drawer Trigger (inside mobile header) */}
       <div className="md:hidden fixed top-0 left-0 w-full border-b border-foreground/10 bg-background/80 backdrop-blur-xl z-50 flex items-center justify-between p-4 h-16">
         <div className="flex items-center gap-2">
