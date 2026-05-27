@@ -314,10 +314,12 @@ export default function Dashboard() {
     <div className="container mx-auto px-4 py-8 max-w-6xl pb-24">
       {/* SECTION 1: WELCOME BANNER */}
       <Card className="p-8 border-2 border-foreground bg-[hsl(var(--pastel-blue))] shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] mb-8 relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0_0_hsl(var(--foreground))] group">
-        <div className="absolute top-0 right-0 p-4 opacity-10 text-9xl group-hover:scale-110 transition-transform select-none">🚀</div>
+        <div className="absolute -top-6 -right-6 opacity-10 group-hover:scale-110 transition-transform select-none pointer-events-none">
+          <Rocket className="h-40 w-40" />
+        </div>
         <div className="relative z-10 max-w-2xl">
           <h2 className="text-3xl font-display font-extrabold text-foreground tracking-tight mb-2">
-            Welcome back, {getFirstName()}! 👋
+            Welcome back, {getFirstName()}
           </h2>
           <p className="text-foreground/80 font-medium text-lg leading-relaxed mb-6 italic">
             "Ready to launch your startup? Submit your pitch and connect with real investors."
