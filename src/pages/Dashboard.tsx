@@ -402,6 +402,164 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* SECTION: LEARN — Startup Videos */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
+            <Youtube className="h-6 w-6 text-[hsl(0_72%_50%)]" /> Learn from the Best
+          </h3>
+          <p className="text-sm text-muted-foreground font-medium">
+            Curated startup talks from Y Combinator, TED & top founders
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { id: "CBYhVcO4WgI", title: "How to Start a Startup", author: "Sam Altman · Y Combinator", tag: "Foundations" },
+            { id: "0lJKucu6HJc", title: "How to Succeed with a Startup", author: "Sam Altman", tag: "Strategy" },
+            { id: "bNpx7gpSqbY", title: "The Single Biggest Reason Startups Succeed", author: "Bill Gross · TED", tag: "Insight" },
+            { id: "Th8JoIan4dg", title: "How to Get Startup Ideas", author: "Paul Graham · Y Combinator", tag: "Ideation" },
+            { id: "fpCWC4xrnCI", title: "How to Raise Money", author: "Marc Andreessen · YC", tag: "Fundraising" },
+            { id: "ZoqgAy3h4OM", title: "How to Build Products Users Love", author: "Kevin Hale · YC", tag: "Product" },
+          ].map((v) => (
+            <Card
+              key={v.id}
+              className="border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl overflow-hidden flex flex-col transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] group"
+            >
+              <div className="relative aspect-video bg-foreground/5 overflow-hidden">
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1`}
+                  title={v.title}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
+              <div className="p-4 flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider border-foreground/20">
+                    {v.tag}
+                  </Badge>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${v.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Open on YouTube"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+                <h4 className="font-display font-extrabold text-base text-foreground leading-snug mb-1 line-clamp-2">
+                  {v.title}
+                </h4>
+                <p className="text-xs font-semibold text-muted-foreground mt-auto">{v.author}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* SECTION: STARTUP FEED — Posts from around the web */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
+            <Newspaper className="h-6 w-6" /> Startup Feed
+          </h3>
+          <p className="text-sm text-muted-foreground font-medium">
+            What founders and investors are sharing this week
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[
+            {
+              source: "linkedin",
+              author: "Aarti Mehra",
+              role: "Founder, Brightleaf · ex-Stripe",
+              time: "2h",
+              text: "Stop pitching features. Start pitching the painful problem you have spent 100 hours living with. Investors fund clarity, not cleverness.",
+              tag: "Fundraising",
+            },
+            {
+              source: "twitter",
+              author: "Naval",
+              role: "@naval",
+              time: "5h",
+              text: "Specific knowledge is found by pursuing your genuine curiosity. Build the company only you can build.",
+              tag: "Mindset",
+            },
+            {
+              source: "linkedin",
+              author: "Rohan Iyer",
+              role: "Partner, Blume Ventures",
+              time: "1d",
+              text: "The best student founders I have backed all share one trait: they ship something every week, even when nobody is watching.",
+              tag: "Founders",
+            },
+            {
+              source: "twitter",
+              author: "Paul Graham",
+              role: "@paulg",
+              time: "1d",
+              text: "Make something a small number of people want a lot, instead of something a lot of people want a little.",
+              tag: "Product",
+            },
+            {
+              source: "linkedin",
+              author: "Sneha Kapoor",
+              role: "Angel Investor · IIT Bombay",
+              time: "2d",
+              text: "Three things I check in 60 seconds on every deck: who is the customer, what hurts them today, and why now. If those are unclear, I pass.",
+              tag: "Pitch Tips",
+            },
+            {
+              source: "twitter",
+              author: "Y Combinator",
+              role: "@ycombinator",
+              time: "3d",
+              text: "Talk to users. Then talk to more users. Then build. Repeat. This is the whole playbook for the first 90 days.",
+              tag: "Playbook",
+            },
+          ].map((post, i) => {
+            const Icon = post.source === "linkedin" ? Linkedin : Twitter;
+            const iconColor = post.source === "linkedin" ? "text-[hsl(210_90%_40%)]" : "text-[hsl(203_89%_53%)]";
+            return (
+              <Card
+                key={i}
+                className="p-5 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-full bg-foreground/5 border border-foreground/10 flex items-center justify-center font-display font-extrabold text-foreground text-sm shrink-0">
+                    {post.author.split(" ").map(w => w[0]).slice(0, 2).join("")}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-sm text-foreground truncate">{post.author}</span>
+                      <Icon className={cn("h-3.5 w-3.5 shrink-0", iconColor)} />
+                      <span className="text-xs text-muted-foreground font-semibold">· {post.time}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground font-semibold mb-2 truncate">{post.role}</p>
+                    <p className="text-sm text-foreground/90 leading-relaxed font-medium mb-3">
+                      {post.text}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider border-foreground/20">
+                        {post.tag}
+                      </Badge>
+                      <span className="text-[11px] font-bold text-muted-foreground">
+                        {post.source === "linkedin" ? "LinkedIn" : "X / Twitter"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
         {/* SECTION 3: YOUR PITCHES (Left 2 Columns) */}
         <div className="lg:col-span-2 space-y-6">
