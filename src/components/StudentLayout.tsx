@@ -19,7 +19,7 @@ import logo from "@/assets/logo.png";
 import { supabase } from "@/integrations/supabase/client";
 
 const sidebarLinks = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Home", href: "/dashboard", icon: LayoutDashboard },
   { name: "Submit Pitch", href: "/pitches/create", icon: FilePlus },
   { name: "View Own Pitches", href: "/pitches/view", icon: Files },
   { name: "Browse Investors", href: "/investors", icon: Users },
@@ -56,7 +56,7 @@ export default function StudentLayout({ children }: { children?: React.ReactNode
     <>
       <div className="p-6 border-b border-foreground/10 flex items-center gap-3">
         <Link to="/dashboard" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-          <span className="text-2xl">🦈</span>
+          <img src={logo} alt="UniShark" className="h-8 w-8 rounded-lg object-contain" />
           <span className="text-xl font-display font-extrabold tracking-wider text-foreground flex items-center gap-1">
             UniShark
           </span>
@@ -111,7 +111,7 @@ export default function StudentLayout({ children }: { children?: React.ReactNode
               <SidebarContent />
             </SheetContent>
           </Sheet>
-          <span className="text-xl">🦈</span>
+          <img src={logo} alt="UniShark" className="h-7 w-7 rounded-md object-contain" />
           <span className="text-lg font-display font-extrabold tracking-wider text-foreground">UniShark</span>
         </div>
 
