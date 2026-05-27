@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import InvestorPitchView from "./investor/InvestorPitchView";
 
 type Pitch = {
   id: string;
@@ -263,6 +264,10 @@ export default function PitchDetail() {
 
   const authorName = authorProfile?.full_name || "John Doe";
   const formattedAsk = parsedFundingAsk || "₹1 Crore";
+
+  if (roles.includes("investor")) {
+    return <InvestorPitchView pitch={pitch} authorProfile={authorProfile} deckSignedUrl={deckSignedUrl} />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl pb-24">

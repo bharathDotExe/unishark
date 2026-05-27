@@ -26,14 +26,49 @@ import { ThemeProvider } from "next-themes";
 import CustomCursor from "./components/CustomCursor.tsx";
 import StudentLayout from "./components/StudentLayout.tsx";
 
+// Investor pages & layout
+import InvestorLayout from "./components/InvestorLayout.tsx";
+import InvestorDashboard from "./pages/investor/InvestorDashboard.tsx";
+import Bookmarks from "./pages/investor/Bookmarks.tsx";
+import Portfolio from "./pages/investor/Portfolio.tsx";
+import InvestmentDetail from "./pages/investor/InvestmentDetail.tsx";
+import Analytics from "./pages/investor/Analytics.tsx";
+import InvestorProfile from "./pages/investor/InvestorProfile.tsx";
+
 const queryClient = new QueryClient();
+
+// Role-based Wrappers
+const DashboardWrapper = () => {
+  const { roles } = useAuth();
+  if (roles.includes("investor")) return <InvestorLayout><InvestorDashboard /></InvestorLayout>;
+  return <StudentLayout><Dashboard /></StudentLayout>;
+};
+
+const MessagesWrapper = () => {
+  const { roles } = useAuth();
+  if (roles.includes("investor")) return <InvestorLayout><Messages /></InvestorLayout>;
+  return <StudentLayout><Messages /></StudentLayout>;
+};
 
 const ProfileWrapper = () => {
   const { roles } = useAuth();
-  if (roles.includes("student")) {
-    return <StudentLayout><Profile /></StudentLayout>;
-  }
+  if (roles.includes("investor")) return <InvestorLayout><InvestorProfile /></InvestorLayout>;
+  if (roles.includes("student")) return <StudentLayout><Profile /></StudentLayout>;
   return <Profile />;
+};
+
+const PitchesWrapper = () => {
+  const { roles } = useAuth();
+  if (roles.includes("investor")) return <InvestorLayout><BrowsePitches /></InvestorLayout>;
+  if (roles.includes("student")) return <StudentLayout><BrowsePitches /></StudentLayout>;
+  return <BrowsePitches />;
+};
+
+const PitchDetailWrapper = () => {
+  const { roles } = useAuth();
+  if (roles.includes("investor")) return <InvestorLayout><PitchDetail /></InvestorLayout>;
+  if (roles.includes("student")) return <StudentLayout><PitchDetail /></StudentLayout>;
+  return <PitchDetail />;
 };
 
 const App = () => (
@@ -54,31 +89,30 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
 
-            {/* Onboarding — requires auth but not a specific role yet */}
+            {/* Onboarding */}
             <Route path="/onboarding/student" element={<ProtectedRoute><StudentOnboarding /></ProtectedRoute>} />
             <Route path="/onboarding/investor" element={<ProtectedRoute><InvestorOnboarding /></ProtectedRoute>} />
 
-            {/* Shared auth routes */}
-            <Route path="/pitches" element={<ProtectedRoute><BrowsePitches /></ProtectedRoute>} />
-            <Route path="/pitches/:id" element={<ProtectedRoute><PitchDetail /></ProtectedRoute>} />
+            {/* Shared & Role-Switched Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardWrapper /></ProtectedRoute>} />
+            <Route path="/messages" element={<ProtectedRoute><MessagesWrapper /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfileWrapper /></ProtectedRoute>} />
+            <Route path="/pitches" element={<ProtectedRoute><PitchesWrapper /></ProtectedRoute>} />
+            <Route path="/pitches/:id" element={<ProtectedRoute><PitchDetailWrapper /></ProtectedRoute>} />
 
-            {/* Profile Route: Uses conditional layout based on role */}
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <ProfileWrapper />
-              </ProtectedRoute>
-            } />
+            {/* Investor-only Routes */}
+            <Route path="/bookmarks" element={<ProtectedRoute requireRole="investor"><InvestorLayout><Bookmarks /></InvestorLayout></ProtectedRoute>} />
+            <Route path="/portfolio" element={<ProtectedRoute requireRole="investor"><InvestorLayout><Portfolio /></InvestorLayout></ProtectedRoute>} />
+            <Route path="/portfolio/:id" element={<ProtectedRoute requireRole="investor"><InvestorLayout><InvestmentDetail /></InvestorLayout></ProtectedRoute>} />
+            <Route path="/analytics" element={<ProtectedRoute requireRole="investor"><InvestorLayout><Analytics /></InvestorLayout></ProtectedRoute>} />
 
             {/* Student routes wrapped in StudentLayout */}
             <Route element={<StudentLayout />}>
-              <Route path="/dashboard" element={<ProtectedRoute requireRole="student"><Dashboard /></ProtectedRoute>} />
               <Route path="/pitches/view" element={<ProtectedRoute requireRole="student"><MyPitches /></ProtectedRoute>} />
               <Route path="/pitches/create" element={<ProtectedRoute requireRole="student"><PitchForm /></ProtectedRoute>} />
               <Route path="/pitches/:id/edit" element={<ProtectedRoute requireRole="student"><PitchForm /></ProtectedRoute>} />
               <Route path="/pitches/:id/security" element={<ProtectedRoute requireRole="student"><PitchSecurity /></ProtectedRoute>} />
-              {/* Optional dummy routes so the sidebar links don't break if clicked */}
               <Route path="/investors" element={<ProtectedRoute requireRole="student"><div className="p-8">Investors Page (Coming Soon)</div></ProtectedRoute>} />
-              <Route path="/messages" element={<ProtectedRoute requireRole="student"><Messages /></ProtectedRoute>} />
               <Route path="/deals" element={<ProtectedRoute requireRole="student"><div className="p-8">Deals (Coming Soon)</div></ProtectedRoute>} />
             </Route>
 
