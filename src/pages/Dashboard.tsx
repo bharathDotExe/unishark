@@ -7,11 +7,14 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Eye, MessageSquare, Bookmark,
-  Trash2, Edit3, Sparkles,
-  ArrowUpRight, ExternalLink, RefreshCw
+  Trash2, Edit3, Sparkles, Play, Youtube,
+  ArrowUpRight, ExternalLink, RefreshCw,
+  TrendingUp, Lightbulb, Rocket, Users, ShieldCheck,
+  FileText, CheckCircle2, XCircle, Linkedin, Twitter, Newspaper
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 type Pitch = {
   id: string;
