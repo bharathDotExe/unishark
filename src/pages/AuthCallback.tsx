@@ -65,7 +65,6 @@ export default function AuthCallback() {
         localStorage.removeItem("unishark_intended_role");
         toast.success("Welcome back!");
         if (roles.includes("admin")) navigate("/admin");
-        else if (roles.includes("investor")) navigate("/pitches");
         else navigate("/dashboard");
         return;
       }

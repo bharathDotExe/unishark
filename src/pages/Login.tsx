@@ -34,7 +34,6 @@ export default function Login() {
       toast.success("Welcome back!");
 
       if (roles.includes("admin")) navigate("/admin");
-      else if (roles.includes("investor")) navigate("/pitches");
       else navigate("/dashboard");
     } catch (err: any) {
       toast.error(err.message || "Login failed");
