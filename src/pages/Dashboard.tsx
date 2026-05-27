@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Plus, FileText, Eye, MessageSquare, Bookmark, ChevronDown, ChevronUp, 
-  ArrowRight, ShieldCheck, Trash2, Edit3, Sparkles, AlertTriangle, 
-  CheckCircle2, ArrowUpRight, HelpCircle, ExternalLink, RefreshCw
+import {
+  Plus, Eye, MessageSquare, Bookmark,
+  Trash2, Edit3, Sparkles,
+  ArrowUpRight, ExternalLink, RefreshCw
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -25,12 +25,8 @@ type Pitch = {
   view_count: number;
   created_at: string;
   updated_at: string;
-<<<<<<< HEAD
   message_count?: number;
   bookmark_count?: number;
-=======
-  thumbnail_url: string | null;
->>>>>>> c2b8bbb8149137bebb90d32cc156536f285a5c1f
 };
 
 type MockPitch = {
@@ -61,8 +57,7 @@ type Message = {
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  
+
   const [pitches, setPitches] = useState<Pitch[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
@@ -137,7 +132,7 @@ export default function Dashboard() {
     if (!user) return;
     try {
       setLoading(true);
-      
+
       // Fetch user profile
       const { data: profile } = await supabase
         .from("profiles")
@@ -160,12 +155,12 @@ export default function Dashboard() {
       // Fetch bookmarks and message counts for all pitches
       if (loadedPitches.length > 0) {
         const pitchIds = loadedPitches.map(p => p.id);
-        
+
         // Count bookmarks for user's pitches
         const { data: bookmarks } = await supabase
           .from("bookmarks")
           .select("pitch_id");
-        
+
         // Count messages for user's pitches
         const { data: messagesData } = await supabase
           .from("messages")
@@ -206,7 +201,7 @@ export default function Dashboard() {
           .from("profiles")
           .select("id, full_name")
           .in("id", senderIds);
-        
+
         // Fetch pitch titles
         const pitchIds = [...new Set(realMessages.map(m => m.pitch_id))];
         const { data: pitchesData } = await supabase
@@ -232,22 +227,15 @@ export default function Dashboard() {
         setMessages([]);
       }
 
-    } catch (e: any) {
-      toast.error("Failed to load dashboard data: " + e.message);
+    } catch (e: unknown) {
+      toast.error("Failed to load dashboard data: " + (e instanceof Error ? e.message : String(e)));
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-<<<<<<< HEAD
     loadData();
-=======
-    if (!user) return;
-    supabase.from("pitches").select("id,title,status,stage,funding_ask,view_count,updated_at,thumbnail_url")
-      .eq("user_id", user.id).order("updated_at", { ascending: false })
-      .then(({ data }) => { setPitches((data ?? []) as Pitch[]); setLoading(false); });
->>>>>>> c2b8bbb8149137bebb90d32cc156536f285a5c1f
   }, [user]);
 
   const handleDelete = async (id: string, isMock?: boolean) => {
@@ -255,7 +243,7 @@ export default function Dashboard() {
       toast.success("Mock pitch deleted successfully!");
       return;
     }
-    
+
     if (!window.confirm("Are you sure you want to delete this pitch?")) return;
     setDeletingId(id);
     const { error } = await supabase.from("pitches").delete().eq("id", id);
@@ -279,12 +267,12 @@ export default function Dashboard() {
         .from("pitches")
         .update({ status: "APPROVED" }) // Instant approval for local demo
         .eq("id", pitchId);
-      
+
       if (error) throw error;
       toast.success("Your pitch is now APPROVED and visible to investors!");
       loadData();
-    } catch (e: any) {
-      toast.error("Failed to publish: " + e.message);
+    } catch (e: unknown) {
+      toast.error("Failed to publish: " + (e instanceof Error ? e.message : String(e)));
     }
   };
 
@@ -293,11 +281,11 @@ export default function Dashboard() {
 
   // Calculate dynamic stats
   const totalPitchesCount = pitches.length > 0 ? pitches.length : mockPitches.length;
-  const approvedCount = pitches.length > 0 
-    ? pitches.filter(p => p.status === "APPROVED").length 
+  const approvedCount = pitches.length > 0
+    ? pitches.filter(p => p.status === "APPROVED").length
     : mockPitches.filter(p => p.status === "APPROVED").length;
-  
-  const totalViews = pitches.length > 0 
+
+  const totalViews = pitches.length > 0
     ? pitches.reduce((sum, p) => sum + (p.view_count || 0), 0)
     : mockPitches.reduce((sum, p) => sum + p.view_count, 0);
 
@@ -430,10 +418,10 @@ export default function Dashboard() {
           ) : (
             <div className="space-y-4">
               {activePitches.map((p) => {
-                const isMock = 'isMock' in p && (p as any).isMock;
+                const isMock = 'isMock' in p && (p as { isMock?: boolean }).isMock;
                 return (
-                  <Card 
-                    key={p.id} 
+                  <Card
+                    key={p.id}
                     className={cn(
                       "p-6 border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]",
                       isMock ? "bg-card/90" : "bg-card"
@@ -444,7 +432,7 @@ export default function Dashboard() {
                         Sample Data
                       </div>
                     )}
-                    
+
                     <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
                       <div>
                         <div className="flex items-center gap-2 flex-wrap mb-2">
@@ -488,7 +476,7 @@ export default function Dashboard() {
                           View Details
                         </Link>
                       </Button>
-                      
+
                       {p.status === "APPROVED" ? (
                         <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-[hsl(var(--pastel-blue))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]">
                           <Link to={`/pitches/${p.id}/security`}>
@@ -496,10 +484,10 @@ export default function Dashboard() {
                           </Link>
                         </Button>
                       ) : (
-                        <Button 
-                          onClick={() => handlePublish(p.id, isMock)} 
-                          size="sm" 
-                          variant="outline" 
+                        <Button
+                          onClick={() => handlePublish(p.id, isMock)}
+                          size="sm"
+                          variant="outline"
                           className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
                         >
                           Submit Pitch
@@ -511,12 +499,12 @@ export default function Dashboard() {
                           <Edit3 className="h-3.5 w-3.5 mr-1" /> Edit
                         </Link>
                       </Button>
-                      
-                      <Button 
-                        onClick={() => handleDelete(p.id, isMock)} 
-                        disabled={deletingId === p.id} 
-                        size="sm" 
-                        variant="outline" 
+
+                      <Button
+                        onClick={() => handleDelete(p.id, isMock)}
+                        disabled={deletingId === p.id}
+                        size="sm"
+                        variant="outline"
                         className="border-2 border-foreground hover:bg-destructive hover:text-destructive-foreground font-bold rounded-lg transition-all ml-auto hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -535,7 +523,6 @@ export default function Dashboard() {
           )}
         </div>
 
-<<<<<<< HEAD
         {/* SECTION 4: RECENT MESSAGES (Right 1 Column) */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
@@ -551,13 +538,13 @@ export default function Dashboard() {
             <h4 className="font-display font-bold text-sm uppercase tracking-wider text-muted-foreground border-b pb-2 mb-2">
               Recent Messages from Investors
             </h4>
-            
+
             <div className="space-y-4 divide-y divide-foreground/5">
               {activeMessages.map((msg, index) => (
                 <div key={msg.id} className={cn("pt-4 flex flex-col gap-1.5", index === 0 ? "pt-0" : "")}>
                   <div className="flex items-center justify-between">
                     <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                      👤 {msg.sender_name} 
+                      👤 {msg.sender_name}
                       {msg.sender_company && (
                         <span className="text-[10px] bg-foreground text-background px-1.5 py-0.5 rounded font-sans font-extrabold uppercase">
                           {msg.sender_company}
@@ -568,68 +555,26 @@ export default function Dashboard() {
                       {formatDate(msg.created_at)}
                     </span>
                   </div>
-                  
+
                   {msg.pitch_title && (
                     <p className="text-[10px] font-bold text-[hsl(var(--pastel-blue))] bg-[hsl(var(--pastel-blue))]/5 self-start px-2 py-0.5 rounded border border-[hsl(var(--pastel-blue))]/10">
                       Re: {msg.pitch_title}
                     </p>
                   )}
-                  
+
                   <p className="text-xs text-foreground/80 font-medium leading-relaxed bg-muted/30 p-2.5 rounded-xl border border-foreground/5 italic">
                     "{msg.content}"
                   </p>
-                  
+
                   <div className="flex gap-2 mt-1">
-                    <Button asChild size="xs" variant="link" className="p-0 font-extrabold text-foreground hover:underline h-auto text-xs">
+                    <Button asChild size="sm" variant="link" className="p-0 font-extrabold text-foreground hover:underline h-auto text-xs">
                       <Link to="/messages" className="flex items-center gap-0.5">Reply →</Link>
                     </Button>
                     {msg.pitch_id && (
-                      <Button asChild size="xs" variant="link" className="p-0 font-extrabold text-muted-foreground hover:underline h-auto text-xs ml-auto">
+                      <Button asChild size="sm" variant="link" className="p-0 font-extrabold text-muted-foreground hover:underline h-auto text-xs ml-auto">
                         <Link to={`/pitches/${msg.pitch_id}`}>View Pitch</Link>
                       </Button>
                     )}
-=======
-        {loading ? (
-          <p className="text-muted-foreground">Loading…</p>
-        ) : pitches.length === 0 ? (
-          <Card className="p-12 text-center shadow-card">
-            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-primary-dark">No pitches yet</h3>
-            <p className="text-muted-foreground mt-2 mb-6">Submit your first pitch to start meeting investors.</p>
-            <Button asChild><Link to="/pitches/create"><Plus className="mr-2 h-4 w-4" /> Create your pitch</Link></Button>
-          </Card>
-        ) : (
-          <div className="grid gap-4">
-            {pitches.map((p) => (
-              <Card key={p.id} className="p-6 shadow-card hover:shadow-elevated transition-shadow">
-                <div className="flex items-start gap-4 flex-col sm:flex-row">
-                  {/* Thumbnail Preview */}
-                  <div className="w-20 h-20 rounded-lg border-2 border-foreground overflow-hidden bg-background shrink-0 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
-                    {p.thumbnail_url ? (
-                      <img src={p.thumbnail_url} alt={p.title} className="w-full h-full object-cover animate-fade-in" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-muted/40 font-mono select-none">
-                        <span className="text-xl font-black text-foreground/20">{(p.title || "UN").slice(0, 2).toUpperCase()}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex-1 min-w-0 flex items-start justify-between flex-wrap gap-4 w-full">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-semibold text-lg text-primary-dark truncate">{p.title || "Untitled pitch"}</h3>
-                        <Badge className={statusStyle[p.status]} variant="outline">{p.status}</Badge>
-                        {p.stage && <Badge variant="outline">{p.stage}</Badge>}
-                      </div>
-                      <div className="flex gap-4 text-sm text-muted-foreground mt-2">
-                        {p.funding_ask && <span>Asking {p.funding_ask}</span>}
-                        <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" /> {p.view_count} views</span>
-                      </div>
-                    </div>
-                    <Button asChild variant="outline" className="border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[1px] hover:translate-y-[1px]">
-                      <Link to={`/pitches/${p.id}/edit`}>{p.status === "DRAFT" ? "Continue editing" : "View"}</Link>
-                    </Button>
->>>>>>> c2b8bbb8149137bebb90d32cc156536f285a5c1f
                   </div>
                 </div>
               ))}
@@ -687,7 +632,7 @@ export default function Dashboard() {
 
       {/* SECTION 6: TIPS & RESOURCES (Collapsible) */}
       <Card className="border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-[24px] mb-12 overflow-hidden transition-all">
-        <button 
+        <button
           onClick={() => setShowTips(!showTips)}
           className="w-full p-6 flex items-center justify-between bg-muted/20 border-b border-foreground/10 hover:bg-muted/40 transition-colors"
         >

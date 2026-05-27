@@ -30,6 +30,8 @@ type Pitch = {
   deck_url?: string | null;
   team_members?: any;
   traction?: string | null;
+  thumbnail_url?: string | null;
+  market_size?: string | null;
 };
 
 type Profile = {
@@ -293,7 +295,6 @@ export default function PitchDetail() {
             </p>
           </div>
 
-<<<<<<< HEAD
           <div className="flex flex-wrap gap-2.5">
             <Button asChild variant="outline" className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
               <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-4 w-4 mr-2" /> Edit</Link>
@@ -337,20 +338,11 @@ export default function PitchDetail() {
               </h3>
             </div>
             <div className="p-6 space-y-4">
-=======
-          {pitch.thumbnail_url && (
-            <div className="w-full aspect-[21/9] rounded-xl border-2 border-foreground overflow-hidden bg-background mt-6 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
-              <img src={pitch.thumbnail_url} alt={pitch.title} className="w-full h-full object-cover animate-fade-in" />
-            </div>
-          )}
-
-          <div className="grid gap-6 mt-8">
-            <Section label="Problem">{pitch.problem}</Section>
-            <Section label="Solution">{pitch.solution}</Section>
-            {pitch.market_size && <Section label="Market">{pitch.market_size}</Section>}
-            {pitch.traction && <Section label="Traction">{pitch.traction}</Section>}
-            {Array.isArray(pitch.team_members) && pitch.team_members.length > 0 && (
->>>>>>> c2b8bbb8149137bebb90d32cc156536f285a5c1f
+              {pitch.thumbnail_url && (
+                <div className="w-full aspect-[21/9] rounded-xl border-2 border-foreground overflow-hidden bg-background mb-6 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
+                  <img src={pitch.thumbnail_url} alt={pitch.title} className="w-full h-full object-cover animate-fade-in" />
+                </div>
+              )}
               <div>
                 <span className="text-xs uppercase font-extrabold text-muted-foreground block mb-1">One-Liner:</span>
                 <p className="text-lg font-bold text-foreground italic">
