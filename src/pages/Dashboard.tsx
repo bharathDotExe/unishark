@@ -407,7 +407,7 @@ export default function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
-              📂 Your Pitches
+              <FileText className="h-6 w-6" /> Your Pitches
               {pitches.length > 0 && <span className="text-xs bg-foreground text-background px-2 py-0.5 rounded-full font-sans font-bold">LIVE</span>}
             </h3>
             <Button asChild variant="ghost" size="sm" className="font-bold text-foreground hover:bg-muted hover:underline flex items-center gap-1">
@@ -444,11 +444,11 @@ export default function Dashboard() {
                           <h4 className="font-display font-extrabold text-xl text-foreground tracking-wide">{p.title || "Untitled Pitch"}</h4>
                           {p.status === "APPROVED" ? (
                             <Badge className="bg-success text-success-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
-                              ✅ APPROVED (visible to investors)
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> APPROVED (visible to investors)
                             </Badge>
                           ) : p.status === "DRAFT" ? (
                             <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
-                              🟡 DRAFT (not visible to investors)
+                              DRAFT (not visible to investors)
                             </Badge>
                           ) : (
                             <Badge className="bg-muted text-muted-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
@@ -532,7 +532,7 @@ export default function Dashboard() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
-              💬 Inbox
+              <MessageSquare className="h-6 w-6" /> Inbox
             </h3>
             <Button asChild variant="ghost" size="sm" className="font-bold text-foreground hover:bg-muted hover:underline flex items-center gap-1">
               <Link to="/messages">View All →</Link>
@@ -549,7 +549,7 @@ export default function Dashboard() {
                 <div key={msg.id} className={cn("pt-4 flex flex-col gap-1.5", index === 0 ? "pt-0" : "")}>
                   <div className="flex items-center justify-between">
                     <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                      👤 {msg.sender_name}
+                      {msg.sender_name}
                       {msg.sender_company && (
                         <span className="text-[10px] bg-foreground text-background px-1.5 py-0.5 rounded font-sans font-extrabold uppercase">
                           {msg.sender_company}
@@ -597,12 +597,12 @@ export default function Dashboard() {
       {/* SECTION 5: QUICK ACTIONS */}
       <div className="mb-10">
         <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight mb-6">
-          ⚡ Quick Actions
+          <span className="inline-flex items-center gap-2"><Sparkles className="h-6 w-6" /> Quick Actions</span>
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-6 border-2 border-foreground bg-card hover:bg-muted/10 shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-[24px] flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
             <div>
-              <div className="text-3xl mb-3">📝</div>
+              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--pastel-blue))] border border-foreground/10"><FileText className="h-6 w-6" /></div>
               <h4 className="font-display font-extrabold text-lg mb-1">Submit Pitch</h4>
               <p className="text-sm text-muted-foreground font-medium mb-4">Start pitching to investors by creating a modern, sleek presentation.</p>
             </div>
@@ -613,7 +613,7 @@ export default function Dashboard() {
 
           <Card className="p-6 border-2 border-foreground bg-card hover:bg-muted/10 shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-[24px] flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
             <div>
-              <div className="text-3xl mb-3">👥</div>
+              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--pastel-mint))] border border-foreground/10"><Users className="h-6 w-6" /></div>
               <h4 className="font-display font-extrabold text-lg mb-1">Browse Investors</h4>
               <p className="text-sm text-muted-foreground font-medium mb-4">Find and connect with verified angel investors and venture firms.</p>
             </div>
@@ -624,7 +624,7 @@ export default function Dashboard() {
 
           <Card className="p-6 border-2 border-foreground bg-card hover:bg-muted/10 shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-[24px] flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
             <div>
-              <div className="text-3xl mb-3">🔒</div>
+              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--pastel-pink))] border border-foreground/10"><ShieldCheck className="h-6 w-6" /></div>
               <h4 className="font-display font-extrabold text-lg mb-1">Security Dashboard</h4>
               <p className="text-sm text-muted-foreground font-medium mb-4">Monitor and control your pitch deck viewing permissions securely.</p>
             </div>
@@ -642,7 +642,7 @@ export default function Dashboard() {
           className="w-full p-6 flex items-center justify-between bg-muted/20 border-b border-foreground/10 hover:bg-muted/40 transition-colors"
         >
           <h4 className="font-display font-extrabold text-lg flex items-center gap-2 text-foreground">
-            <span>💡</span> Tips for Getting Funded
+            <Lightbulb className="h-5 w-5" /> Tips for Getting Funded
           </h4>
           <div className="flex items-center gap-2 text-sm font-bold text-foreground">
             <span>{showTips ? "Hide ▼" : "Show ▲"}</span>
@@ -681,7 +681,7 @@ export default function Dashboard() {
       {/* FOOTER */}
       <footer className="border-t-2 border-foreground/10 pt-8 pb-12 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🦈</span>
+          <img src={logo} alt="UniShark" className="h-7 w-7 rounded-md object-contain" />
           <span className="font-display font-extrabold text-lg">UniShark</span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-bold text-muted-foreground">
