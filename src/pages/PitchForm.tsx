@@ -372,7 +372,7 @@ export default function PitchForm() {
             </div>
             <span className="text-sm font-bold bg-muted/60 border border-foreground/10 px-3 py-1.5 rounded-full flex items-center gap-1.5">
               {readonly ? (
-                <>🔒 Status: <Badge variant="outline" className="border-foreground/20 font-bold bg-background">{status}</Badge></>
+                <>Status: <Badge variant="outline" className="border-foreground/20 font-bold bg-background">{status}</Badge></>
               ) : (
                 <><Sparkles className="h-4 w-4 text-[hsl(var(--pastel-blue))]" /> Auto-saving draft...</>
               )}

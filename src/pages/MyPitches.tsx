@@ -410,22 +410,22 @@ export default function MyPitches() {
                       {/* Dynamic Status Badges */}
                       {p.status === "APPROVED" && (
                         <Badge className="bg-success text-success-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          ✅ APPROVED (visible to investors)
+                          APPROVED (visible to investors)
                         </Badge>
                       )}
                       {p.status === "DRAFT" && (
                         <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          🟡 DRAFT (not visible to investors)
+                          DRAFT (not visible to investors)
                         </Badge>
                       )}
                       {p.status === "REJECTED" && (
                         <Badge className="bg-destructive text-destructive-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          ❌ REJECTED (not visible to investors)
+                          REJECTED (not visible to investors)
                         </Badge>
                       )}
                       {p.status === "SUBMITTED" && (
                         <Badge className="bg-[hsl(var(--pastel-blue))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          🔵 SUBMITTED (under review)
+                          SUBMITTED (under review)
                         </Badge>
                       )}
                     </div>
@@ -465,11 +465,11 @@ export default function MyPitches() {
 
                 {/* STATS ROW */}
                 <div className="flex flex-wrap gap-4 text-xs font-bold text-muted-foreground bg-muted/40 p-3 rounded-xl border border-foreground/10 mb-5 w-fit">
-                  <span className="flex items-center gap-1.5">👁️ {p.view_count} Views</span>
+                  <span className="flex items-center gap-1.5">{p.view_count} Views</span>
                   <span className="text-foreground/10">|</span>
-                  <span className="flex items-center gap-1.5">💬 {p.message_count ?? 0} Messages</span>
+                  <span className="flex items-center gap-1.5">{p.message_count ?? 0} Messages</span>
                   <span className="text-foreground/10">|</span>
-                  <span className="flex items-center gap-1.5">🔖 {p.bookmark_count ?? 0} Bookmarks</span>
+                  <span className="flex items-center gap-1.5">{p.bookmark_count ?? 0} Bookmarks</span>
                 </div>
 
                 {/* BUTTONS ACTION STRIP */}

@@ -7,11 +7,14 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Eye, MessageSquare, Bookmark,
-  Trash2, Edit3, Sparkles,
-  ArrowUpRight, ExternalLink, RefreshCw
+  Trash2, Edit3, Sparkles, Play, Youtube,
+  ArrowUpRight, ExternalLink, RefreshCw,
+  TrendingUp, Lightbulb, Rocket, Users, ShieldCheck,
+  FileText, CheckCircle2, XCircle, Linkedin, Twitter, Newspaper
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 type Pitch = {
   id: string;
@@ -311,10 +314,12 @@ export default function Dashboard() {
     <div className="container mx-auto px-4 py-8 max-w-6xl pb-24">
       {/* SECTION 1: WELCOME BANNER */}
       <Card className="p-8 border-2 border-foreground bg-[hsl(var(--pastel-blue))] shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] mb-8 relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0_0_hsl(var(--foreground))] group">
-        <div className="absolute top-0 right-0 p-4 opacity-10 text-9xl group-hover:scale-110 transition-transform select-none">🚀</div>
+        <div className="absolute -top-6 -right-6 opacity-10 group-hover:scale-110 transition-transform select-none pointer-events-none">
+          <Rocket className="h-40 w-40" />
+        </div>
         <div className="relative z-10 max-w-2xl">
           <h2 className="text-3xl font-display font-extrabold text-foreground tracking-tight mb-2">
-            Welcome back, {getFirstName()}! 👋
+            Welcome back, {getFirstName()}
           </h2>
           <p className="text-foreground/80 font-medium text-lg leading-relaxed mb-6 italic">
             "Ready to launch your startup? Submit your pitch and connect with real investors."
@@ -397,12 +402,170 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* SECTION: LEARN — Startup Videos */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
+            <Youtube className="h-6 w-6 text-[hsl(0_72%_50%)]" /> Learn from the Best
+          </h3>
+          <p className="text-sm text-muted-foreground font-medium">
+            Curated startup talks from Y Combinator, TED & top founders
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { id: "CBYhVcO4WgI", title: "How to Start a Startup", author: "Sam Altman · Y Combinator", tag: "Foundations" },
+            { id: "0lJKucu6HJc", title: "How to Succeed with a Startup", author: "Sam Altman", tag: "Strategy" },
+            { id: "bNpx7gpSqbY", title: "The Single Biggest Reason Startups Succeed", author: "Bill Gross · TED", tag: "Insight" },
+            { id: "Th8JoIan4dg", title: "How to Get Startup Ideas", author: "Paul Graham · Y Combinator", tag: "Ideation" },
+            { id: "fpCWC4xrnCI", title: "How to Raise Money", author: "Marc Andreessen · YC", tag: "Fundraising" },
+            { id: "ZoqgAy3h4OM", title: "How to Build Products Users Love", author: "Kevin Hale · YC", tag: "Product" },
+          ].map((v) => (
+            <Card
+              key={v.id}
+              className="border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl overflow-hidden flex flex-col transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] group"
+            >
+              <div className="relative aspect-video bg-foreground/5 overflow-hidden">
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${v.id}?rel=0&modestbranding=1`}
+                  title={v.title}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
+              <div className="p-4 flex-1 flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider border-foreground/20">
+                    {v.tag}
+                  </Badge>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${v.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Open on YouTube"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+                <h4 className="font-display font-extrabold text-base text-foreground leading-snug mb-1 line-clamp-2">
+                  {v.title}
+                </h4>
+                <p className="text-xs font-semibold text-muted-foreground mt-auto">{v.author}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* SECTION: STARTUP FEED — Posts from around the web */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+          <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
+            <Newspaper className="h-6 w-6" /> Startup Feed
+          </h3>
+          <p className="text-sm text-muted-foreground font-medium">
+            What founders and investors are sharing this week
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {[
+            {
+              source: "linkedin",
+              author: "Aarti Mehra",
+              role: "Founder, Brightleaf · ex-Stripe",
+              time: "2h",
+              text: "Stop pitching features. Start pitching the painful problem you have spent 100 hours living with. Investors fund clarity, not cleverness.",
+              tag: "Fundraising",
+            },
+            {
+              source: "twitter",
+              author: "Naval",
+              role: "@naval",
+              time: "5h",
+              text: "Specific knowledge is found by pursuing your genuine curiosity. Build the company only you can build.",
+              tag: "Mindset",
+            },
+            {
+              source: "linkedin",
+              author: "Rohan Iyer",
+              role: "Partner, Blume Ventures",
+              time: "1d",
+              text: "The best student founders I have backed all share one trait: they ship something every week, even when nobody is watching.",
+              tag: "Founders",
+            },
+            {
+              source: "twitter",
+              author: "Paul Graham",
+              role: "@paulg",
+              time: "1d",
+              text: "Make something a small number of people want a lot, instead of something a lot of people want a little.",
+              tag: "Product",
+            },
+            {
+              source: "linkedin",
+              author: "Sneha Kapoor",
+              role: "Angel Investor · IIT Bombay",
+              time: "2d",
+              text: "Three things I check in 60 seconds on every deck: who is the customer, what hurts them today, and why now. If those are unclear, I pass.",
+              tag: "Pitch Tips",
+            },
+            {
+              source: "twitter",
+              author: "Y Combinator",
+              role: "@ycombinator",
+              time: "3d",
+              text: "Talk to users. Then talk to more users. Then build. Repeat. This is the whole playbook for the first 90 days.",
+              tag: "Playbook",
+            },
+          ].map((post, i) => {
+            const Icon = post.source === "linkedin" ? Linkedin : Twitter;
+            const iconColor = post.source === "linkedin" ? "text-[hsl(210_90%_40%)]" : "text-[hsl(203_89%_53%)]";
+            return (
+              <Card
+                key={i}
+                className="p-5 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-full bg-foreground/5 border border-foreground/10 flex items-center justify-center font-display font-extrabold text-foreground text-sm shrink-0">
+                    {post.author.split(" ").map(w => w[0]).slice(0, 2).join("")}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-sm text-foreground truncate">{post.author}</span>
+                      <Icon className={cn("h-3.5 w-3.5 shrink-0", iconColor)} />
+                      <span className="text-xs text-muted-foreground font-semibold">· {post.time}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground font-semibold mb-2 truncate">{post.role}</p>
+                    <p className="text-sm text-foreground/90 leading-relaxed font-medium mb-3">
+                      {post.text}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider border-foreground/20">
+                        {post.tag}
+                      </Badge>
+                      <span className="text-[11px] font-bold text-muted-foreground">
+                        {post.source === "linkedin" ? "LinkedIn" : "X / Twitter"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
         {/* SECTION 3: YOUR PITCHES (Left 2 Columns) */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
-              📂 Your Pitches
+              <FileText className="h-6 w-6" /> Your Pitches
               {pitches.length > 0 && <span className="text-xs bg-foreground text-background px-2 py-0.5 rounded-full font-sans font-bold">LIVE</span>}
             </h3>
             <Button asChild variant="ghost" size="sm" className="font-bold text-foreground hover:bg-muted hover:underline flex items-center gap-1">
@@ -439,11 +602,11 @@ export default function Dashboard() {
                           <h4 className="font-display font-extrabold text-xl text-foreground tracking-wide">{p.title || "Untitled Pitch"}</h4>
                           {p.status === "APPROVED" ? (
                             <Badge className="bg-success text-success-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
-                              ✅ APPROVED (visible to investors)
+                              <CheckCircle2 className="h-3 w-3 mr-1" /> APPROVED (visible to investors)
                             </Badge>
                           ) : p.status === "DRAFT" ? (
                             <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
-                              🟡 DRAFT (not visible to investors)
+                              DRAFT (not visible to investors)
                             </Badge>
                           ) : (
                             <Badge className="bg-muted text-muted-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
@@ -527,7 +690,7 @@ export default function Dashboard() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
-              💬 Inbox
+              <MessageSquare className="h-6 w-6" /> Inbox
             </h3>
             <Button asChild variant="ghost" size="sm" className="font-bold text-foreground hover:bg-muted hover:underline flex items-center gap-1">
               <Link to="/messages">View All →</Link>
@@ -544,7 +707,7 @@ export default function Dashboard() {
                 <div key={msg.id} className={cn("pt-4 flex flex-col gap-1.5", index === 0 ? "pt-0" : "")}>
                   <div className="flex items-center justify-between">
                     <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                      👤 {msg.sender_name}
+                      {msg.sender_name}
                       {msg.sender_company && (
                         <span className="text-[10px] bg-foreground text-background px-1.5 py-0.5 rounded font-sans font-extrabold uppercase">
                           {msg.sender_company}
@@ -592,12 +755,12 @@ export default function Dashboard() {
       {/* SECTION 5: QUICK ACTIONS */}
       <div className="mb-10">
         <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight mb-6">
-          ⚡ Quick Actions
+          <span className="inline-flex items-center gap-2"><Sparkles className="h-6 w-6" /> Quick Actions</span>
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="p-6 border-2 border-foreground bg-card hover:bg-muted/10 shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-[24px] flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
             <div>
-              <div className="text-3xl mb-3">📝</div>
+              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--pastel-blue))] border border-foreground/10"><FileText className="h-6 w-6" /></div>
               <h4 className="font-display font-extrabold text-lg mb-1">Submit Pitch</h4>
               <p className="text-sm text-muted-foreground font-medium mb-4">Start pitching to investors by creating a modern, sleek presentation.</p>
             </div>
@@ -608,7 +771,7 @@ export default function Dashboard() {
 
           <Card className="p-6 border-2 border-foreground bg-card hover:bg-muted/10 shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-[24px] flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
             <div>
-              <div className="text-3xl mb-3">👥</div>
+              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--pastel-mint))] border border-foreground/10"><Users className="h-6 w-6" /></div>
               <h4 className="font-display font-extrabold text-lg mb-1">Browse Investors</h4>
               <p className="text-sm text-muted-foreground font-medium mb-4">Find and connect with verified angel investors and venture firms.</p>
             </div>
@@ -619,7 +782,7 @@ export default function Dashboard() {
 
           <Card className="p-6 border-2 border-foreground bg-card hover:bg-muted/10 shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-[24px] flex flex-col justify-between hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all">
             <div>
-              <div className="text-3xl mb-3">🔒</div>
+              <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(var(--pastel-pink))] border border-foreground/10"><ShieldCheck className="h-6 w-6" /></div>
               <h4 className="font-display font-extrabold text-lg mb-1">Security Dashboard</h4>
               <p className="text-sm text-muted-foreground font-medium mb-4">Monitor and control your pitch deck viewing permissions securely.</p>
             </div>
@@ -637,7 +800,7 @@ export default function Dashboard() {
           className="w-full p-6 flex items-center justify-between bg-muted/20 border-b border-foreground/10 hover:bg-muted/40 transition-colors"
         >
           <h4 className="font-display font-extrabold text-lg flex items-center gap-2 text-foreground">
-            <span>💡</span> Tips for Getting Funded
+            <Lightbulb className="h-5 w-5" /> Tips for Getting Funded
           </h4>
           <div className="flex items-center gap-2 text-sm font-bold text-foreground">
             <span>{showTips ? "Hide ▼" : "Show ▲"}</span>
@@ -676,7 +839,7 @@ export default function Dashboard() {
       {/* FOOTER */}
       <footer className="border-t-2 border-foreground/10 pt-8 pb-12 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🦈</span>
+          <img src={logo} alt="UniShark" className="h-7 w-7 rounded-md object-contain" />
           <span className="font-display font-extrabold text-lg">UniShark</span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-bold text-muted-foreground">
