@@ -118,7 +118,7 @@ export default function Messages() {
         firstViewed: "May 12, 10:15 AM",
         views: 4,
         bookmarked: true,
-        status: "Reviewing 🟡",
+        status: "Reviewing",
         statusColor: "text-amber-500"
       },
       messages: [
@@ -170,7 +170,7 @@ export default function Messages() {
         firstViewed: "May 11, 2:00 PM",
         views: 5,
         bookmarked: false,
-        status: "Evaluating 🟡",
+        status: "Evaluating",
         statusColor: "text-amber-500"
       },
       messages: [
@@ -465,7 +465,7 @@ export default function Messages() {
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5 min-w-0">
                           {conv.unread ? (
-                            <span className="text-indigo-600 text-sm animate-pulse flex-shrink-0">🔵</span>
+                            <span className="h-2 w-2 rounded-full bg-indigo-600 animate-pulse flex-shrink-0" />
                           ) : (
                             <span className="text-muted-foreground text-sm flex-shrink-0">⭕</span>
                           )}

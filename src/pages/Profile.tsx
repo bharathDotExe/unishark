@@ -273,7 +273,7 @@ export default function Profile() {
       {/* PAGE TITLE */}
       <div className="text-center p-6 border-[3px] border-foreground shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] bg-card mb-8">
         <span className="text-xs uppercase tracking-widest font-black text-foreground bg-[hsl(var(--pastel-pink))] border-2 border-foreground px-3 py-1 rounded-full mb-3 inline-block shadow-[2px_2px_0_0_hsl(var(--foreground))]">
-          👤 FOUNDER IDENTITY
+          Founder Identity
         </span>
         <h1 className="text-3xl sm:text-4xl font-display font-black text-foreground uppercase tracking-widest mt-1">
           MY PROFILE
