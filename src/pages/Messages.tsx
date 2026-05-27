@@ -305,7 +305,7 @@ export default function Messages() {
         firstViewed: "May 3, 11:30 AM",
         views: 6,
         bookmarked: true,
-        status: "Hot Prospect 🔥",
+        status: "Hot Prospect",
         statusColor: "text-pink-600 font-extrabold"
       },
       messages: [

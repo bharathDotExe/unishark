@@ -558,7 +558,7 @@ export default function Profile() {
         {activeTab === "skills" && (
           <Card className="border-[3px] border-foreground bg-card shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] overflow-hidden p-6 sm:p-8">
             <h3 className="font-display font-black text-lg text-foreground uppercase tracking-wider mb-6 flex items-center gap-2">
-              <span>🎯</span> TAB 2: SKILLS & INTERESTS
+              Skills &amp; Interests
             </h3>
 
             <div className="space-y-6">
