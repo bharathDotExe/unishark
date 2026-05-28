@@ -12,7 +12,8 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   ArrowLeft, ArrowRight, Upload, Save, Send, AlertCircle, CheckCircle2, 
-  HelpCircle, Trash2, Plus, Sparkles, RefreshCw, FileText, X, Image as ImageIcon, Loader2
+  HelpCircle, Trash2, Plus, Sparkles, RefreshCw, FileText, X, Image as ImageIcon, Loader2,
+  Rocket, Lightbulb, TrendingUp, Banknote, Users, Check
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -315,38 +316,65 @@ export default function PitchForm() {
 
   // Neobrutalistic Custom Progress Bar renderer
   const renderProgress = () => {
+    const stepMeta = [
+      { label: "Basics", icon: Rocket },
+      { label: "Problem", icon: Lightbulb },
+      { label: "Market", icon: TrendingUp },
+      { label: "Funding", icon: Banknote },
+      { label: "Team & Deck", icon: Users },
+    ];
     return (
-      <div className="border-2 border-foreground rounded-2xl bg-muted/30 p-4 mb-8 flex flex-col gap-3 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
-        <div className="flex items-center justify-between text-sm font-bold text-foreground">
-          <span>PROGRESS:</span>
-          <span>STEP {step} OF 5</span>
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3 text-xs font-medium text-muted-foreground">
+          <span className="uppercase tracking-wider">Step {step} of 5 · {stepMeta[step - 1].label}</span>
+          <span>{Math.round((step / 5) * 100)}% complete</span>
         </div>
-        <div className="flex items-center justify-between gap-1 flex-wrap sm:flex-nowrap">
-          {[1, 2, 3, 4, 5].map((s) => {
+        <div className="h-1.5 rounded-full bg-muted/60 overflow-hidden mb-5">
+          <div
+            className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
+            style={{ width: `${(step / 5) * 100}%` }}
+          />
+        </div>
+        <div className="grid grid-cols-5 gap-2">
+          {stepMeta.map((m, idx) => {
+            const s = idx + 1;
             const isActive = s === step;
             const isCompleted = s < step;
+            const Icon = m.icon;
             return (
               <button
                 key={s}
                 disabled={readonly}
                 onClick={() => {
-                  // Only allow jumping back, or jumping forward if validated
                   if (s < step) setStep(s);
                   else if (s > step && validateStep(step)) {
                     persist(false).then(() => setStep(Math.min(s, step + 1)));
                   }
                 }}
                 className={cn(
-                  "flex-1 py-2 px-3 border-2 border-foreground rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5",
-                  isActive 
-                    ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] translate-y-[-1px]" 
-                    : isCompleted 
-                      ? "bg-[hsl(var(--pastel-mint))] text-foreground" 
-                      : "bg-background text-muted-foreground opacity-60 hover:opacity-100"
+                  "group flex flex-col items-center gap-1.5 py-2 px-1 rounded-lg transition-all",
+                  !readonly && "hover:bg-muted/40 cursor-pointer",
+                  readonly && "cursor-default"
                 )}
               >
-                <span>Step {s}</span>
-                {isCompleted ? "██" : isActive ? "██░░" : "░░░░"}
+                <div
+                  className={cn(
+                    "h-9 w-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all border",
+                    isActive && "bg-primary text-primary-foreground border-primary shadow-md scale-110",
+                    isCompleted && "bg-accent text-accent-foreground border-accent",
+                    !isActive && !isCompleted && "bg-background text-muted-foreground border-border"
+                  )}
+                >
+                  {isCompleted ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+                </div>
+                <span
+                  className={cn(
+                    "text-[11px] font-medium hidden sm:block transition-colors",
+                    isActive ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {m.label}
+                </span>
               </button>
             );
           })}
@@ -356,25 +384,23 @@ export default function PitchForm() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative pb-20" style={{ backgroundImage: "var(--gradient-mesh)" }}>
+    <div className="app-shell min-h-screen pb-20">
       <div className="container mx-auto px-4 pt-8 pb-8 sm:pt-12 sm:pb-10 max-w-3xl">
-        <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-6 hover:bg-muted border border-foreground/10 rounded-xl">
+        <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-6 -ml-2 text-muted-foreground hover:text-foreground">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
         </Button>
         
-        <Card className="p-6 sm:p-10 border-2 border-foreground shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px]">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-4 border-b border-foreground/10 pb-4">
+        <Card className="p-6 sm:p-10 border border-border/60 rounded-2xl backdrop-blur-xl bg-card/80 shadow-lg">
+          <div className="flex items-start justify-between flex-wrap gap-4 mb-8 pb-6 border-b border-border/60">
             <div>
-              <span className="text-xs uppercase tracking-widest font-extrabold text-[hsl(var(--pastel-pink))] bg-[hsl(var(--pastel-pink))]/10 border border-[hsl(var(--pastel-pink))]/20 px-2.5 py-1 rounded-full mb-1 inline-block">
-                STUDENT USER JOURNEY
-              </span>
-              <h1 className="text-3xl font-display font-extrabold text-foreground tracking-wide mt-1">Submit Your Pitch</h1>
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Submit your pitch</h1>
+              <p className="text-sm text-muted-foreground mt-1.5">Tell investors what you're building. We review every submission within 24 hours.</p>
             </div>
-            <span className="text-sm font-bold bg-muted/60 border border-foreground/10 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+            <span className="text-xs font-medium text-muted-foreground bg-muted/50 border border-border/60 px-3 py-1.5 rounded-full flex items-center gap-1.5 shrink-0">
               {readonly ? (
-                <>Status: <Badge variant="outline" className="border-foreground/20 font-bold bg-background">{status}</Badge></>
+                <>Status: <Badge variant="outline" className="ml-1">{status}</Badge></>
               ) : (
-                <><Sparkles className="h-4 w-4 text-[hsl(var(--pastel-blue))]" /> Auto-saving draft...</>
+                <><Sparkles className="h-3.5 w-3.5 text-primary" /> Draft auto-saved</>
               )}
             </span>
           </div>
@@ -384,14 +410,18 @@ export default function PitchForm() {
           {/* STEP 1: BASIC INFO */}
           {step === 1 && (
             <div className="space-y-6">
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold text-foreground">The basics</h2>
+                <p className="text-sm text-muted-foreground">Start with a clear name, a one-line description, and your current stage.</p>
+              </div>
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="title" className="font-bold text-foreground">Pitch Title *</Label>
+                  <Label htmlFor="title" className="font-medium text-foreground">Pitch Title <span className="text-destructive">*</span></Label>
                   <span className={cn(
-                    "text-xs font-bold", 
+                    "text-xs tabular-nums",
                     draft.title.length >= 90 ? "text-destructive" : draft.title.length >= 70 ? "text-amber-500" : "text-muted-foreground"
                   )}>
-                    ({draft.title.length}/100)
+                    {draft.title.length}/100
                   </span>
                 </div>
                 <Input 
@@ -401,19 +431,19 @@ export default function PitchForm() {
                   onChange={(e) => set("title", e.target.value)} 
                   disabled={readonly} 
                   placeholder="e.g. AI Resume Builder"
-                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground"
+                  className="h-11 rounded-lg"
                 />
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Tip: Choose a simple, recognizable name like "AI Resume Builder" or "EdTech Platform"</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Choose a simple, recognizable name.</p>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="oneliner" className="font-bold text-foreground">One-Liner Description *</Label>
+                  <Label htmlFor="oneliner" className="font-medium text-foreground">One-Liner Description <span className="text-destructive">*</span></Label>
                   <span className={cn(
-                    "text-xs font-bold", 
+                    "text-xs tabular-nums",
                     draft.one_liner.length >= 135 ? "text-destructive" : draft.one_liner.length >= 110 ? "text-amber-500" : "text-muted-foreground"
                   )}>
-                    ({draft.one_liner.length}/150)
+                    {draft.one_liner.length}/150
                   </span>
                 </div>
                 <Input 
@@ -422,14 +452,14 @@ export default function PitchForm() {
                   value={draft.one_liner} 
                   onChange={(e) => set("one_liner", e.target.value)} 
                   disabled={readonly} 
-                  placeholder="e.g. Describe what your startup does in 1 sentence."
-                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground"
+                  placeholder="What your startup does in one sentence"
+                  className="h-11 rounded-lg"
                 />
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Tip: What is your primary elevator pitch? (Max 150 chars)</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Think elevator pitch. Max 150 characters.</p>
               </div>
 
               <div>
-                <Label className="font-bold text-foreground block mb-2">Startup Stage *</Label>
+                <Label className="font-medium text-foreground block mb-2">Startup Stage <span className="text-destructive">*</span></Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     { val: "IDEA", label: "Idea", desc: "No product yet" },
@@ -443,14 +473,14 @@ export default function PitchForm() {
                       disabled={readonly}
                       onClick={() => set("stage", s.val as any)}
                       className={cn(
-                        "p-4 border-2 border-foreground rounded-xl text-left transition-all flex flex-col gap-0.5",
+                        "p-4 border rounded-xl text-left transition-all flex flex-col gap-0.5",
                         draft.stage === s.val 
-                          ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] translate-y-[-1px] font-bold" 
-                          : "bg-background text-muted-foreground hover:bg-muted"
+                          ? "bg-primary/5 border-primary ring-1 ring-primary/30" 
+                          : "bg-background border-border/60 hover:border-border hover:bg-muted/40"
                       )}
                     >
-                      <span className="font-bold text-foreground">{s.label}</span>
-                      <span className="text-xs">{s.desc}</span>
+                      <span className="font-semibold text-foreground text-sm">{s.label}</span>
+                      <span className="text-xs text-muted-foreground">{s.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -461,14 +491,18 @@ export default function PitchForm() {
           {/* STEP 2: PROBLEM & SOLUTION */}
           {step === 2 && (
             <div className="space-y-6">
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold text-foreground">Problem & solution</h2>
+                <p className="text-sm text-muted-foreground">Explain what you're fixing and who you're fixing it for.</p>
+              </div>
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="problem" className="font-bold text-foreground">Problem Statement *</Label>
+                  <Label htmlFor="problem" className="font-medium text-foreground">Problem Statement <span className="text-destructive">*</span></Label>
                   <span className={cn(
-                    "text-xs font-bold", 
+                    "text-xs tabular-nums",
                     draft.problem.length >= 450 ? "text-destructive" : draft.problem.length >= 400 ? "text-amber-500" : "text-muted-foreground"
                   )}>
-                    ({draft.problem.length}/500)
+                    {draft.problem.length}/500
                   </span>
                 </div>
                 <Textarea 
@@ -479,19 +513,19 @@ export default function PitchForm() {
                   onChange={(e) => set("problem", e.target.value)} 
                   disabled={readonly} 
                   placeholder="Describe the main pain point."
-                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground resize-none"
+                  className="rounded-lg resize-none"
                 />
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Example: "Students struggle to build resumes that impress recruiters. Most resume builders are clunky and outdated."</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Example: Students struggle to build resumes that impress recruiters.</p>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="solution" className="font-bold text-foreground">Your Solution *</Label>
+                  <Label htmlFor="solution" className="font-medium text-foreground">Your Solution <span className="text-destructive">*</span></Label>
                   <span className={cn(
-                    "text-xs font-bold", 
+                    "text-xs tabular-nums",
                     draft.solution.length >= 450 ? "text-destructive" : draft.solution.length >= 400 ? "text-amber-500" : "text-muted-foreground"
                   )}>
-                    ({draft.solution.length}/500)
+                    {draft.solution.length}/500
                   </span>
                 </div>
                 <Textarea 
@@ -502,20 +536,20 @@ export default function PitchForm() {
                   onChange={(e) => set("solution", e.target.value)} 
                   disabled={readonly} 
                   placeholder="How does your startup solve this problem?"
-                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground resize-none"
+                  className="rounded-lg resize-none"
                 />
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Example: "We built an AI-powered resume builder that analyzes job descriptions and tailors resumes in seconds."</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Example: An AI resume builder that tailors resumes in seconds.</p>
               </div>
 
               <div>
-                <Label htmlFor="target_market" className="font-bold text-foreground">Target Market *</Label>
+                <Label htmlFor="target_market" className="font-medium text-foreground">Target Market <span className="text-destructive">*</span></Label>
                 <Input 
                   id="target_market" 
                   value={draft.target_market} 
                   onChange={(e) => set("target_market", e.target.value)} 
                   disabled={readonly} 
                   placeholder="e.g. Engineering students, first-time job seekers"
-                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                  className="h-11 rounded-lg mt-1.5"
                 />
               </div>
             </div>
@@ -524,8 +558,12 @@ export default function PitchForm() {
           {/* STEP 3: TRACTION & MARKET */}
           {step === 3 && (
             <div className="space-y-6">
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold text-foreground">Market & traction</h2>
+                <p className="text-sm text-muted-foreground">Show the opportunity, your edge, and any early proof.</p>
+              </div>
               <div>
-                <Label htmlFor="traction" className="font-bold text-foreground">Current Traction (optional)</Label>
+                <Label htmlFor="traction" className="font-medium text-foreground">Current Traction <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <Textarea 
                   id="traction" 
                   rows={3} 
@@ -533,43 +571,43 @@ export default function PitchForm() {
                   onChange={(e) => set("traction", e.target.value)} 
                   disabled={readonly} 
                   placeholder="e.g. 500 beta users, $5k MRR, 20% weekly growth"
-                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground mt-1 resize-none"
+                  className="rounded-lg mt-1.5 resize-none"
                 />
               </div>
 
               <div>
-                <Label htmlFor="market_size" className="font-bold text-foreground">Market Size *</Label>
+                <Label htmlFor="market_size" className="font-medium text-foreground">Market Size <span className="text-destructive">*</span></Label>
                 <Input 
                   id="market_size" 
                   value={draft.market_size} 
                   onChange={(e) => set("market_size", e.target.value)} 
                   disabled={readonly} 
                   placeholder="e.g. $10 Billion TAM"
-                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                  className="h-11 rounded-lg mt-1.5"
                 />
               </div>
 
               <div>
-                <Label htmlFor="competitors" className="font-bold text-foreground">Competitors *</Label>
+                <Label htmlFor="competitors" className="font-medium text-foreground">Competitors <span className="text-destructive">*</span></Label>
                 <Input 
                   id="competitors" 
                   value={draft.competitors} 
                   onChange={(e) => set("competitors", e.target.value)} 
                   disabled={readonly} 
                   placeholder="e.g. LinkedIn, Indeed, Canva Resumes"
-                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                  className="h-11 rounded-lg mt-1.5"
                 />
               </div>
 
               <div>
-                <Label htmlFor="advantage" className="font-bold text-foreground">Your Advantage *</Label>
+                <Label htmlFor="advantage" className="font-medium text-foreground">Your Advantage <span className="text-destructive">*</span></Label>
                 <Input 
                   id="advantage" 
                   value={draft.advantage} 
                   onChange={(e) => set("advantage", e.target.value)} 
                   disabled={readonly} 
                   placeholder="e.g. AI-powered, 10x faster, 90% accuracy"
-                  className="border-2 border-foreground rounded-xl h-12 focus-visible:ring-0 focus-visible:border-foreground mt-1"
+                  className="h-11 rounded-lg mt-1.5"
                 />
               </div>
             </div>
@@ -578,10 +616,14 @@ export default function PitchForm() {
           {/* STEP 4: FUNDRAISING */}
           {step === 4 && (
             <div className="space-y-6">
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold text-foreground">Fundraising</h2>
+                <p className="text-sm text-muted-foreground">How much you're raising and how you'll spend it.</p>
+              </div>
               <div>
-                <Label htmlFor="ask" className="font-bold text-foreground">Funding Ask *</Label>
-                <div className="relative mt-1">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none font-bold text-foreground">
+                <Label htmlFor="ask" className="font-medium text-foreground">Funding Ask <span className="text-destructive">*</span></Label>
+                <div className="relative mt-1.5">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none font-medium text-muted-foreground">
                     ₹
                   </div>
                   <Input 
@@ -589,21 +631,21 @@ export default function PitchForm() {
                     value={draft.funding_ask} 
                     onChange={(e) => set("funding_ask", e.target.value)} 
                     disabled={readonly} 
-                    placeholder="e.g. 1 Crore (10 Million Rupees)" 
-                    className="border-2 border-foreground rounded-xl h-12 pl-8 focus-visible:ring-0 focus-visible:border-foreground"
+                    placeholder="e.g. 1 Crore" 
+                    className="h-11 rounded-lg pl-7"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Specify how much you are raising from angel investors.</p>
+                <p className="text-xs text-muted-foreground mt-1.5">How much you're raising from angel investors.</p>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="use_of_funds" className="font-bold text-foreground">Use of Funds *</Label>
+                  <Label htmlFor="use_of_funds" className="font-medium text-foreground">Use of Funds <span className="text-destructive">*</span></Label>
                   <span className={cn(
-                    "text-xs font-bold", 
+                    "text-xs tabular-nums",
                     draft.use_of_funds.length >= 270 ? "text-destructive" : draft.use_of_funds.length >= 220 ? "text-amber-500" : "text-muted-foreground"
                   )}>
-                    ({draft.use_of_funds.length}/300)
+                    {draft.use_of_funds.length}/300
                   </span>
                 </div>
                 <Textarea 
@@ -614,13 +656,13 @@ export default function PitchForm() {
                   onChange={(e) => set("use_of_funds", e.target.value)} 
                   disabled={readonly} 
                   placeholder="Explain allocation of the funds."
-                  className="border-2 border-foreground rounded-xl focus-visible:ring-0 focus-visible:border-foreground resize-none"
+                  className="rounded-lg resize-none"
                 />
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Example: "40% Product Dev, 35% Marketing, 25% Ops"</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Example: 40% Product, 35% Marketing, 25% Ops.</p>
               </div>
 
               <div>
-                <Label className="font-bold text-foreground block mb-2">Current Funding Status *</Label>
+                <Label className="font-medium text-foreground block mb-2">Current Funding Status <span className="text-destructive">*</span></Label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
                     { val: "BOOTSTRAPPED", label: "Bootstrapped", desc: "No external funding" },
@@ -634,14 +676,14 @@ export default function PitchForm() {
                       disabled={readonly}
                       onClick={() => set("funding_status", s.val as any)}
                       className={cn(
-                        "p-4 border-2 border-foreground rounded-xl text-left transition-all flex flex-col gap-0.5",
+                        "p-4 border rounded-xl text-left transition-all flex flex-col gap-0.5",
                         draft.funding_status === s.val 
-                          ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] translate-y-[-1px] font-bold" 
-                          : "bg-background text-muted-foreground hover:bg-muted"
+                          ? "bg-primary/5 border-primary ring-1 ring-primary/30" 
+                          : "bg-background border-border/60 hover:border-border hover:bg-muted/40"
                       )}
                     >
-                      <span className="font-bold text-foreground">{s.label}</span>
-                      <span className="text-xs">{s.desc}</span>
+                      <span className="font-semibold text-foreground text-sm">{s.label}</span>
+                      <span className="text-xs text-muted-foreground">{s.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -652,13 +694,22 @@ export default function PitchForm() {
           {/* STEP 5: TEAM & DOCUMENTS */}
           {step === 5 && (
             <div className="space-y-6">
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold text-foreground">Team & documents</h2>
+                <p className="text-sm text-muted-foreground">Add your co-founders and upload your pitch deck to submit.</p>
+              </div>
               <div>
-                <Label className="font-bold text-foreground block mb-3">Team Members *</Label>
+                <Label className="font-medium text-foreground block mb-3">Team Members <span className="text-destructive">*</span></Label>
                 <div className="space-y-4">
                   {draft.team_members.map((m, i) => (
-                    <div key={i} className="p-4 border-2 border-foreground rounded-2xl bg-muted/10 relative">
+                    <div key={i} className="p-4 border border-border/60 rounded-xl bg-muted/20 relative">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-bold text-sm">Member {i + 1} {i === 0 ? "(Required)" : "(Optional)"}</span>
+                        <span className="font-semibold text-sm text-foreground">
+                          Member {i + 1}
+                          <span className="ml-2 text-xs font-normal text-muted-foreground">
+                            {i === 0 ? "(Required)" : "(Optional)"}
+                          </span>
+                        </span>
                         {draft.team_members.length > 1 && !readonly && (
                           <button
                             type="button"
@@ -666,7 +717,7 @@ export default function PitchForm() {
                               const arr = draft.team_members.filter((_, idx) => idx !== i);
                               set("team_members", arr);
                             }}
-                            className="text-xs font-bold text-destructive hover:underline"
+                            className="text-xs font-medium text-destructive hover:underline"
                           >
                             Remove
                           </button>
@@ -674,40 +725,40 @@ export default function PitchForm() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                         <div>
-                          <Label className="text-xs font-bold mb-1 block">Full Name</Label>
+                          <Label className="text-xs font-medium mb-1 block text-muted-foreground">Full Name</Label>
                           <Input 
-                            placeholder="Name" 
+                            placeholder="Jane Doe" 
                             value={m.name} 
                             onChange={(e) => {
                               const arr = [...draft.team_members]; arr[i] = { ...arr[i], name: e.target.value }; set("team_members", arr);
                             }} 
                             disabled={readonly} 
-                            className="border-2 border-foreground rounded-xl h-10"
+                            className="h-10 rounded-lg"
                           />
                         </div>
                         <div>
-                          <Label className="text-xs font-bold mb-1 block">Role</Label>
+                          <Label className="text-xs font-medium mb-1 block text-muted-foreground">Role</Label>
                           <Input 
-                            placeholder="Role (e.g. CEO, CTO)" 
+                            placeholder="CEO, CTO, etc." 
                             value={m.role} 
                             onChange={(e) => {
                               const arr = [...draft.team_members]; arr[i] = { ...arr[i], role: e.target.value }; set("team_members", arr);
                             }} 
                             disabled={readonly} 
-                            className="border-2 border-foreground rounded-xl h-10"
+                            className="h-10 rounded-lg"
                           />
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs font-bold mb-1 block">LinkedIn Profile URL</Label>
+                        <Label className="text-xs font-medium mb-1 block text-muted-foreground">LinkedIn Profile URL</Label>
                         <Input 
-                          placeholder="LinkedIn URL" 
+                          placeholder="https://linkedin.com/in/..." 
                           value={m.linkedinUrl ?? ""} 
                           onChange={(e) => {
                             const arr = [...draft.team_members]; arr[i] = { ...arr[i], linkedinUrl: e.target.value }; set("team_members", arr);
                           }} 
                           disabled={readonly} 
-                          className="border-2 border-foreground rounded-xl h-10"
+                          className="h-10 rounded-lg"
                         />
                       </div>
                     </div>
@@ -718,39 +769,38 @@ export default function PitchForm() {
                       type="button" 
                       variant="outline" 
                       onClick={() => set("team_members", [...draft.team_members, { name: "", role: "", linkedinUrl: "" }])}
-                      className="border-2 border-dashed border-foreground/30 hover:border-foreground bg-background hover:bg-muted font-bold rounded-xl flex items-center justify-center gap-1 w-full"
+                      className="border-dashed hover:border-primary hover:text-primary rounded-lg w-full"
                     >
-                      <Plus className="h-4 w-4" /> Add More Members
+                      <Plus className="h-4 w-4" /> Add another member
                     </Button>
                   )}
                 </div>
               </div>
 
               {/* Startup Thumbnail */}
-              <div className="mb-6">
-                <Label className="font-bold text-foreground block mb-2">Startup Thumbnail (Optional)</Label>
+              <div>
+                <Label className="font-medium text-foreground block mb-2">Startup Thumbnail <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <div
                   onDragOver={(e) => handleDrag(e, "thumbnail", true)}
                   onDragLeave={(e) => handleDrag(e, "thumbnail", false)}
                   onDrop={(e) => handleDrop(e, "thumbnail")}
                   className={cn(
-                    "border-2 border-dashed rounded-2xl p-6 text-center transition-all relative flex flex-col items-center justify-center min-h-[220px]",
-                    draft.thumbnail_url ? "border-solid bg-surface" : "border-foreground/30 bg-muted/5",
-                    dragOverThumbnail ? "border-primary bg-primary/5 scale-[0.99]" : "",
-                    !readonly && "hover:border-foreground/60 cursor-pointer"
+                    "border border-dashed rounded-xl p-6 text-center transition-all relative flex flex-col items-center justify-center min-h-[200px]",
+                    draft.thumbnail_url ? "border-solid bg-muted/20" : "border-border bg-muted/10",
+                    dragOverThumbnail ? "border-primary bg-primary/5" : "",
+                    !readonly && "hover:border-primary/60 cursor-pointer"
                   )}
                 >
                   {draft.thumbnail_url ? (
                     <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
-                      <div className="w-48 aspect-[16/9] rounded-lg border-2 border-foreground overflow-hidden bg-background shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+                      <div className="w-48 aspect-[16/9] rounded-lg border border-border overflow-hidden bg-background shadow-sm">
                         <img src={draft.thumbnail_url} alt="Startup Thumbnail" className="w-full h-full object-cover animate-fade-in" />
                       </div>
                       {!readonly && (
                         <Button
                           type="button"
-                          variant="destructive"
+                          variant="outline"
                           size="sm"
-                          className="border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
                           onClick={(e) => {
                             e.stopPropagation();
                             set("thumbnail_url", "");
@@ -771,17 +821,17 @@ export default function PitchForm() {
                       />
                       {uploadingThumbnail ? (
                         <div className="flex flex-col items-center space-y-2">
-                          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                          <p className="text-sm font-medium text-foreground">Uploading thumbnail...</p>
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <p className="text-sm text-muted-foreground">Uploading thumbnail...</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center space-y-2 pointer-events-none">
-                          <div className="p-3 bg-[hsl(var(--pastel-pink))]/10 border-2 border-[hsl(var(--pastel-pink))] rounded-lg shadow-[2px_2px_0_0_hsl(var(--pastel-pink))]">
-                            <ImageIcon className="h-8 w-8 text-foreground" />
+                          <div className="p-2.5 bg-primary/10 rounded-lg">
+                            <ImageIcon className="h-6 w-6 text-primary" />
                           </div>
-                          <p className="font-bold text-foreground">Upload Thumbnail</p>
-                          <p className="text-xs text-muted-foreground">Drag & drop or click to choose</p>
-                          <p className="text-[10px] text-muted-foreground/80 font-mono mt-1">PNG, JPG, WEBP • Max 2MB</p>
+                          <p className="font-medium text-foreground text-sm">Upload thumbnail</p>
+                          <p className="text-xs text-muted-foreground">Drag & drop or click to browse</p>
+                          <p className="text-[11px] text-muted-foreground/80 mt-1">PNG, JPG, WEBP · Max 2MB</p>
                         </div>
                       )}
                     </>
@@ -790,7 +840,7 @@ export default function PitchForm() {
               </div>
 
               <div>
-                <Label className="font-bold text-foreground block mb-2">Pitch Deck (PDF, max 5MB) *</Label>
+                <Label className="font-medium text-foreground block mb-2">Pitch Deck <span className="text-destructive">*</span> <span className="text-muted-foreground font-normal">(PDF, max 5MB)</span></Label>
                 
                 {/* Drag and Drop area */}
                 <div 
@@ -799,10 +849,10 @@ export default function PitchForm() {
                   onDrop={(e) => handleDrop(e, "deck")}
                   onClick={() => !readonly && !uploading && fileInputRef.current?.click()}
                   className={cn(
-                    "border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center",
+                    "border border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center",
                     dragOverDeck 
-                      ? "border-primary bg-[hsl(var(--pastel-blue))]/10 scale-[0.99]" 
-                      : "border-foreground/30 bg-muted/5 hover:bg-muted/15 hover:border-foreground/60",
+                      ? "border-primary bg-primary/5" 
+                      : "border-border bg-muted/10 hover:bg-muted/20 hover:border-primary/60",
                     readonly && "cursor-not-allowed opacity-70"
                   )}
                 >
@@ -817,25 +867,27 @@ export default function PitchForm() {
                   
                   {uploading ? (
                     <>
-                      <RefreshCw className="h-10 w-10 text-foreground animate-spin mb-3" />
-                      <p className="font-bold text-foreground text-sm">Uploading deck PDF...</p>
+                      <RefreshCw className="h-8 w-8 text-primary animate-spin mb-3" />
+                      <p className="text-sm text-muted-foreground">Uploading deck PDF...</p>
                     </>
                   ) : draft.deck_url ? (
                     <>
-                      <CheckCircle2 className="h-10 w-10 text-success mb-3" />
-                      <p className="font-bold text-success text-sm flex items-center gap-1 justify-center">
-                        <FileText className="h-4 w-4 text-foreground" /> Pitch deck uploaded successfully!
+                      <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-3" />
+                      <p className="font-medium text-foreground text-sm flex items-center gap-1.5 justify-center">
+                        <FileText className="h-4 w-4 text-muted-foreground" /> Pitch deck uploaded
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">Click or drag here to replace the current file</p>
+                      <p className="text-xs text-muted-foreground mt-1">Click or drag to replace the file</p>
                     </>
                   ) : (
                     <>
-                      <Upload className="h-10 w-10 text-muted-foreground mb-3" />
-                      <p className="font-bold text-foreground text-sm">
-                        <span className="underline">Choose File</span> or Drag & Drop here
+                      <div className="p-2.5 bg-primary/10 rounded-lg mb-3">
+                        <Upload className="h-6 w-6 text-primary" />
+                      </div>
+                      <p className="font-medium text-foreground text-sm">
+                        <span className="text-primary">Choose a file</span> or drag & drop
                       </p>
-                      <p className="text-xs text-muted-foreground/80 mt-1 max-w-sm">
-                        PDF format only (Max 5MB). Your deck should include: Problem, Solution, Market, Traction, Team, Financials, and Ask.
+                      <p className="text-xs text-muted-foreground mt-1.5 max-w-sm">
+                        PDF only · Max 5MB. Include problem, solution, market, traction, team, and the ask.
                       </p>
                     </>
                   )}
@@ -843,27 +895,27 @@ export default function PitchForm() {
               </div>
 
               <div>
-                <Label className="font-bold text-foreground block mb-2">Additional Documents (optional)</Label>
+                <Label className="font-medium text-foreground block mb-2">Additional Documents <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <div className="flex gap-2">
                   <Input 
                     type="file" 
                     accept=".pdf,.doc,.docx,.xls,.xlsx" 
                     disabled={readonly}
-                    className="border-2 border-foreground rounded-xl file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-2 file:border-foreground file:text-xs file:font-bold file:bg-[hsl(var(--pastel-blue))] hover:file:opacity-90 cursor-pointer"
+                    className="rounded-lg file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Upload Business Plan, Financial Projections, or technical charts if available.</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Business plan, financial projections, or technical charts.</p>
               </div>
             </div>
           )}
 
           {/* BACK | SAVE AS DRAFT | NEXT/SUBMIT FOOTER */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-8 pt-6 border-t border-foreground/10">
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-10 pt-6 border-t border-border/60">
             <Button 
               variant="outline" 
               onClick={prev} 
               disabled={step === 1}
-              className="border-2 border-foreground bg-background hover:bg-muted shadow-[2px_2px_0_0_hsl(var(--foreground))] font-bold rounded-xl transition-all"
+              className="rounded-lg"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
@@ -871,33 +923,33 @@ export default function PitchForm() {
             <div className="flex gap-2">
               {!readonly && (
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   onClick={() => persist(false).then(() => toast.success("Draft saved successfully!"))} 
                   disabled={saving}
-                  className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-xl"
+                  className="rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <Save className="mr-2 h-4 w-4" /> Save as Draft
+                  <Save className="mr-2 h-4 w-4" /> Save draft
                 </Button>
               )}
               
               {step < 5 ? (
                 <Button 
                   onClick={next}
-                  className="border-2 border-foreground bg-foreground text-background hover:bg-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] font-bold rounded-xl hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+                  className="rounded-lg shadow-sm"
                 >
-                  Continue to Next <ArrowRight className="ml-2 h-4 w-4" />
+                  Continue <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ) : (
                 !readonly && (
                   <Button 
                     onClick={submit} 
                     disabled={saving}
-                    className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-extrabold rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+                    className="rounded-lg shadow-sm bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-95"
                   >
                     {saving ? (
                       <><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
                     ) : (
-                      <><Send className="mr-2 h-4 w-4" /> Submit Pitch</>
+                      <><Send className="mr-2 h-4 w-4" /> Submit pitch</>
                     )}
                   </Button>
                 )

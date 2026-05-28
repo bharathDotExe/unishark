@@ -79,13 +79,13 @@ export default function InvestorProfile() {
         setInvestorData({
           linkedin_url: invData.linkedin_url,
           sectors: (invData.sectors as string[] | null) ?? [],
-          ticket_size_min: invData.ticket_size_min,
-          ticket_size_max: invData.ticket_size_max,
-          past_investments: invData.past_investments,
+          ticket_size_min: invData.ticket_size_min as unknown as number | null,
+          ticket_size_max: invData.ticket_size_max as unknown as number | null,
+          past_investments: (invData.past_investments as string | null) ?? null,
           verified: invData.verified ?? false,
         });
         setEditLinkedIn(invData.linkedin_url ?? "");
-        setEditPastInvestments(invData.past_investments ?? "");
+        setEditPastInvestments((invData.past_investments as string | null) ?? "");
         setEditTicketMin(invData.ticket_size_min?.toString() ?? "");
         setEditTicketMax(invData.ticket_size_max?.toString() ?? "");
         setEditSectors((invData.sectors as string[] | null) ?? []);
@@ -132,8 +132,8 @@ export default function InvestorProfile() {
         .upsert({
           user_id: user.id,
           sectors: editSectors,
-          ticket_size_min: editTicketMin ? Number(editTicketMin) : null,
-          ticket_size_max: editTicketMax ? Number(editTicketMax) : null,
+          ticket_size_min: editTicketMin ? (Number(editTicketMin) as unknown as string) : null,
+          ticket_size_max: editTicketMax ? (Number(editTicketMax) as unknown as string) : null,
           past_investments: editPastInvestments || null,
         }, { onConflict: "user_id" });
       if (error) throw error;
