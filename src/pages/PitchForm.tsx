@@ -384,25 +384,23 @@ export default function PitchForm() {
   };
 
   return (
-    <div className="min-h-screen bg-background relative pb-20" style={{ backgroundImage: "var(--gradient-mesh)" }}>
+    <div className="app-shell min-h-screen pb-20">
       <div className="container mx-auto px-4 pt-8 pb-8 sm:pt-12 sm:pb-10 max-w-3xl">
-        <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-6 hover:bg-muted border border-foreground/10 rounded-xl">
+        <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-6 -ml-2 text-muted-foreground hover:text-foreground">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
         </Button>
         
-        <Card className="p-6 sm:p-10 border-2 border-foreground shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px]">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-4 border-b border-foreground/10 pb-4">
+        <Card className="p-6 sm:p-10 border border-border/60 rounded-2xl backdrop-blur-xl bg-card/80 shadow-lg">
+          <div className="flex items-start justify-between flex-wrap gap-4 mb-8 pb-6 border-b border-border/60">
             <div>
-              <span className="text-xs uppercase tracking-widest font-extrabold text-[hsl(var(--pastel-pink))] bg-[hsl(var(--pastel-pink))]/10 border border-[hsl(var(--pastel-pink))]/20 px-2.5 py-1 rounded-full mb-1 inline-block">
-                STUDENT USER JOURNEY
-              </span>
-              <h1 className="text-3xl font-display font-extrabold text-foreground tracking-wide mt-1">Submit Your Pitch</h1>
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Submit your pitch</h1>
+              <p className="text-sm text-muted-foreground mt-1.5">Tell investors what you're building. We review every submission within 24 hours.</p>
             </div>
-            <span className="text-sm font-bold bg-muted/60 border border-foreground/10 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+            <span className="text-xs font-medium text-muted-foreground bg-muted/50 border border-border/60 px-3 py-1.5 rounded-full flex items-center gap-1.5 shrink-0">
               {readonly ? (
-                <>Status: <Badge variant="outline" className="border-foreground/20 font-bold bg-background">{status}</Badge></>
+                <>Status: <Badge variant="outline" className="ml-1">{status}</Badge></>
               ) : (
-                <><Sparkles className="h-4 w-4 text-[hsl(var(--pastel-blue))]" /> Auto-saving draft...</>
+                <><Sparkles className="h-3.5 w-3.5 text-primary" /> Draft auto-saved</>
               )}
             </span>
           </div>
