@@ -12,7 +12,8 @@ import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   ArrowLeft, ArrowRight, Upload, Save, Send, AlertCircle, CheckCircle2, 
-  HelpCircle, Trash2, Plus, Sparkles, RefreshCw, FileText, X, Image as ImageIcon, Loader2
+  HelpCircle, Trash2, Plus, Sparkles, RefreshCw, FileText, X, Image as ImageIcon, Loader2,
+  Rocket, Lightbulb, TrendingUp, Banknote, Users, Check
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
