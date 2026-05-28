@@ -694,13 +694,22 @@ export default function PitchForm() {
           {/* STEP 5: TEAM & DOCUMENTS */}
           {step === 5 && (
             <div className="space-y-6">
+              <div className="mb-2">
+                <h2 className="text-lg font-semibold text-foreground">Team & documents</h2>
+                <p className="text-sm text-muted-foreground">Add your co-founders and upload your pitch deck to submit.</p>
+              </div>
               <div>
-                <Label className="font-bold text-foreground block mb-3">Team Members *</Label>
+                <Label className="font-medium text-foreground block mb-3">Team Members <span className="text-destructive">*</span></Label>
                 <div className="space-y-4">
                   {draft.team_members.map((m, i) => (
-                    <div key={i} className="p-4 border-2 border-foreground rounded-2xl bg-muted/10 relative">
+                    <div key={i} className="p-4 border border-border/60 rounded-xl bg-muted/20 relative">
                       <div className="flex items-center justify-between mb-3">
-                        <span className="font-bold text-sm">Member {i + 1} {i === 0 ? "(Required)" : "(Optional)"}</span>
+                        <span className="font-semibold text-sm text-foreground">
+                          Member {i + 1}
+                          <span className="ml-2 text-xs font-normal text-muted-foreground">
+                            {i === 0 ? "(Required)" : "(Optional)"}
+                          </span>
+                        </span>
                         {draft.team_members.length > 1 && !readonly && (
                           <button
                             type="button"
@@ -708,7 +717,7 @@ export default function PitchForm() {
                               const arr = draft.team_members.filter((_, idx) => idx !== i);
                               set("team_members", arr);
                             }}
-                            className="text-xs font-bold text-destructive hover:underline"
+                            className="text-xs font-medium text-destructive hover:underline"
                           >
                             Remove
                           </button>
@@ -716,40 +725,40 @@ export default function PitchForm() {
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                         <div>
-                          <Label className="text-xs font-bold mb-1 block">Full Name</Label>
+                          <Label className="text-xs font-medium mb-1 block text-muted-foreground">Full Name</Label>
                           <Input 
-                            placeholder="Name" 
+                            placeholder="Jane Doe" 
                             value={m.name} 
                             onChange={(e) => {
                               const arr = [...draft.team_members]; arr[i] = { ...arr[i], name: e.target.value }; set("team_members", arr);
                             }} 
                             disabled={readonly} 
-                            className="border-2 border-foreground rounded-xl h-10"
+                            className="h-10 rounded-lg"
                           />
                         </div>
                         <div>
-                          <Label className="text-xs font-bold mb-1 block">Role</Label>
+                          <Label className="text-xs font-medium mb-1 block text-muted-foreground">Role</Label>
                           <Input 
-                            placeholder="Role (e.g. CEO, CTO)" 
+                            placeholder="CEO, CTO, etc." 
                             value={m.role} 
                             onChange={(e) => {
                               const arr = [...draft.team_members]; arr[i] = { ...arr[i], role: e.target.value }; set("team_members", arr);
                             }} 
                             disabled={readonly} 
-                            className="border-2 border-foreground rounded-xl h-10"
+                            className="h-10 rounded-lg"
                           />
                         </div>
                       </div>
                       <div>
-                        <Label className="text-xs font-bold mb-1 block">LinkedIn Profile URL</Label>
+                        <Label className="text-xs font-medium mb-1 block text-muted-foreground">LinkedIn Profile URL</Label>
                         <Input 
-                          placeholder="LinkedIn URL" 
+                          placeholder="https://linkedin.com/in/..." 
                           value={m.linkedinUrl ?? ""} 
                           onChange={(e) => {
                             const arr = [...draft.team_members]; arr[i] = { ...arr[i], linkedinUrl: e.target.value }; set("team_members", arr);
                           }} 
                           disabled={readonly} 
-                          className="border-2 border-foreground rounded-xl h-10"
+                          className="h-10 rounded-lg"
                         />
                       </div>
                     </div>
@@ -760,39 +769,38 @@ export default function PitchForm() {
                       type="button" 
                       variant="outline" 
                       onClick={() => set("team_members", [...draft.team_members, { name: "", role: "", linkedinUrl: "" }])}
-                      className="border-2 border-dashed border-foreground/30 hover:border-foreground bg-background hover:bg-muted font-bold rounded-xl flex items-center justify-center gap-1 w-full"
+                      className="border-dashed hover:border-primary hover:text-primary rounded-lg w-full"
                     >
-                      <Plus className="h-4 w-4" /> Add More Members
+                      <Plus className="h-4 w-4" /> Add another member
                     </Button>
                   )}
                 </div>
               </div>
 
               {/* Startup Thumbnail */}
-              <div className="mb-6">
-                <Label className="font-bold text-foreground block mb-2">Startup Thumbnail (Optional)</Label>
+              <div>
+                <Label className="font-medium text-foreground block mb-2">Startup Thumbnail <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <div
                   onDragOver={(e) => handleDrag(e, "thumbnail", true)}
                   onDragLeave={(e) => handleDrag(e, "thumbnail", false)}
                   onDrop={(e) => handleDrop(e, "thumbnail")}
                   className={cn(
-                    "border-2 border-dashed rounded-2xl p-6 text-center transition-all relative flex flex-col items-center justify-center min-h-[220px]",
-                    draft.thumbnail_url ? "border-solid bg-surface" : "border-foreground/30 bg-muted/5",
-                    dragOverThumbnail ? "border-primary bg-primary/5 scale-[0.99]" : "",
-                    !readonly && "hover:border-foreground/60 cursor-pointer"
+                    "border border-dashed rounded-xl p-6 text-center transition-all relative flex flex-col items-center justify-center min-h-[200px]",
+                    draft.thumbnail_url ? "border-solid bg-muted/20" : "border-border bg-muted/10",
+                    dragOverThumbnail ? "border-primary bg-primary/5" : "",
+                    !readonly && "hover:border-primary/60 cursor-pointer"
                   )}
                 >
                   {draft.thumbnail_url ? (
                     <div className="w-full h-full flex flex-col items-center justify-center space-y-3">
-                      <div className="w-48 aspect-[16/9] rounded-lg border-2 border-foreground overflow-hidden bg-background shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+                      <div className="w-48 aspect-[16/9] rounded-lg border border-border overflow-hidden bg-background shadow-sm">
                         <img src={draft.thumbnail_url} alt="Startup Thumbnail" className="w-full h-full object-cover animate-fade-in" />
                       </div>
                       {!readonly && (
                         <Button
                           type="button"
-                          variant="destructive"
+                          variant="outline"
                           size="sm"
-                          className="border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
                           onClick={(e) => {
                             e.stopPropagation();
                             set("thumbnail_url", "");
@@ -813,17 +821,17 @@ export default function PitchForm() {
                       />
                       {uploadingThumbnail ? (
                         <div className="flex flex-col items-center space-y-2">
-                          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-                          <p className="text-sm font-medium text-foreground">Uploading thumbnail...</p>
+                          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                          <p className="text-sm text-muted-foreground">Uploading thumbnail...</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center space-y-2 pointer-events-none">
-                          <div className="p-3 bg-[hsl(var(--pastel-pink))]/10 border-2 border-[hsl(var(--pastel-pink))] rounded-lg shadow-[2px_2px_0_0_hsl(var(--pastel-pink))]">
-                            <ImageIcon className="h-8 w-8 text-foreground" />
+                          <div className="p-2.5 bg-primary/10 rounded-lg">
+                            <ImageIcon className="h-6 w-6 text-primary" />
                           </div>
-                          <p className="font-bold text-foreground">Upload Thumbnail</p>
-                          <p className="text-xs text-muted-foreground">Drag & drop or click to choose</p>
-                          <p className="text-[10px] text-muted-foreground/80 font-mono mt-1">PNG, JPG, WEBP • Max 2MB</p>
+                          <p className="font-medium text-foreground text-sm">Upload thumbnail</p>
+                          <p className="text-xs text-muted-foreground">Drag & drop or click to browse</p>
+                          <p className="text-[11px] text-muted-foreground/80 mt-1">PNG, JPG, WEBP · Max 2MB</p>
                         </div>
                       )}
                     </>
@@ -832,7 +840,7 @@ export default function PitchForm() {
               </div>
 
               <div>
-                <Label className="font-bold text-foreground block mb-2">Pitch Deck (PDF, max 5MB) *</Label>
+                <Label className="font-medium text-foreground block mb-2">Pitch Deck <span className="text-destructive">*</span> <span className="text-muted-foreground font-normal">(PDF, max 5MB)</span></Label>
                 
                 {/* Drag and Drop area */}
                 <div 
@@ -841,10 +849,10 @@ export default function PitchForm() {
                   onDrop={(e) => handleDrop(e, "deck")}
                   onClick={() => !readonly && !uploading && fileInputRef.current?.click()}
                   className={cn(
-                    "border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center",
+                    "border border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 flex flex-col items-center justify-center",
                     dragOverDeck 
-                      ? "border-primary bg-[hsl(var(--pastel-blue))]/10 scale-[0.99]" 
-                      : "border-foreground/30 bg-muted/5 hover:bg-muted/15 hover:border-foreground/60",
+                      ? "border-primary bg-primary/5" 
+                      : "border-border bg-muted/10 hover:bg-muted/20 hover:border-primary/60",
                     readonly && "cursor-not-allowed opacity-70"
                   )}
                 >
@@ -859,25 +867,27 @@ export default function PitchForm() {
                   
                   {uploading ? (
                     <>
-                      <RefreshCw className="h-10 w-10 text-foreground animate-spin mb-3" />
-                      <p className="font-bold text-foreground text-sm">Uploading deck PDF...</p>
+                      <RefreshCw className="h-8 w-8 text-primary animate-spin mb-3" />
+                      <p className="text-sm text-muted-foreground">Uploading deck PDF...</p>
                     </>
                   ) : draft.deck_url ? (
                     <>
-                      <CheckCircle2 className="h-10 w-10 text-success mb-3" />
-                      <p className="font-bold text-success text-sm flex items-center gap-1 justify-center">
-                        <FileText className="h-4 w-4 text-foreground" /> Pitch deck uploaded successfully!
+                      <CheckCircle2 className="h-8 w-8 text-emerald-500 mb-3" />
+                      <p className="font-medium text-foreground text-sm flex items-center gap-1.5 justify-center">
+                        <FileText className="h-4 w-4 text-muted-foreground" /> Pitch deck uploaded
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">Click or drag here to replace the current file</p>
+                      <p className="text-xs text-muted-foreground mt-1">Click or drag to replace the file</p>
                     </>
                   ) : (
                     <>
-                      <Upload className="h-10 w-10 text-muted-foreground mb-3" />
-                      <p className="font-bold text-foreground text-sm">
-                        <span className="underline">Choose File</span> or Drag & Drop here
+                      <div className="p-2.5 bg-primary/10 rounded-lg mb-3">
+                        <Upload className="h-6 w-6 text-primary" />
+                      </div>
+                      <p className="font-medium text-foreground text-sm">
+                        <span className="text-primary">Choose a file</span> or drag & drop
                       </p>
-                      <p className="text-xs text-muted-foreground/80 mt-1 max-w-sm">
-                        PDF format only (Max 5MB). Your deck should include: Problem, Solution, Market, Traction, Team, Financials, and Ask.
+                      <p className="text-xs text-muted-foreground mt-1.5 max-w-sm">
+                        PDF only · Max 5MB. Include problem, solution, market, traction, team, and the ask.
                       </p>
                     </>
                   )}
@@ -885,27 +895,27 @@ export default function PitchForm() {
               </div>
 
               <div>
-                <Label className="font-bold text-foreground block mb-2">Additional Documents (optional)</Label>
+                <Label className="font-medium text-foreground block mb-2">Additional Documents <span className="text-muted-foreground font-normal">(optional)</span></Label>
                 <div className="flex gap-2">
                   <Input 
                     type="file" 
                     accept=".pdf,.doc,.docx,.xls,.xlsx" 
                     disabled={readonly}
-                    className="border-2 border-foreground rounded-xl file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-2 file:border-foreground file:text-xs file:font-bold file:bg-[hsl(var(--pastel-blue))] hover:file:opacity-90 cursor-pointer"
+                    className="rounded-lg file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 cursor-pointer"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground font-semibold mt-1">Upload Business Plan, Financial Projections, or technical charts if available.</p>
+                <p className="text-xs text-muted-foreground mt-1.5">Business plan, financial projections, or technical charts.</p>
               </div>
             </div>
           )}
 
           {/* BACK | SAVE AS DRAFT | NEXT/SUBMIT FOOTER */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mt-8 pt-6 border-t border-foreground/10">
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-10 pt-6 border-t border-border/60">
             <Button 
               variant="outline" 
               onClick={prev} 
               disabled={step === 1}
-              className="border-2 border-foreground bg-background hover:bg-muted shadow-[2px_2px_0_0_hsl(var(--foreground))] font-bold rounded-xl transition-all"
+              className="rounded-lg"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back
             </Button>
@@ -913,33 +923,33 @@ export default function PitchForm() {
             <div className="flex gap-2">
               {!readonly && (
                 <Button 
-                  variant="outline" 
+                  variant="ghost" 
                   onClick={() => persist(false).then(() => toast.success("Draft saved successfully!"))} 
                   disabled={saving}
-                  className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-xl"
+                  className="rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <Save className="mr-2 h-4 w-4" /> Save as Draft
+                  <Save className="mr-2 h-4 w-4" /> Save draft
                 </Button>
               )}
               
               {step < 5 ? (
                 <Button 
                   onClick={next}
-                  className="border-2 border-foreground bg-foreground text-background hover:bg-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] font-bold rounded-xl hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+                  className="rounded-lg shadow-sm"
                 >
-                  Continue to Next <ArrowRight className="ml-2 h-4 w-4" />
+                  Continue <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ) : (
                 !readonly && (
                   <Button 
                     onClick={submit} 
                     disabled={saving}
-                    className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-extrabold rounded-xl shadow-[3px_3px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
+                    className="rounded-lg shadow-sm bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-95"
                   >
                     {saving ? (
                       <><RefreshCw className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
                     ) : (
-                      <><Send className="mr-2 h-4 w-4" /> Submit Pitch</>
+                      <><Send className="mr-2 h-4 w-4" /> Submit pitch</>
                     )}
                   </Button>
                 )
