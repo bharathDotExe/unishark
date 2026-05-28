@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   MessageSquare, Heart, Repeat2, Share, Bookmark, ThumbsUp, ExternalLink,
-  TrendingUp, Briefcase, BarChart3, ArrowUpRight, CheckCircle2
+  TrendingUp, Briefcase, BarChart3, ArrowUpRight, CheckCircle2, FileText,
+  RefreshCw
 } from "lucide-react";
 
-// ── DATA ────────────────────────────────────────────────────────────────────
+// ── STATIC EDITORIAL DATA ────────────────────────────────────────────────────
 
 const youtubeVideos = [
   {
@@ -134,65 +135,19 @@ const instagramPosts = [
   },
 ];
 
-const pitchedIdeas = [
-  {
-    id: "p1",
-    name: "AI Resume Builder",
-    sector: "EdTech",
-    stage: "MVP",
-    ask: "₹1 Crore",
-    match: 94,
-    time: "2h ago",
-    tagline: "AI-powered tool helping students tailor resumes to specific job descriptions. 500 users, ₹5K MRR.",
-    hot: true,
-  },
-  {
-    id: "p2",
-    name: "EcoLogistics Hub",
-    sector: "ClimateTech",
-    stage: "Seed",
-    ask: "₹50 Lakhs",
-    match: 82,
-    time: "5h ago",
-    tagline: "EV fleet routing to cut last-mile delivery carbon by 30% and fuel costs by 25% for SMBs.",
-    hot: false,
-  },
-  {
-    id: "p3",
-    name: "SaaS Revenue Ops",
-    sector: "SaaS",
-    stage: "Pre-Seed",
-    ask: "₹25 Lakhs",
-    match: 75,
-    time: "1d ago",
-    tagline: "Unified churn/MRR/LTV dashboard for B2B SaaS companies in real-time.",
-    hot: false,
-  },
-  {
-    id: "p4",
-    name: "HealthStack Pro",
-    sector: "HealthTech",
-    stage: "MVP",
-    ask: "₹75 Lakhs",
-    match: 71,
-    time: "2d ago",
-    tagline: "Clinic management SaaS for tier-2 and tier-3 cities. 120 clinics onboarded in 3 months.",
-    hot: false,
-  },
-  {
-    id: "p5",
-    name: "AgriSense AI",
-    sector: "AgriTech",
-    stage: "Pre-Seed",
-    ask: "₹20 Lakhs",
-    match: 68,
-    time: "2d ago",
-    tagline: "Soil quality prediction for smallholder farmers using satellite imagery and ML.",
-    hot: false,
-  },
-];
+// ── TYPES ─────────────────────────────────────────────────────────────────────
 
-// ── COMPONENTS ───────────────────────────────────────────────────────────────
+type Pitch = {
+  id: string;
+  title: string;
+  one_liner: string | null;
+  stage: string | null;
+  funding_ask: string | null;
+  traction: string | null;
+  created_at: string;
+};
+
+// ── COMPONENTS ────────────────────────────────────────────────────────────────
 
 function YTCard({ video }: { video: typeof youtubeVideos[0] }) {
   return (
@@ -305,7 +260,6 @@ function LinkedInCard({ post }: { post: typeof linkedinPosts[0] }) {
 function InstagramCard({ post }: { post: typeof instagramPosts[0] }) {
   return (
     <Card className="p-0 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl overflow-hidden flex flex-col">
-      {/* Header */}
       <div className="p-3 flex items-center justify-between border-b-2 border-foreground">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px] border border-foreground">
@@ -320,14 +274,12 @@ function InstagramCard({ post }: { post: typeof instagramPosts[0] }) {
         </Badge>
       </div>
 
-      {/* Quote image */}
       <div className={`${post.bgColor} flex items-center justify-center p-8 text-center border-b-2 border-foreground min-h-[160px]`}>
         <h3 className="font-display font-black text-xl uppercase tracking-tight text-foreground leading-tight">
           "{post.quote}"
         </h3>
       </div>
 
-      {/* Actions */}
       <div className="p-4">
         <div className="flex items-center gap-4 mb-2">
           <Heart className="w-5 h-5 cursor-pointer hover:fill-destructive hover:text-destructive transition-colors" />
@@ -345,40 +297,43 @@ function InstagramCard({ post }: { post: typeof instagramPosts[0] }) {
   );
 }
 
-function PitchCard({ pitch }: { pitch: typeof pitchedIdeas[0] }) {
+function PitchCard({ pitch }: { pitch: Pitch }) {
   return (
-    <Card className={`p-5 border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-xl transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] relative ${pitch.hot ? "bg-[hsl(var(--pastel-yellow))]/20" : "bg-card"}`}>
-      {pitch.hot && (
-        <div className="absolute top-0 right-0 bg-destructive text-destructive-foreground text-[9px] font-black px-2 py-0.5 border-b-2 border-l-2 border-foreground rounded-bl-xl tracking-widest uppercase">
-          HOT
-        </div>
-      )}
-
+    <Card className="p-5 border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-xl transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] bg-card">
       <div className="flex justify-between items-start mb-3">
-        <Badge className={`font-bold shadow-[1px_1px_0_0_hsl(var(--foreground))] border-foreground text-xs ${pitch.match >= 90 ? "bg-success text-success-foreground" : "bg-foreground text-background"}`}>
-          {pitch.match}% Match
+        <Badge className="font-bold shadow-[1px_1px_0_0_hsl(var(--foreground))] border-foreground text-xs bg-foreground text-background">
+          New
         </Badge>
-        <span className="text-[10px] font-extrabold text-muted-foreground uppercase">{pitch.time}</span>
+        <span className="text-[10px] font-extrabold text-muted-foreground uppercase">
+          {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+        </span>
       </div>
 
-      <h4 className="font-display font-extrabold text-xl leading-tight mb-1">{pitch.name}</h4>
+      <h4 className="font-display font-extrabold text-xl leading-tight mb-1">{pitch.title}</h4>
       <div className="flex flex-wrap gap-1.5 mb-3 pb-3 border-b-2 border-foreground/10">
-        <Badge variant="outline" className="text-[10px] font-bold border-foreground/30">{pitch.sector}</Badge>
-        <Badge variant="outline" className="text-[10px] font-bold border-foreground/30">{pitch.stage}</Badge>
-        <Badge variant="outline" className="text-[10px] font-bold border-foreground/30">Ask: {pitch.ask}</Badge>
+        {pitch.stage && (
+          <Badge variant="outline" className="text-[10px] font-bold border-foreground/30">{pitch.stage}</Badge>
+        )}
+        {pitch.funding_ask && (
+          <Badge variant="outline" className="text-[10px] font-bold border-foreground/30">Ask: {pitch.funding_ask}</Badge>
+        )}
       </div>
 
-      <p className="text-xs font-semibold text-muted-foreground italic mb-4 line-clamp-2">"{pitch.tagline}"</p>
+      {pitch.one_liner && (
+        <p className="text-xs font-semibold text-muted-foreground italic mb-4 line-clamp-2">"{pitch.one_liner}"</p>
+      )}
 
       <div className="flex gap-2">
         <Button asChild size="sm" className="flex-1 border-2 border-foreground font-bold shadow-[2px_2px_0_0_hsl(var(--foreground))] rounded-lg text-xs h-8">
-          <Link to={`/pitches`}>View Pitch</Link>
+          <Link to={`/pitches/${pitch.id}`}>View Pitch</Link>
         </Button>
         <Button size="icon" variant="outline" className="border-2 border-foreground font-bold shadow-[2px_2px_0_0_hsl(var(--foreground))] rounded-lg h-8 w-8 shrink-0">
           <Bookmark className="h-3.5 w-3.5" />
         </Button>
-        <Button size="icon" variant="outline" className="border-2 border-foreground font-bold shadow-[2px_2px_0_0_hsl(var(--foreground))] rounded-lg h-8 w-8 shrink-0">
-          <MessageSquare className="h-3.5 w-3.5" />
+        <Button asChild size="icon" variant="outline" className="border-2 border-foreground font-bold shadow-[2px_2px_0_0_hsl(var(--foreground))] rounded-lg h-8 w-8 shrink-0">
+          <Link to="/messages">
+            <MessageSquare className="h-3.5 w-3.5" />
+          </Link>
         </Button>
       </div>
     </Card>
@@ -392,8 +347,16 @@ export default function InvestorHome() {
   const [fullName, setFullName] = useState("");
   const [activeTab, setActiveTab] = useState<"all" | "youtube" | "twitter" | "linkedin" | "instagram">("all");
 
+  // Real DB data
+  const [pitches, setPitches] = useState<Pitch[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [newPitchesToday, setNewPitchesToday] = useState(0);
+  const [loadingPitches, setLoadingPitches] = useState(true);
+
   useEffect(() => {
     if (!user) return;
+
+    // Load profile name
     supabase
       .from("profiles")
       .select("full_name")
@@ -402,12 +365,47 @@ export default function InvestorHome() {
       .then(({ data }) => {
         if (data?.full_name) setFullName(data.full_name);
       });
+
+    // Load approved pitches for deal flow
+    const loadPitches = async () => {
+      setLoadingPitches(true);
+      try {
+        const { data } = await supabase
+          .from("pitches")
+          .select("id, title, one_liner, stage, funding_ask, traction, created_at")
+          .eq("status", "APPROVED")
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        const all = data ?? [];
+        setPitches(all);
+
+        // Count pitches created in last 24 hours
+        const yesterday = new Date(Date.now() - 86400000).toISOString();
+        setNewPitchesToday(all.filter(p => p.created_at >= yesterday).length);
+      } finally {
+        setLoadingPitches(false);
+      }
+    };
+
+    // Load unread message count
+    const loadUnread = async () => {
+      const { count } = await supabase
+        .from("messages")
+        .select("id", { count: "exact", head: true })
+        .eq("recipient_id", user.id)
+        .eq("read", false);
+      setUnreadCount(count ?? 0);
+    };
+
+    loadPitches();
+    loadUnread();
   }, [user]);
 
   const getFirstName = () => {
     if (fullName) return fullName.split(" ")[0];
     if (user?.email) return user.email.split("@")[0];
-    return "Raj";
+    return "Investor";
   };
 
   return (
@@ -426,13 +424,13 @@ export default function InvestorHome() {
             Your daily feed — investment education, market signals, and fresh pitches.
           </p>
 
-          {/* Quick Stats Row */}
+          {/* Quick Stats Row — real data */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
             {[
-              { label: "Portfolio Value", value: "₹6.2 Cr", icon: Briefcase, delta: "+18%" },
-              { label: "Active Deals", value: "5 cos.", icon: CheckCircle2, delta: "Seed/MVP" },
-              { label: "New Pitches", value: "12 today", icon: BarChart3, delta: "Fresh" },
-              { label: "Unread Messages", value: "4", icon: MessageSquare, delta: "Founders" },
+              { label: "Active Deals", value: "—", icon: Briefcase, delta: "No deals yet" },
+              { label: "New Pitches Today", value: newPitchesToday.toString(), icon: BarChart3, delta: "Approved" },
+              { label: "Total Pitches", value: pitches.length.toString(), icon: FileText, delta: "Browseable" },
+              { label: "Unread Messages", value: unreadCount.toString(), icon: MessageSquare, delta: "Founders" },
             ].map((s) => (
               <div key={s.label} className="bg-background/60 border-2 border-foreground rounded-xl p-3 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
                 <p className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground mb-1">{s.label}</p>
@@ -447,10 +445,10 @@ export default function InvestorHome() {
               <a href="#dealflow">Browse New Pitches</a>
             </Button>
             <Button asChild size="sm" variant="outline" className="border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] bg-background rounded-xl font-extrabold">
-              <Link to="/portfolio">My Portfolio</Link>
+              <Link to="/bookmarks">My Bookmarks</Link>
             </Button>
             <Button asChild size="sm" variant="outline" className="border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] bg-background rounded-xl font-extrabold">
-              <Link to="/analytics">Analytics</Link>
+              <Link to="/messages">Messages {unreadCount > 0 && `(${unreadCount})`}</Link>
             </Button>
           </div>
         </div>
@@ -538,13 +536,13 @@ export default function InvestorHome() {
           )}
         </div>
 
-        {/* ── RIGHT: DEAL FLOW ── */}
+        {/* ── RIGHT: DEAL FLOW (real DB data) ── */}
         <div className="space-y-5" id="dealflow">
           <div className="flex items-center justify-between border-b-2 border-foreground/10 pb-4">
             <h3 className="text-xl font-display font-extrabold text-foreground uppercase tracking-tight">
               Deal Flow
               <span className="text-xs font-bold text-muted-foreground ml-2 lowercase normal-case tracking-normal">
-                ({pitchedIdeas.length} new pitches)
+                ({pitches.length} pitches)
               </span>
             </h3>
             <Button asChild variant="ghost" size="sm" className="text-xs font-extrabold underline">
@@ -552,9 +550,25 @@ export default function InvestorHome() {
             </Button>
           </div>
 
-          <div className="space-y-4">
-            {pitchedIdeas.map((p) => <PitchCard key={p.id} pitch={p} />)}
-          </div>
+          {loadingPitches ? (
+            <Card className="p-8 text-center border-2 border-foreground/20 rounded-2xl">
+              <RefreshCw className="h-6 w-6 text-muted-foreground animate-spin mx-auto mb-2" />
+              <p className="text-sm font-semibold text-muted-foreground">Loading pitches...</p>
+            </Card>
+          ) : pitches.length === 0 ? (
+            <Card className="p-8 text-center border-2 border-dashed border-foreground/20 rounded-2xl">
+              <FileText className="h-10 w-10 text-foreground/20 mx-auto mb-3" />
+              <p className="text-sm font-bold text-muted-foreground mb-1">No approved pitches yet</p>
+              <p className="text-xs text-muted-foreground/70 font-medium">Student founders are submitting. Check back soon!</p>
+              <Button asChild variant="outline" size="sm" className="mt-4 border-2 border-foreground font-bold rounded-xl">
+                <Link to="/pitches">Browse All Pitches</Link>
+              </Button>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {pitches.map((p) => <PitchCard key={p.id} pitch={p} />)}
+            </div>
+          )}
 
           <Button asChild variant="outline" className="w-full border-2 border-foreground border-dashed bg-background hover:bg-muted font-extrabold rounded-xl py-5 text-sm">
             <Link to="/pitches">Browse All Pitches</Link>

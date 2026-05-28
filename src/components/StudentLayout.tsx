@@ -32,6 +32,7 @@ export default function StudentLayout({ children }: { children?: React.ReactNode
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
   const { user, signOut } = useAuth();
   const [fullName, setFullName] = useState("");
   const [searchVal, setSearchVal] = useState("");
@@ -149,7 +150,12 @@ export default function StudentLayout({ children }: { children?: React.ReactNode
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="w-64 border-r border-foreground/10 bg-background/30 backdrop-blur-md flex-shrink-0 hidden md:flex flex-col h-screen sticky top-0 z-40">
+      <aside
+        className={cn(
+          "border-r border-foreground/10 bg-background/30 backdrop-blur-md flex-shrink-0 hidden md:flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 overflow-hidden",
+          desktopSidebarOpen ? "w-64" : "w-0"
+        )}
+      >
         <SidebarContent />
       </aside>
 
@@ -157,6 +163,28 @@ export default function StudentLayout({ children }: { children?: React.ReactNode
       <div className="flex-1 flex flex-col min-w-0 md:pt-0 pt-16">
         {/* Sticky Desktop Top Header */}
         <header className="hidden md:flex sticky top-0 z-30 h-16 w-full items-center justify-between border-b border-foreground/10 bg-background/25 backdrop-blur-md px-8 gap-4">
+          
+          {/* Hamburger toggle for desktop sidebar */}
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setDesktopSidebarOpen((v) => !v)}
+              className="h-9 w-9 rounded-xl border border-foreground/10 hover:bg-muted transition-all hover:border-foreground/20"
+              aria-label="Toggle sidebar"
+            >
+              <Menu className="h-5 w-5 text-muted-foreground" />
+            </Button>
+
+            {/* Show logo+name when sidebar is collapsed */}
+            {!desktopSidebarOpen && (
+              <Link to="/dashboard" className="flex items-center gap-2">
+                <img src={logo} alt="UniShark" className="h-7 w-7 rounded-md object-contain" />
+                <span className="font-display font-extrabold text-lg tracking-wider text-foreground">UniShark</span>
+              </Link>
+            )}
+          </div>
+
           {/* Search bar */}
           <form onSubmit={handleSearchSubmit} className="relative w-full max-w-md">
             <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />

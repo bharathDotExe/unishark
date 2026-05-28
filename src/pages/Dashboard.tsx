@@ -32,21 +32,6 @@ type Pitch = {
   bookmark_count?: number;
 };
 
-type MockPitch = {
-  id: string;
-  title: string;
-  status: "APPROVED" | "DRAFT";
-  created_at: string;
-  view_count: number;
-  message_count: number;
-  bookmark_count: number;
-  stage: string;
-  one_liner: string;
-  problem: string;
-  solution: string;
-  isMock: boolean;
-};
-
 type Message = {
   id: string;
   sender_name: string;
@@ -55,7 +40,6 @@ type Message = {
   created_at: string;
   pitch_id?: string;
   pitch_title?: string;
-  isMock?: boolean;
 };
 
 export default function Dashboard() {
@@ -67,69 +51,6 @@ export default function Dashboard() {
   const [fullName, setFullName] = useState("");
   const [showTips, setShowTips] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  // Mock fallbacks for Pitches if database is empty
-  const mockPitches: MockPitch[] = [
-    {
-      id: "mock-pitch-1",
-      title: "AI Resume Builder",
-      status: "APPROVED",
-      created_at: "2024-05-14T10:00:00Z",
-      view_count: 23,
-      message_count: 5,
-      bookmark_count: 8,
-      stage: "MVP",
-      one_liner: "Build industry-tailored resumes in 60 seconds with advanced AI.",
-      problem: "Students struggle to write resumes that pass ATS screenings.",
-      solution: "AI engine scans resumes against real-time jobs and suggests exact keywords.",
-      isMock: true
-    },
-    {
-      id: "mock-pitch-2",
-      title: "EdTech Learning Platform",
-      status: "DRAFT",
-      created_at: "2024-05-10T09:15:00Z",
-      view_count: 0,
-      message_count: 0,
-      bookmark_count: 0,
-      stage: "IDEA",
-      one_liner: "Peer-to-peer visual learning platform for college engineering classes.",
-      problem: "Engineering lectures are abstract and hard to grasp for visual learners.",
-      solution: "Interactive 3D model libraries built by students for students.",
-      isMock: true
-    }
-  ];
-
-  // Mock fallbacks for Messages if database is empty
-  const mockMessages: Message[] = [
-    {
-      id: "mock-msg-1",
-      sender_name: "Raj Patel",
-      sender_company: "TechVentures",
-      content: "Love your AI idea! Can we schedule a call?",
-      created_at: "2024-05-15T14:30:00Z",
-      pitch_title: "AI Resume Builder",
-      isMock: true
-    },
-    {
-      id: "mock-msg-2",
-      sender_name: "Priya Sharma",
-      sender_company: "EdFunds",
-      content: "Interested in the EdTech platform. What is your go-to-market plan?",
-      created_at: "2024-05-14T11:15:00Z",
-      pitch_title: "EdTech Learning Platform",
-      isMock: true
-    },
-    {
-      id: "mock-msg-3",
-      sender_name: "Vedant Kumar",
-      sender_company: "AngelNetwork",
-      content: "Can you send more details about your market sizing assumptions?",
-      created_at: "2024-05-13T16:45:00Z",
-      pitch_title: "AI Resume Builder",
-      isMock: true
-    }
-  ];
 
   const loadData = async () => {
     if (!user) return;
@@ -241,12 +162,7 @@ export default function Dashboard() {
     loadData();
   }, [user]);
 
-  const handleDelete = async (id: string, isMock?: boolean) => {
-    if (isMock) {
-      toast.success("Mock pitch deleted successfully!");
-      return;
-    }
-
+  const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this pitch?")) return;
     setDeletingId(id);
     const { error } = await supabase.from("pitches").delete().eq("id", id);
@@ -259,16 +175,11 @@ export default function Dashboard() {
     }
   };
 
-  const handlePublish = async (pitchId: string, isMock?: boolean) => {
-    if (isMock) {
-      toast.success("Mock pitch submitted for review successfully!");
-      return;
-    }
-
+  const handlePublish = async (pitchId: string) => {
     try {
       const { error } = await supabase
         .from("pitches")
-        .update({ status: "APPROVED" }) // Instant approval for local demo
+        .update({ status: "APPROVED" })
         .eq("id", pitchId);
 
       if (error) throw error;
@@ -279,20 +190,11 @@ export default function Dashboard() {
     }
   };
 
-  const activePitches = pitches.length > 0 ? pitches : mockPitches;
-  const activeMessages = messages.length > 0 ? messages : mockMessages;
-
-  // Calculate dynamic stats
-  const totalPitchesCount = pitches.length > 0 ? pitches.length : mockPitches.length;
-  const approvedCount = pitches.length > 0
-    ? pitches.filter(p => p.status === "APPROVED").length
-    : mockPitches.filter(p => p.status === "APPROVED").length;
-
-  const totalViews = pitches.length > 0
-    ? pitches.reduce((sum, p) => sum + (p.view_count || 0), 0)
-    : mockPitches.reduce((sum, p) => sum + p.view_count, 0);
-
-  const totalMessageCount = messages.length > 0 ? messages.length : mockMessages.length;
+  // Calculate stats from real data only
+  const totalPitchesCount = pitches.length;
+  const approvedCount = pitches.filter(p => p.status === "APPROVED").length;
+  const totalViews = pitches.reduce((sum, p) => sum + (p.view_count || 0), 0);
+  const totalMessageCount = messages.length;
 
   const getFirstName = () => {
     if (fullName) return fullName.split(" ")[0];
@@ -364,7 +266,7 @@ export default function Dashboard() {
               <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-none text-xs">Visits</Badge>
             </div>
             <p className="text-4xl font-extrabold text-foreground font-display">Views: {totalViews}</p>
-            <p className="text-sm text-muted-foreground mt-1 font-semibold">({Math.round(totalViews * 0.75) || 34} unique)</p>
+            <p className="text-sm text-muted-foreground mt-1 font-semibold">({Math.round(totalViews * 0.75)} unique)</p>
           </div>
           <Button asChild variant="link" className="p-0 h-auto self-start mt-4 font-bold text-foreground hover:underline">
             <Link to="/profile" className="flex items-center gap-1">View Stats <ArrowUpRight className="h-3.5 w-3.5" /></Link>
@@ -379,7 +281,7 @@ export default function Dashboard() {
               <Badge className="bg-[hsl(var(--pastel-mint))] text-foreground border-none text-xs">Inbox</Badge>
             </div>
             <p className="text-4xl font-extrabold text-foreground font-display">{totalMessageCount}</p>
-            <p className="text-sm text-muted-foreground mt-1 font-semibold">({Math.max(0, totalMessageCount - 1) || 2} unread)</p>
+            <p className="text-sm text-muted-foreground mt-1 font-semibold">({totalMessageCount} total)</p>
           </div>
           <Button asChild variant="link" className="p-0 h-auto self-start mt-4 font-bold text-foreground hover:underline">
             <Link to="/messages" className="flex items-center gap-1">Go to Box <ArrowUpRight className="h-3.5 w-3.5" /></Link>
@@ -576,106 +478,105 @@ export default function Dashboard() {
           {loading ? (
             <Card className="p-8 text-center border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl">
               <RefreshCw className="h-8 w-8 text-muted-foreground animate-spin mx-auto mb-2" />
-              <p className="text-muted-foreground font-semibold">Refreshing pitches...</p>
+              <p className="text-muted-foreground font-semibold">Loading your pitches...</p>
+            </Card>
+          ) : pitches.length === 0 ? (
+            <Card className="p-10 text-center border-2 border-dashed border-foreground/30 rounded-2xl bg-card/50">
+              <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(var(--pastel-blue))]/20 border-2 border-foreground/10">
+                <FileText className="h-7 w-7 text-foreground/50" />
+              </div>
+              <h4 className="font-display font-extrabold text-xl text-foreground mb-2">No pitches yet</h4>
+              <p className="text-muted-foreground font-medium text-sm mb-6 max-w-xs mx-auto">
+                Submit your first pitch to start connecting with investors. It only takes a few minutes.
+              </p>
+              <Button asChild className="border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] bg-foreground text-background hover:bg-foreground rounded-xl font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
+                <Link to="/pitches/create">
+                  <Plus className="mr-2 h-4 w-4" /> Submit Your First Pitch
+                </Link>
+              </Button>
             </Card>
           ) : (
             <div className="space-y-4">
-              {activePitches.map((p) => {
-                const isMock = 'isMock' in p && (p as { isMock?: boolean }).isMock;
-                return (
-                  <Card
-                    key={p.id}
-                    className={cn(
-                      "p-6 border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]",
-                      isMock ? "bg-card/90" : "bg-card"
-                    )}
-                  >
-                    {isMock && (
-                      <div className="absolute top-0 right-0 bg-foreground/5 text-foreground/40 text-[10px] uppercase font-bold tracking-widest px-3 py-1 rounded-bl-xl select-none">
-                        Sample Data
+              {pitches.map((p) => (
+                <Card
+                  key={p.id}
+                  className="p-6 border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl bg-card relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]"
+                >
+                  <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-2">
+                        <h4 className="font-display font-extrabold text-xl text-foreground tracking-wide">{p.title || "Untitled Pitch"}</h4>
+                        {p.status === "APPROVED" ? (
+                          <Badge className="bg-success text-success-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
+                            <CheckCircle2 className="h-3 w-3 mr-1" /> APPROVED (visible to investors)
+                          </Badge>
+                        ) : p.status === "DRAFT" ? (
+                          <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
+                            DRAFT (not visible to investors)
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-muted text-muted-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
+                            {p.status}
+                          </Badge>
+                        )}
+                        {p.stage && (
+                          <Badge variant="outline" className="border-foreground/20 text-muted-foreground font-semibold">
+                            {p.stage}
+                          </Badge>
+                        )}
                       </div>
-                    )}
-
-                    <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap mb-2">
-                          <h4 className="font-display font-extrabold text-xl text-foreground tracking-wide">{p.title || "Untitled Pitch"}</h4>
-                          {p.status === "APPROVED" ? (
-                            <Badge className="bg-success text-success-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
-                              <CheckCircle2 className="h-3 w-3 mr-1" /> APPROVED (visible to investors)
-                            </Badge>
-                          ) : p.status === "DRAFT" ? (
-                            <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
-                              DRAFT (not visible to investors)
-                            </Badge>
-                          ) : (
-                            <Badge className="bg-muted text-muted-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans">
-                              {p.status}
-                            </Badge>
-                          )}
-                          {p.stage && (
-                            <Badge variant="outline" className="border-foreground/20 text-muted-foreground font-semibold">
-                              {p.stage}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs font-semibold text-muted-foreground">
-                          Created: {formatDate(p.created_at)}
-                        </p>
-                      </div>
+                      <p className="text-xs font-semibold text-muted-foreground">
+                        Created: {formatDate(p.created_at)}
+                      </p>
                     </div>
+                  </div>
 
-                    {/* Stats strip */}
-                    <div className="flex flex-wrap gap-4 text-xs font-bold text-muted-foreground bg-muted/40 p-3 rounded-xl border border-foreground/10 mb-4">
-                      <span className="flex items-center gap-1.5"><Eye className="h-4 w-4 text-foreground" /> {p.view_count} Views</span>
-                      <span className="flex items-center gap-1.5"><MessageSquare className="h-4 w-4 text-foreground" /> {p.message_count ?? 0} Messages</span>
-                      <span className="flex items-center gap-1.5"><Bookmark className="h-4 w-4 text-foreground" /> {p.bookmark_count ?? 0} Bookmarks</span>
-                    </div>
+                  {/* Stats strip */}
+                  <div className="flex flex-wrap gap-4 text-xs font-bold text-muted-foreground bg-muted/40 p-3 rounded-xl border border-foreground/10 mb-4">
+                    <span className="flex items-center gap-1.5"><Eye className="h-4 w-4 text-foreground" /> {p.view_count} Views</span>
+                    <span className="flex items-center gap-1.5"><MessageSquare className="h-4 w-4 text-foreground" /> {p.message_count ?? 0} Messages</span>
+                    <span className="flex items-center gap-1.5"><Bookmark className="h-4 w-4 text-foreground" /> {p.bookmark_count ?? 0} Bookmarks</span>
+                  </div>
 
-                    {/* Action buttons */}
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-lg transition-all">
-                        <Link to={`/pitches/${p.id}`}>
-                          View Details
-                        </Link>
+                  {/* Action buttons */}
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-lg transition-all">
+                      <Link to={`/pitches/${p.id}`}>View Details</Link>
+                    </Button>
+
+                    {p.status === "APPROVED" ? (
+                      <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-[hsl(var(--pastel-blue))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]">
+                        <Link to={`/pitches/${p.id}/security`}>Security</Link>
                       </Button>
-
-                      {p.status === "APPROVED" ? (
-                        <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-[hsl(var(--pastel-blue))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]">
-                          <Link to={`/pitches/${p.id}/security`}>
-                            Security
-                          </Link>
-                        </Button>
-                      ) : (
-                        <Button
-                          onClick={() => handlePublish(p.id, isMock)}
-                          size="sm"
-                          variant="outline"
-                          className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
-                        >
-                          Submit Pitch
-                        </Button>
-                      )}
-
-                      <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-lg transition-all">
-                        <Link to={`/pitches/${p.id}/edit`}>
-                          <Edit3 className="h-3.5 w-3.5 mr-1" /> Edit
-                        </Link>
-                      </Button>
-
+                    ) : (
                       <Button
-                        onClick={() => handleDelete(p.id, isMock)}
-                        disabled={deletingId === p.id}
+                        onClick={() => handlePublish(p.id)}
                         size="sm"
                         variant="outline"
-                        className="border-2 border-foreground hover:bg-destructive hover:text-destructive-foreground font-bold rounded-lg transition-all ml-auto hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+                        className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        Submit Pitch
                       </Button>
-                    </div>
-                  </Card>
-                );
-              })}
+                    )}
+
+                    <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-lg transition-all">
+                      <Link to={`/pitches/${p.id}/edit`}>
+                        <Edit3 className="h-3.5 w-3.5 mr-1" /> Edit
+                      </Link>
+                    </Button>
+
+                    <Button
+                      onClick={() => handleDelete(p.id)}
+                      disabled={deletingId === p.id}
+                      size="sm"
+                      variant="outline"
+                      className="border-2 border-foreground hover:bg-destructive hover:text-destructive-foreground font-bold rounded-lg transition-all ml-auto hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                </Card>
+              ))}
 
               <Button asChild className="w-full h-14 border-2 border-dashed border-foreground/30 bg-background/20 hover:bg-background/40 text-foreground font-bold rounded-2xl transition-all">
                 <Link to="/pitches/create" className="flex items-center justify-center gap-2">
@@ -702,52 +603,60 @@ export default function Dashboard() {
               Recent Messages from Investors
             </h4>
 
-            <div className="space-y-4 divide-y divide-foreground/5">
-              {activeMessages.map((msg, index) => (
-                <div key={msg.id} className={cn("pt-4 flex flex-col gap-1.5", index === 0 ? "pt-0" : "")}>
-                  <div className="flex items-center justify-between">
-                    <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
-                      {msg.sender_name}
-                      {msg.sender_company && (
-                        <span className="text-[10px] bg-foreground text-background px-1.5 py-0.5 rounded font-sans font-extrabold uppercase">
-                          {msg.sender_company}
+            {messages.length === 0 ? (
+              <div className="py-8 text-center">
+                <MessageSquare className="h-10 w-10 text-foreground/20 mx-auto mb-3" />
+                <p className="text-sm font-bold text-muted-foreground">No messages yet</p>
+                <p className="text-xs text-muted-foreground/70 mt-1 font-medium">Investors will reach out once they see your pitch</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-4 divide-y divide-foreground/5">
+                  {messages.map((msg, index) => (
+                    <div key={msg.id} className={cn("pt-4 flex flex-col gap-1.5", index === 0 ? "pt-0" : "")}>
+                      <div className="flex items-center justify-between">
+                        <p className="font-bold text-foreground text-sm flex items-center gap-1.5">
+                          {msg.sender_name}
+                          {msg.sender_company && (
+                            <span className="text-[10px] bg-foreground text-background px-1.5 py-0.5 rounded font-sans font-extrabold uppercase">
+                              {msg.sender_company}
+                            </span>
+                          )}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground font-semibold">
+                          {formatDate(msg.created_at)}
                         </span>
+                      </div>
+
+                      {msg.pitch_title && (
+                        <p className="text-[10px] font-bold text-[hsl(var(--pastel-blue))] bg-[hsl(var(--pastel-blue))]/5 self-start px-2 py-0.5 rounded border border-[hsl(var(--pastel-blue))]/10">
+                          Re: {msg.pitch_title}
+                        </p>
                       )}
-                    </p>
-                    <span className="text-[10px] text-muted-foreground font-semibold">
-                      {formatDate(msg.created_at)}
-                    </span>
-                  </div>
 
-                  {msg.pitch_title && (
-                    <p className="text-[10px] font-bold text-[hsl(var(--pastel-blue))] bg-[hsl(var(--pastel-blue))]/5 self-start px-2 py-0.5 rounded border border-[hsl(var(--pastel-blue))]/10">
-                      Re: {msg.pitch_title}
-                    </p>
-                  )}
+                      <p className="text-xs text-foreground/80 font-medium leading-relaxed bg-muted/30 p-2.5 rounded-xl border border-foreground/5 italic">
+                        "{msg.content}"
+                      </p>
 
-                  <p className="text-xs text-foreground/80 font-medium leading-relaxed bg-muted/30 p-2.5 rounded-xl border border-foreground/5 italic">
-                    "{msg.content}"
-                  </p>
-
-                  <div className="flex gap-2 mt-1">
-                    <Button asChild size="sm" variant="link" className="p-0 font-extrabold text-foreground hover:underline h-auto text-xs">
-                      <Link to="/messages" className="flex items-center gap-0.5">Reply →</Link>
-                    </Button>
-                    {msg.pitch_id && (
-                      <Button asChild size="sm" variant="link" className="p-0 font-extrabold text-muted-foreground hover:underline h-auto text-xs ml-auto">
-                        <Link to={`/pitches/${msg.pitch_id}`}>View Pitch</Link>
-                      </Button>
-                    )}
-                  </div>
+                      <div className="flex gap-2 mt-1">
+                        <Button asChild size="sm" variant="link" className="p-0 font-extrabold text-foreground hover:underline h-auto text-xs">
+                          <Link to="/messages" className="flex items-center gap-0.5">Reply →</Link>
+                        </Button>
+                        {msg.pitch_id && (
+                          <Button asChild size="sm" variant="link" className="p-0 font-extrabold text-muted-foreground hover:underline h-auto text-xs ml-auto">
+                            <Link to={`/pitches/${msg.pitch_id}`}>View Pitch</Link>
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            <Button asChild className="w-full border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] bg-background hover:bg-muted text-foreground font-bold rounded-xl mt-4">
-              <Link to="/messages">
-                View All Messages
-              </Link>
-            </Button>
+                <Button asChild className="w-full border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] bg-background hover:bg-muted text-foreground font-bold rounded-xl mt-4">
+                  <Link to="/messages">View All Messages</Link>
+                </Button>
+              </>
+            )}
           </Card>
         </div>
       </div>
