@@ -316,38 +316,65 @@ export default function PitchForm() {
 
   // Neobrutalistic Custom Progress Bar renderer
   const renderProgress = () => {
+    const stepMeta = [
+      { label: "Basics", icon: Rocket },
+      { label: "Problem", icon: Lightbulb },
+      { label: "Market", icon: TrendingUp },
+      { label: "Funding", icon: Banknote },
+      { label: "Team & Deck", icon: Users },
+    ];
     return (
-      <div className="border-2 border-foreground rounded-2xl bg-muted/30 p-4 mb-8 flex flex-col gap-3 shadow-[2px_2px_0_0_hsl(var(--foreground))]">
-        <div className="flex items-center justify-between text-sm font-bold text-foreground">
-          <span>PROGRESS:</span>
-          <span>STEP {step} OF 5</span>
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-3 text-xs font-medium text-muted-foreground">
+          <span className="uppercase tracking-wider">Step {step} of 5 · {stepMeta[step - 1].label}</span>
+          <span>{Math.round((step / 5) * 100)}% complete</span>
         </div>
-        <div className="flex items-center justify-between gap-1 flex-wrap sm:flex-nowrap">
-          {[1, 2, 3, 4, 5].map((s) => {
+        <div className="h-1.5 rounded-full bg-muted/60 overflow-hidden mb-5">
+          <div
+            className="h-full bg-gradient-to-r from-primary to-accent transition-all duration-500"
+            style={{ width: `${(step / 5) * 100}%` }}
+          />
+        </div>
+        <div className="grid grid-cols-5 gap-2">
+          {stepMeta.map((m, idx) => {
+            const s = idx + 1;
             const isActive = s === step;
             const isCompleted = s < step;
+            const Icon = m.icon;
             return (
               <button
                 key={s}
                 disabled={readonly}
                 onClick={() => {
-                  // Only allow jumping back, or jumping forward if validated
                   if (s < step) setStep(s);
                   else if (s > step && validateStep(step)) {
                     persist(false).then(() => setStep(Math.min(s, step + 1)));
                   }
                 }}
                 className={cn(
-                  "flex-1 py-2 px-3 border-2 border-foreground rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5",
-                  isActive 
-                    ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] translate-y-[-1px]" 
-                    : isCompleted 
-                      ? "bg-[hsl(var(--pastel-mint))] text-foreground" 
-                      : "bg-background text-muted-foreground opacity-60 hover:opacity-100"
+                  "group flex flex-col items-center gap-1.5 py-2 px-1 rounded-lg transition-all",
+                  !readonly && "hover:bg-muted/40 cursor-pointer",
+                  readonly && "cursor-default"
                 )}
               >
-                <span>Step {s}</span>
-                {isCompleted ? "██" : isActive ? "██░░" : "░░░░"}
+                <div
+                  className={cn(
+                    "h-9 w-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all border",
+                    isActive && "bg-primary text-primary-foreground border-primary shadow-md scale-110",
+                    isCompleted && "bg-accent text-accent-foreground border-accent",
+                    !isActive && !isCompleted && "bg-background text-muted-foreground border-border"
+                  )}
+                >
+                  {isCompleted ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
+                </div>
+                <span
+                  className={cn(
+                    "text-[11px] font-medium hidden sm:block transition-colors",
+                    isActive ? "text-foreground" : "text-muted-foreground"
+                  )}
+                >
+                  {m.label}
+                </span>
               </button>
             );
           })}
