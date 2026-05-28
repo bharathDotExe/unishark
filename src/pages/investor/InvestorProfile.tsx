@@ -79,8 +79,8 @@ export default function InvestorProfile() {
         setInvestorData({
           linkedin_url: invData.linkedin_url,
           sectors: (invData.sectors as string[] | null) ?? [],
-          ticket_size_min: invData.ticket_size_min as number | null,
-          ticket_size_max: invData.ticket_size_max as number | null,
+          ticket_size_min: invData.ticket_size_min as unknown as number | null,
+          ticket_size_max: invData.ticket_size_max as unknown as number | null,
           past_investments: (invData.past_investments as string | null) ?? null,
           verified: invData.verified ?? false,
         });
@@ -132,8 +132,8 @@ export default function InvestorProfile() {
         .upsert({
           user_id: user.id,
           sectors: editSectors,
-          ticket_size_min: editTicketMin ? Number(editTicketMin) : null,
-          ticket_size_max: editTicketMax ? Number(editTicketMax) : null,
+          ticket_size_min: editTicketMin ? (Number(editTicketMin) as unknown as string) : null,
+          ticket_size_max: editTicketMax ? (Number(editTicketMax) as unknown as string) : null,
           past_investments: editPastInvestments || null,
         }, { onConflict: "user_id" });
       if (error) throw error;
