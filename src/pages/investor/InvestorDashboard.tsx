@@ -10,6 +10,7 @@ import {
   TrendingUp, Briefcase, BarChart3, ArrowUpRight, CheckCircle2, FileText,
   RefreshCw
 } from "lucide-react";
+import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
 
 // ── STATIC EDITORIAL DATA ────────────────────────────────────────────────────
 
@@ -187,7 +188,7 @@ function TwitterCard({ post }: { post: typeof twitterPosts[0] }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full border-2 border-foreground overflow-hidden bg-muted">
-            <img src={post.avatar} alt={post.name} className="w-full h-full object-cover" />
+            <SharkIdenticon seed={post.name} role="investor" size={40} className="w-full h-full rounded-none" />
           </div>
           <div>
             <p className="font-extrabold text-sm leading-none">{post.name}</p>
@@ -227,8 +228,8 @@ function LinkedInCard({ post }: { post: typeof linkedinPosts[0] }) {
     <Card className="p-5 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-sm border-2 border-foreground overflow-hidden bg-muted">
-            <img src={post.avatar} alt={post.name} className="w-full h-full object-cover" />
+          <div className="w-12 h-12 rounded-sm border-2 border-foreground overflow-hidden bg-muted flex items-center justify-center">
+            <SharkIdenticon seed={post.name} role="mentor" size={48} className="w-full h-full rounded-none" />
           </div>
           <div>
             <p className="font-extrabold text-sm leading-none">{post.name}</p>
@@ -264,7 +265,7 @@ function InstagramCard({ post }: { post: typeof instagramPosts[0] }) {
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px] border border-foreground">
             <div className="w-full h-full bg-background rounded-full overflow-hidden">
-              <img src={post.avatar} alt={post.handle} className="w-full h-full object-cover" />
+              <SharkIdenticon seed={post.handle} role="student" size={32} className="w-full h-full rounded-none" />
             </div>
           </div>
           <span className="text-xs font-extrabold">{post.handle}</span>

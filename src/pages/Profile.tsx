@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import {
   AlertTriangle, Lock, ShieldCheck, Mail, RefreshCw, Sparkles, X, Check, Save 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
 
 type ExperienceItem = {
   id: string;
@@ -34,21 +35,21 @@ export default function Profile() {
   const [isEditingSkills, setIsEditingSkills] = useState(false);
   
   // Profile Meta
-  const [coverPhoto, setCoverPhoto] = useState("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80");
-  const [profilePhoto, setProfilePhoto] = useState("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80");
+  const [coverPhoto, setCoverPhoto] = useState("");
+  const [profilePhoto, setProfilePhoto] = useState("");
 
   // Tab 1: Basic Info State (with mock fallbacks)
-  const [firstName, setFirstName] = useState("John");
-  const [lastName, setLastName] = useState("Doe");
-  const [email, setEmail] = useState("john@example.com");
-  const [contactNumber, setContactNumber] = useState("+91 98765 43210");
-  const [city, setCity] = useState("Delhi");
-  const [college, setCollege] = useState("IIT Delhi");
-  const [gradYear, setGradYear] = useState("Alumni (Graduated 2022)");
-  const [linkedin, setLinkedin] = useState("linkedin.com/in/johndoe");
-  const [twitter, setTwitter] = useState("twitter.com/johndoe");
-  const [website, setWebsite] = useState("www.johndoe.com");
-  const [bio, setBio] = useState("Building AI-powered tools to help students. Previously at Google working on ML infrastructure.");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [city, setCity] = useState("");
+  const [college, setCollege] = useState("");
+  const [gradYear, setGradYear] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [website, setWebsite] = useState("");
+  const [bio, setBio] = useState("");
 
   // Temporary Edit Form States
   const [editForm, setEditForm] = useState({
@@ -65,29 +66,14 @@ export default function Profile() {
   });
 
   // Tab 2: Skills & Interests
-  const [skills, setSkills] = useState<string[]>(["Web Development", "AI/ML", "Product Management"]);
-  const [interests, setInterests] = useState<string[]>(["SaaS", "EdTech", "B2C"]);
-  const [industries, setIndustries] = useState<string>("Education, Technology, Career Development");
+  const [skills, setSkills] = useState<string[]>([]);
+  const [interests, setInterests] = useState<string[]>([]);
+  const [industries, setIndustries] = useState<string>("");
   const [newSkill, setNewSkill] = useState("");
   const [newInterest, setNewInterest] = useState("");
 
   // Tab 3: Experience
-  const [experiences, setExperiences] = useState<ExperienceItem[]>([
-    {
-      id: "exp-1",
-      title: "Software Engineer",
-      company: "Google",
-      duration: "2022 - 2024 (2 years)",
-      description: "Worked on ML infrastructure, trained 100+ ML models, reduced inference latency by 40%."
-    },
-    {
-      id: "exp-2",
-      title: "Data Scientist Intern",
-      company: "Microsoft",
-      duration: "Summer 2021 (3 months)",
-      description: "Implemented recommendation algorithms for Azure dashboards."
-    }
-  ]);
+  const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
   const [newExp, setNewExp] = useState({
     title: "",
     company: "",
@@ -105,13 +91,17 @@ export default function Profile() {
   });
   const [privacy, setPrivacy] = useState<"public" | "investors" | "private">("investors");
 
+  // Upload Refs
+  const coverPhotoInputRef = useRef<HTMLInputElement>(null);
+  const profilePhotoInputRef = useRef<HTMLInputElement>(null);
+
   // Load profile from Supabase
   useEffect(() => {
     if (!user) return;
     (async () => {
       setLoading(true);
       try {
-        const { data: p } = await supabase.from("profiles").select("full_name, email").eq("id", user.id).maybeSingle();
+        const { data: p } = await supabase.from("profiles").select("full_name, email, avatar_url").eq("id", user.id).maybeSingle();
         const { data: sp } = await supabase.from("student_profiles").select("*").eq("user_id", user.id).maybeSingle();
 
         if (p) {
@@ -119,6 +109,7 @@ export default function Profile() {
           setFirstName(names[0] || "John");
           setLastName(names.slice(1).join(" ") || "Doe");
           setEmail(p.email || "john@example.com");
+          if (p.avatar_url) setProfilePhoto(p.avatar_url);
         }
         if (sp) {
           setCollege(sp.college || "IIT Delhi");
@@ -127,6 +118,16 @@ export default function Profile() {
             setSkills(sp.skills as string[]);
           }
           setLinkedin(sp.linkedin_url || "linkedin.com/in/johndoe");
+          
+          if (sp.contact_number) setContactNumber(sp.contact_number);
+          if (sp.city) setCity(sp.city);
+          if (sp.twitter_url) setTwitter(sp.twitter_url);
+          if (sp.website_url) setWebsite(sp.website_url);
+          if (sp.bio) setBio(sp.bio);
+          if (sp.industries) setIndustries(sp.industries);
+          if (sp.interests && Array.isArray(sp.interests)) setInterests(sp.interests);
+          if (sp.experiences) setExperiences(sp.experiences as any);
+          if (sp.cover_photo_url) setCoverPhoto(sp.cover_photo_url);
         }
       } catch (err) {
         console.error("Failed to load real profile", err);
@@ -165,8 +166,12 @@ export default function Profile() {
           user_id: user.id,
           college: editForm.college,
           year: editForm.gradYear as any,
-          skills,
-          linkedin_url: editForm.linkedin
+          linkedin_url: editForm.linkedin,
+          contact_number: editForm.contactNumber,
+          city: editForm.city,
+          twitter_url: editForm.twitter,
+          website_url: editForm.website,
+          bio: editForm.bio
         }, { onConflict: "user_id" });
       }
 
@@ -224,8 +229,24 @@ export default function Profile() {
     }
   };
 
+  // Handle saving skills
+  const handleSaveSkills = async () => {
+    if (!user) return;
+    try {
+      await supabase.from("student_profiles").upsert({
+        user_id: user.id,
+        skills,
+        interests,
+        industries
+      }, { onConflict: "user_id" });
+      toast.success("Skills & interests saved successfully!");
+    } catch (e: any) {
+      toast.error("Could not save skills: " + e.message);
+    }
+  };
+
   // Handle experiences
-  const handleAddExperience = () => {
+  const handleAddExperience = async () => {
     if (!newExp.title.trim() || !newExp.company.trim()) {
       toast.error("Title and Company are required!");
       return;
@@ -237,15 +258,89 @@ export default function Profile() {
       duration: newExp.duration || "Present",
       description: newExp.description
     };
-    setExperiences([...experiences, exp]);
+    const updatedExperiences = [...experiences, exp];
+    
+    if (user) {
+      try {
+        await supabase.from("student_profiles").upsert({
+          user_id: user.id,
+          experiences: updatedExperiences as any
+        }, { onConflict: "user_id" });
+      } catch (e: any) {
+        toast.error("Failed to save experience: " + e.message);
+        return;
+      }
+    }
+
+    setExperiences(updatedExperiences);
     setNewExp({ title: "", company: "", duration: "", description: "" });
     setShowAddExp(false);
     toast.success("Experience added successfully!");
   };
 
-  const handleDeleteExperience = (id: string) => {
-    setExperiences(experiences.filter(exp => exp.id !== id));
+  const handleDeleteExperience = async (id: string) => {
+    const updatedExperiences = experiences.filter(exp => exp.id !== id);
+    if (user) {
+      try {
+        await supabase.from("student_profiles").upsert({
+          user_id: user.id,
+          experiences: updatedExperiences as any
+        }, { onConflict: "user_id" });
+      } catch (e: any) {
+        toast.error("Failed to delete experience: " + e.message);
+        return;
+      }
+    }
+    setExperiences(updatedExperiences);
     toast.success("Experience deleted!");
+  };
+
+  // Handle photo uploads
+  const handleUploadCover = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    toast.loading("Uploading cover photo...", { id: "cover-upload" });
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-cover-${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+      const { error } = await supabase.storage.from('profile-photos').upload(filePath, file, { upsert: true });
+      if (error) throw error;
+      const { data } = supabase.storage.from('profile-photos').getPublicUrl(filePath);
+      
+      await supabase.from("student_profiles").upsert({
+        user_id: user.id,
+        cover_photo_url: data.publicUrl
+      }, { onConflict: "user_id" });
+      
+      setCoverPhoto(data.publicUrl);
+      toast.success("Cover photo updated!", { id: "cover-upload" });
+    } catch (error: any) {
+      toast.error("Upload failed: " + error.message, { id: "cover-upload" });
+    }
+  };
+
+  const handleUploadAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    toast.loading("Uploading profile photo...", { id: "avatar-upload" });
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-avatar-${Date.now()}.${fileExt}`;
+      const filePath = `${user.id}/${fileName}`;
+      const { error } = await supabase.storage.from('profile-photos').upload(filePath, file, { upsert: true });
+      if (error) throw error;
+      const { data } = supabase.storage.from('profile-photos').getPublicUrl(filePath);
+      
+      await supabase.from("profiles").update({
+        avatar_url: data.publicUrl
+      }).eq("id", user.id);
+      
+      setProfilePhoto(data.publicUrl);
+      toast.success("Profile photo updated!", { id: "avatar-upload" });
+    } catch (error: any) {
+      toast.error("Upload failed: " + error.message, { id: "avatar-upload" });
+    }
   };
 
   const handleSaveSettings = () => {
@@ -284,9 +379,14 @@ export default function Profile() {
       <Card className="border-[3px] border-foreground bg-card shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] overflow-hidden mb-8 relative">
         {/* Cover Photo */}
         <div className="h-48 w-full bg-muted relative overflow-hidden group border-b-2 border-foreground">
-          <img src={coverPhoto} alt="Cover" className="w-full h-full object-cover" />
+          <img 
+            src={coverPhoto || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"} 
+            alt="Cover" 
+            className="w-full h-full object-cover" 
+          />
+          <input type="file" accept="image/*" className="hidden" ref={coverPhotoInputRef} onChange={handleUploadCover} />
           <button 
-            onClick={() => handleActionToast("Edit Cover Photo")}
+            onClick={() => coverPhotoInputRef.current?.click()}
             className="absolute top-4 right-4 bg-background border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-foreground text-xs font-black px-3 py-1.5 rounded-xl hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
           >
             📸 Change Cover
@@ -297,23 +397,33 @@ export default function Profile() {
         <div className="p-6 pt-16 sm:pt-6 relative flex flex-col sm:flex-row items-center sm:items-end justify-between gap-6">
           
           {/* Profile Photo */}
-          <div className="absolute top-[-60px] sm:top-[-80px] left-1/2 sm:left-8 translate-x-[-50%] sm:translate-x-0 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-[3px] border-foreground bg-background shadow-[4px_4px_0_0_hsl(var(--foreground))] overflow-hidden">
-            <img src={profilePhoto} alt="John Doe" className="w-full h-full object-cover" />
+          <div className="absolute top-[-60px] sm:top-[-80px] left-1/2 sm:left-8 translate-x-[-50%] sm:translate-x-0 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-[3px] border-foreground bg-background shadow-[4px_4px_0_0_hsl(var(--foreground))] overflow-hidden group cursor-pointer" onClick={() => profilePhotoInputRef.current?.click()}>
+            {profilePhoto ? (
+              <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover group-hover:opacity-80 transition-opacity" />
+            ) : (
+              <div className="w-full h-full bg-muted flex items-center justify-center group-hover:opacity-80 transition-opacity relative">
+                <SharkIdenticon seed={user?.id || "default"} role="student" size={128} className="absolute inset-0 w-full h-full rounded-none" />
+              </div>
+            )}
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+              <span className="text-white text-[10px] font-black uppercase tracking-wider">Change</span>
+            </div>
+            <input type="file" accept="image/*" className="hidden" ref={profilePhotoInputRef} onChange={handleUploadAvatar} />
           </div>
 
           {/* User Meta (Shifted left for desktop profile photo alignment) */}
           <div className="mt-8 sm:mt-0 sm:pl-36 text-center sm:text-left space-y-1 flex-1">
             <h2 className="text-2xl font-display font-black text-foreground uppercase tracking-tight flex items-center justify-center sm:justify-start gap-1.5">
-              {firstName} {lastName}
+              {firstName || "Student"} {lastName || "Founder"}
               <span className="text-[10px] bg-foreground text-background px-2 py-0.5 rounded border border-background/20 font-black shadow-[1px_1px_0_0_hsl(var(--foreground))]">
                 Student Founder
               </span>
             </h2>
             <p className="text-xs font-black text-muted-foreground uppercase tracking-wide">
-              Founder & CEO | {college}
+              Founder & CEO | {college || "Not provided"}
             </p>
             <p className="text-xs text-muted-foreground font-semibold">
-              {email}
+              {email || "Not provided"}
             </p>
           </div>
 
@@ -499,16 +609,16 @@ export default function Profile() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Left Metadata Column */}
                   <div className="md:col-span-2 space-y-4 font-bold text-xs text-muted-foreground border-r-0 md:border-r-2 md:border-foreground/15 pr-0 md:pr-6">
-                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">First Name:</span> {firstName}</p>
-                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Last Name:</span> {lastName}</p>
-                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Email:</span> {email}</p>
-                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Contact Number:</span> {contactNumber}</p>
-                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">City:</span> {city}</p>
+                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">First Name:</span> {firstName || "Not provided"}</p>
+                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Last Name:</span> {lastName || "Not provided"}</p>
+                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Email:</span> {email || "Not provided"}</p>
+                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Contact Number:</span> {contactNumber || "Not provided"}</p>
+                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">City:</span> {city || "Not provided"}</p>
                     
                     <div className="h-px bg-foreground/10 my-4"></div>
 
-                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">College:</span> {college}</p>
-                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Year:</span> {gradYear}</p>
+                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">College:</span> {college || "Not provided"}</p>
+                    <p className="flex items-center gap-2"><span className="font-black text-foreground min-w-[120px]">Year:</span> {gradYear || "Not provided"}</p>
                   </div>
 
                   {/* Right Socials Column */}
@@ -518,15 +628,15 @@ export default function Profile() {
                     </p>
                     <p className="flex items-center gap-2 hover:text-foreground">
                       <Linkedin className="h-4 w-4 text-foreground flex-shrink-0" />
-                      <a href={`https://${linkedin}`} target="_blank" rel="noreferrer" className="underline truncate">{linkedin}</a>
+                      {linkedin ? <a href={`https://${linkedin}`} target="_blank" rel="noreferrer" className="underline truncate">{linkedin}</a> : "Not provided"}
                     </p>
                     <p className="flex items-center gap-2 hover:text-foreground">
                       <Twitter className="h-4 w-4 text-foreground flex-shrink-0" />
-                      <a href={`https://${twitter}`} target="_blank" rel="noreferrer" className="underline truncate">{twitter}</a>
+                      {twitter ? <a href={`https://${twitter}`} target="_blank" rel="noreferrer" className="underline truncate">{twitter}</a> : "Not provided"}
                     </p>
                     <p className="flex items-center gap-2 hover:text-foreground">
                       <Globe className="h-4 w-4 text-foreground flex-shrink-0" />
-                      <a href={`https://${website}`} target="_blank" rel="noreferrer" className="underline truncate">{website}</a>
+                      {website ? <a href={`https://${website}`} target="_blank" rel="noreferrer" className="underline truncate">{website}</a> : "Not provided"}
                     </p>
                   </div>
                 </div>
@@ -537,7 +647,7 @@ export default function Profile() {
                 <div className="space-y-2">
                   <p className="font-black text-xs text-foreground uppercase tracking-wider text-[10px]">Bio:</p>
                   <p className="text-xs text-muted-foreground font-black italic bg-muted/30 p-4 border-2 border-foreground/10 rounded-xl leading-relaxed max-w-3xl">
-                    "{bio}"
+                    {bio ? `"${bio}"` : "Bio not provided yet. Click Edit Basic Details to add your founder bio."}
                   </p>
                 </div>
 
@@ -660,7 +770,7 @@ export default function Profile() {
 
               <div className="flex justify-start pt-6 border-t border-foreground/10">
                 <Button 
-                  onClick={() => toast.success("Skills & interests saved successfully!")}
+                  onClick={handleSaveSkills}
                   className="border-2 border-foreground bg-foreground text-background hover:bg-foreground hover:text-background shadow-[3px_3px_0_0_hsl(var(--foreground))] font-black text-xs rounded-xl px-5 hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
                 >
                   <Save className="h-3.5 w-3.5 mr-1.5" /> Save Skills

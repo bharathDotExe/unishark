@@ -14,10 +14,12 @@ import {
   User, Briefcase, PieChart, Star, Settings2, ExternalLink, Edit, RefreshCw, Save, X
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
 
 type Profile = {
   full_name: string;
   email: string;
+  avatar_url?: string | null;
 };
 
 type InvestorProfileData = {
@@ -37,7 +39,7 @@ export default function InvestorProfile() {
   const [editing, setEditing] = useState(false);
 
   // Profile data from DB
-  const [profile, setProfile] = useState<Profile>({ full_name: "", email: "" });
+  const [profile, setProfile] = useState<Profile>({ full_name: "", email: "", avatar_url: null });
   const [investorData, setInvestorData] = useState<InvestorProfileData>({
     linkedin_url: null,
     sectors: [],
@@ -67,12 +69,16 @@ export default function InvestorProfile() {
     setLoading(true);
     try {
       const [{ data: profileData }, { data: invData }] = await Promise.all([
-        supabase.from("profiles").select("full_name, email").eq("id", user.id).maybeSingle(),
+        supabase.from("profiles").select("full_name, email, avatar_url").eq("id", user.id).maybeSingle(),
         supabase.from("investor_profiles").select("linkedin_url, sectors, ticket_size_min, ticket_size_max, past_investments, verified").eq("user_id", user.id).maybeSingle(),
       ]);
 
       if (profileData) {
-        setProfile({ full_name: profileData.full_name ?? "", email: profileData.email ?? user.email ?? "" });
+        setProfile({ 
+          full_name: profileData.full_name ?? "", 
+          email: profileData.email ?? user.email ?? "",
+          avatar_url: profileData.avatar_url 
+        });
         setEditName(profileData.full_name ?? "");
       }
       if (invData) {
@@ -186,8 +192,12 @@ export default function InvestorProfile() {
 
         <div className="p-6 pt-16 relative flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
           {/* Avatar */}
-          <div className="absolute -top-14 left-1/2 md:left-8 -translate-x-1/2 md:translate-x-0 w-28 h-28 rounded-full border-[3px] border-foreground bg-[hsl(var(--pastel-yellow))] shadow-[4px_4px_0_0_hsl(var(--foreground))] overflow-hidden flex items-center justify-center text-4xl font-extrabold text-foreground select-none">
-            {profile.full_name ? profile.full_name[0].toUpperCase() : (user?.email?.[0]?.toUpperCase() ?? "I")}
+          <div className="absolute -top-14 left-1/2 md:left-8 -translate-x-1/2 md:translate-x-0 w-28 h-28 rounded-full border-[3px] border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] overflow-hidden bg-background">
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <SharkIdenticon seed={user?.id || "default"} role="investor" size={112} className="w-full h-full rounded-none" />
+            )}
           </div>
 
           <div className="w-full md:pl-36 text-center md:text-left space-y-2">

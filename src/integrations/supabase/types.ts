@@ -182,6 +182,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string
           email: string
           full_name: string | null
@@ -189,6 +190,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
           email: string
           full_name?: string | null
@@ -196,6 +198,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
@@ -206,30 +209,60 @@ export type Database = {
       }
       student_profiles: {
         Row: {
+          bio: string | null
+          city: string | null
           college: string | null
+          contact_number: string | null
+          cover_photo_url: string | null
           created_at: string
+          experiences: Json | null
           id: string
+          identity_card_url: string | null
+          industries: string | null
+          interests: string[] | null
           linkedin_url: string | null
           skills: Json
+          twitter_url: string | null
           user_id: string
+          website_url: string | null
           year: Database["public"]["Enums"]["student_year"] | null
         }
         Insert: {
+          bio?: string | null
+          city?: string | null
           college?: string | null
+          contact_number?: string | null
+          cover_photo_url?: string | null
           created_at?: string
+          experiences?: Json | null
           id?: string
+          identity_card_url?: string | null
+          industries?: string | null
+          interests?: string[] | null
           linkedin_url?: string | null
           skills?: Json
+          twitter_url?: string | null
           user_id: string
+          website_url?: string | null
           year?: Database["public"]["Enums"]["student_year"] | null
         }
         Update: {
+          bio?: string | null
+          city?: string | null
           college?: string | null
+          contact_number?: string | null
+          cover_photo_url?: string | null
           created_at?: string
+          experiences?: Json | null
           id?: string
+          identity_card_url?: string | null
+          industries?: string | null
+          interests?: string[] | null
           linkedin_url?: string | null
           skills?: Json
+          twitter_url?: string | null
           user_id?: string
+          website_url?: string | null
           year?: Database["public"]["Enums"]["student_year"] | null
         }
         Relationships: []

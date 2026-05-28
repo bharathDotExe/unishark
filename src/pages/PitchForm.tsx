@@ -241,6 +241,7 @@ export default function PitchForm() {
       case 5:
         const validMembers = draft.team_members.filter(m => m.name.trim() && m.role.trim());
         if (validMembers.length === 0) { toast.error("At least one valid Team Member (Name & Role) is required."); return false; }
+        if (!draft.thumbnail_url) { toast.error("Please upload a Startup Thumbnail image."); return false; }
         if (!draft.deck_url) { toast.error("Please upload your Pitch Deck PDF (max 5MB)."); return false; }
         return true;
       default:
@@ -384,14 +385,16 @@ export default function PitchForm() {
   };
 
   return (
-    <div className="app-shell min-h-screen pb-20">
-      <div className="container mx-auto px-4 pt-8 pb-8 sm:pt-12 sm:pb-10 max-w-3xl">
-        <Button variant="ghost" onClick={() => navigate("/dashboard")} className="mb-6 -ml-2 text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
-        </Button>
+    <div className="w-full h-full p-4 sm:p-8">
+      <div className="flex flex-col h-full max-w-6xl mx-auto">
+        <div className="mb-6">
+          <Button variant="ghost" onClick={() => navigate("/dashboard")} className="-ml-2 text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Dashboard
+          </Button>
+        </div>
         
-        <Card className="p-6 sm:p-10 border border-border/60 rounded-2xl backdrop-blur-xl bg-card/80 shadow-lg">
-          <div className="flex items-start justify-between flex-wrap gap-4 mb-8 pb-6 border-b border-border/60">
+        <Card className="flex-1 p-6 sm:p-10 border-2 border-foreground rounded-2xl backdrop-blur-xl bg-card shadow-[8px_8px_0_0_hsl(var(--foreground))]">
+          <div className="flex items-start justify-between flex-wrap gap-4 mb-8 pb-6 border-b-2 border-foreground/10">
             <div>
               <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">Submit your pitch</h1>
               <p className="text-sm text-muted-foreground mt-1.5">Tell investors what you're building. We review every submission within 24 hours.</p>
@@ -779,7 +782,7 @@ export default function PitchForm() {
 
               {/* Startup Thumbnail */}
               <div>
-                <Label className="font-medium text-foreground block mb-2">Startup Thumbnail <span className="text-muted-foreground font-normal">(optional)</span></Label>
+                <Label className="font-medium text-foreground block mb-2">Startup Thumbnail <span className="text-destructive">*</span></Label>
                 <div
                   onDragOver={(e) => handleDrag(e, "thumbnail", true)}
                   onDragLeave={(e) => handleDrag(e, "thumbnail", false)}

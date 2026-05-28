@@ -8,8 +8,60 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import AuthLayout from "@/components/AuthLayout";
 import { toast } from "sonner";
 import { signupSchema } from "@/lib/validations/auth";
-import { Eye, EyeOff, GraduationCap, Briefcase } from "lucide-react";
+import { Eye, EyeOff, GraduationCap, Briefcase, Upload } from "lucide-react";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+
+const compressAndConvertToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 1024;
+        const MAX_HEIGHT = 1024;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("Canvas context failed"));
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.7));
+      };
+      img.onerror = (err) => reject(err);
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
+
+const base64ToBlob = (base64: string): Blob | null => {
+  try {
+    const parts = base64.split(";base64,");
+    if (parts.length !== 2) return null;
+    const contentType = parts[0].split(":")[1];
+    const raw = window.atob(parts[1]);
+    const uInt8Array = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; ++i) uInt8Array[i] = raw.charCodeAt(i);
+    return new Blob([uInt8Array], { type: contentType });
+  } catch (err) {
+    return null;
+  }
+};
 
 export default function Signup() {
   const [params] = useSearchParams();
@@ -23,6 +75,7 @@ export default function Signup() {
   const [showPw, setShowPw] = useState(false);
   const [showCpw, setShowCpw] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [idCardFile, setIdCardFile] = useState<File | null>(null);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +84,25 @@ export default function Signup() {
       toast.error(parsed.error.errors[0].message);
       return;
     }
+    
+    if (role === "student" && !idCardFile) {
+      toast.error("Please upload your student identity card.");
+      return;
+    }
+
     setLoading(true);
+
+    if (role === "student" && idCardFile) {
+      try {
+        const base64 = await compressAndConvertToBase64(idCardFile);
+        sessionStorage.setItem("pendingIdCard", base64);
+      } catch (err) {
+        toast.error("Failed to process identity card image. Please try another image.");
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -48,6 +119,25 @@ export default function Signup() {
       }
 
       if (data.session) {
+        const pendingIdCard = sessionStorage.getItem("pendingIdCard");
+        if (pendingIdCard && data.user) {
+          const blob = base64ToBlob(pendingIdCard);
+          if (blob) {
+            const filePath = `${data.user.id}/id-card.jpg`;
+            const { error: uploadError } = await supabase.storage
+              .from("identity-cards")
+              .upload(filePath, blob, { upsert: true, contentType: "image/jpeg" });
+              
+            if (!uploadError) {
+              const { data: publicUrlData } = supabase.storage.from("identity-cards").getPublicUrl(filePath);
+              await supabase.from("student_profiles").update({
+                identity_card_url: publicUrlData.publicUrl
+              }).eq("user_id", data.user.id);
+            }
+          }
+          sessionStorage.removeItem("pendingIdCard");
+        }
+
         toast.success("Account created! Let's build your profile.");
         navigate(role === "student" ? "/onboarding/student" : "/onboarding/investor");
         return;
@@ -198,6 +288,28 @@ export default function Signup() {
             <p className="text-xs text-destructive mt-1">Passwords don't match</p>
           )}
         </div>
+
+        {/* Identity Card Upload (Students Only) */}
+        {role === "student" && (
+          <div className="p-4 border-2 border-dashed border-border rounded-xl bg-muted/30">
+            <Label className="font-semibold flex items-center gap-2 mb-2">
+              <Upload className="w-4 h-4" /> Identity Card Photo
+            </Label>
+            <p className="text-xs text-muted-foreground mb-3">
+              Please upload a clear picture of your university ID card. This will be verified by our team.
+            </p>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) setIdCardFile(file);
+              }}
+              required={role === "student"}
+              className="cursor-pointer file:cursor-pointer file:bg-primary file:text-primary-foreground file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 file:font-medium file:hover:bg-primary/90"
+            />
+          </div>
+        )}
 
         <Button
           type="submit"

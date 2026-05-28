@@ -6,6 +6,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
+import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,12 +37,14 @@ export default function InvestorLayout({ children }: { children?: React.ReactNod
   const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
   const { user, signOut } = useAuth();
   const [fullName, setFullName] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [searchVal, setSearchVal] = useState("");
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle().then(({ data }) => {
+    supabase.from("profiles").select("full_name, avatar_url").eq("id", user.id).maybeSingle().then(({ data }) => {
       if (data?.full_name) setFullName(data.full_name);
+      if (data?.avatar_url) setAvatarUrl(data.avatar_url);
     });
   }, [user]);
 
@@ -121,11 +125,11 @@ export default function InvestorLayout({ children }: { children?: React.ReactNod
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-xl border-2 border-foreground bg-card p-0 overflow-hidden shadow-sm hover:bg-muted">
-                <Avatar className="h-full w-full rounded-none bg-transparent">
-                  <AvatarFallback className="bg-transparent text-foreground text-sm font-extrabold rounded-none">
-                    {fullName.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || "IN"}
-                  </AvatarFallback>
-                </Avatar>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <SharkIdenticon seed={user?.id || "default"} role="investor" size={40} className="w-full h-full rounded-none" />
+                )}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 mt-2 border-2 border-foreground rounded-2xl shadow-[6px_6px_0_0_hsl(var(--foreground))]">
@@ -150,18 +154,23 @@ export default function InvestorLayout({ children }: { children?: React.ReactNod
         </div>
       </div>
 
-      {/* ── DESKTOP SIDEBAR (collapsible via hamburger) ── */}
+      {/* ── DESKTOP SIDEBAR (Fixed) ── */}
       <aside
         className={cn(
-          "border-r border-foreground/10 bg-background/30 backdrop-blur-md flex-shrink-0 hidden md:flex flex-col h-screen sticky top-0 z-40 transition-all duration-300 overflow-hidden",
+          "border-r border-foreground/10 bg-background/30 backdrop-blur-md hidden md:flex flex-col h-screen fixed top-0 left-0 z-40 transition-all duration-300 overflow-hidden",
           desktopSidebarOpen ? "w-64" : "w-0"
         )}
       >
         <SidebarContent />
       </aside>
 
-      {/* ── MAIN CONTENT ── */}
-      <div className="flex-1 flex flex-col min-w-0 md:pt-0 pt-16">
+      {/* ── MAIN CONTENT (Offset by sidebar width) ── */}
+      <div 
+        className={cn(
+          "flex-1 flex flex-col min-w-0 md:pt-0 pt-16 transition-all duration-300",
+          desktopSidebarOpen ? "md:ml-64" : "md:ml-0"
+        )}
+      >
         {/* Desktop sticky top header */}
         <header className="hidden md:flex sticky top-0 z-30 h-16 w-full items-center justify-between border-b border-foreground/10 bg-background/25 backdrop-blur-md px-8 gap-4">
 
@@ -212,11 +221,13 @@ export default function InvestorLayout({ children }: { children?: React.ReactNod
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 px-2 gap-2 rounded-xl border-2 border-foreground bg-card hover:bg-muted overflow-hidden shadow-sm flex items-center">
-                  <Avatar className="h-7 w-7 rounded-lg">
-                    <AvatarFallback className="bg-[hsl(var(--pastel-blue))] text-foreground text-xs font-bold rounded-lg">
-                      {fullName ? fullName.slice(0, 2).toUpperCase() : user?.email?.slice(0, 2).toUpperCase() || "IN"}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="h-7 w-7 rounded-lg overflow-hidden flex items-center justify-center">
+                    {avatarUrl ? (
+                      <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      <SharkIdenticon seed={user?.id || "default"} role="investor" size={28} className="w-full h-full rounded-none" />
+                    )}
+                  </div>
                   <span className="text-sm font-bold max-w-[120px] truncate">{fullName || "Investor"}</span>
                 </Button>
               </DropdownMenuTrigger>

@@ -215,24 +215,24 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl pb-24">
       {/* SECTION 1: WELCOME BANNER */}
-      <Card className="p-8 border-2 border-foreground bg-[hsl(var(--pastel-blue))] shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] mb-8 relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[8px_8px_0_0_hsl(var(--foreground))] group">
-        <div className="absolute -top-6 -right-6 opacity-10 group-hover:scale-110 transition-transform select-none pointer-events-none">
-          <Rocket className="h-40 w-40" />
+      <Card className="p-5 sm:p-6 border-2 border-foreground bg-[hsl(var(--pastel-blue))] shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl mb-6 relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] group">
+        <div className="absolute -top-4 -right-4 opacity-10 group-hover:scale-110 transition-transform select-none pointer-events-none">
+          <Rocket className="h-28 w-28 sm:h-32 sm:w-32" />
         </div>
         <div className="relative z-10 max-w-2xl">
-          <h2 className="text-3xl font-display font-extrabold text-foreground tracking-tight mb-2">
+          <h2 className="text-xl sm:text-2xl font-display font-extrabold text-foreground tracking-tight mb-1.5">
             Welcome back, {getFirstName()}
           </h2>
-          <p className="text-foreground/80 font-medium text-lg leading-relaxed mb-6 italic">
+          <p className="text-foreground/80 font-medium text-sm sm:text-base leading-relaxed mb-4 italic">
             "Ready to launch your startup? Submit your pitch and connect with real investors."
           </p>
-          <div className="flex flex-wrap gap-4">
-            <Button asChild size="lg" className="border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] bg-foreground text-background hover:bg-foreground rounded-xl font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
+          <div className="flex flex-wrap gap-3">
+            <Button asChild size="sm" className="border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] bg-foreground text-background hover:bg-foreground rounded-lg font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
               <Link to="/pitches/create">
-                <Plus className="mr-2 h-5 w-5" /> Submit New Pitch
+                <Plus className="mr-2 h-4 w-4" /> Submit New Pitch
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted shadow-[4px_4px_0_0_hsl(var(--foreground))] text-foreground rounded-xl font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
+            <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted shadow-[3px_3px_0_0_hsl(var(--foreground))] text-foreground rounded-lg font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
               <Link to="/investors">
                 Explore Investors
               </Link>
@@ -242,64 +242,64 @@ export default function Dashboard() {
       </Card>
 
       {/* SECTION 2: QUICK STATS (4 Cards) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {/* STAT 1 */}
-        <Card className="p-6 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
+        <Card className="p-4 sm:p-5 border-2 border-foreground bg-card shadow-[3px_3px_0_0_hsl(var(--foreground))] rounded-xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-muted-foreground text-sm uppercase tracking-wider">My Pitches</span>
-              <Badge className="bg-foreground text-background border-none text-xs">Pitches</Badge>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-bold text-muted-foreground text-xs sm:text-sm uppercase tracking-wider">My Pitches</span>
+              <Badge className="bg-foreground text-background border-none text-[10px] sm:text-xs px-2 py-0">Pitches</Badge>
             </div>
-            <p className="text-4xl font-extrabold text-foreground font-display">{totalPitchesCount}</p>
-            <p className="text-sm text-muted-foreground mt-1 font-semibold">({approvedCount} approved)</p>
+            <p className="text-3xl font-extrabold text-foreground font-display">{totalPitchesCount}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-semibold">({approvedCount} approved)</p>
           </div>
-          <Button asChild variant="link" className="p-0 h-auto self-start mt-4 font-bold text-foreground hover:underline">
-            <Link to="/pitches/view" className="flex items-center gap-1">View All <ArrowUpRight className="h-3.5 w-3.5" /></Link>
+          <Button asChild variant="link" className="p-0 h-auto self-start mt-3 font-bold text-foreground hover:underline text-xs sm:text-sm">
+            <Link to="/pitches/view" className="flex items-center gap-1">View All <ArrowUpRight className="h-3 w-3" /></Link>
           </Button>
         </Card>
 
         {/* STAT 2 */}
-        <Card className="p-6 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
+        <Card className="p-4 sm:p-5 border-2 border-foreground bg-card shadow-[3px_3px_0_0_hsl(var(--foreground))] rounded-xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-muted-foreground text-sm uppercase tracking-wider">Profile</span>
-              <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-none text-xs">Visits</Badge>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-bold text-muted-foreground text-xs sm:text-sm uppercase tracking-wider">Profile</span>
+              <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-none text-[10px] sm:text-xs px-2 py-0">Visits</Badge>
             </div>
-            <p className="text-4xl font-extrabold text-foreground font-display">Views: {totalViews}</p>
-            <p className="text-sm text-muted-foreground mt-1 font-semibold">({Math.round(totalViews * 0.75)} unique)</p>
+            <p className="text-3xl font-extrabold text-foreground font-display">Views: {totalViews}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-semibold">({Math.round(totalViews * 0.75)} unique)</p>
           </div>
-          <Button asChild variant="link" className="p-0 h-auto self-start mt-4 font-bold text-foreground hover:underline">
-            <Link to="/profile" className="flex items-center gap-1">View Stats <ArrowUpRight className="h-3.5 w-3.5" /></Link>
+          <Button asChild variant="link" className="p-0 h-auto self-start mt-3 font-bold text-foreground hover:underline text-xs sm:text-sm">
+            <Link to="/profile" className="flex items-center gap-1">View Stats <ArrowUpRight className="h-3 w-3" /></Link>
           </Button>
         </Card>
 
         {/* STAT 3 */}
-        <Card className="p-6 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
+        <Card className="p-4 sm:p-5 border-2 border-foreground bg-card shadow-[3px_3px_0_0_hsl(var(--foreground))] rounded-xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-muted-foreground text-sm uppercase tracking-wider">Messages</span>
-              <Badge className="bg-[hsl(var(--pastel-mint))] text-foreground border-none text-xs">Inbox</Badge>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-bold text-muted-foreground text-xs sm:text-sm uppercase tracking-wider">Messages</span>
+              <Badge className="bg-[hsl(var(--pastel-mint))] text-foreground border-none text-[10px] sm:text-xs px-2 py-0">Inbox</Badge>
             </div>
-            <p className="text-4xl font-extrabold text-foreground font-display">{totalMessageCount}</p>
-            <p className="text-sm text-muted-foreground mt-1 font-semibold">({totalMessageCount} total)</p>
+            <p className="text-3xl font-extrabold text-foreground font-display">{totalMessageCount}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-semibold">({totalMessageCount} total)</p>
           </div>
-          <Button asChild variant="link" className="p-0 h-auto self-start mt-4 font-bold text-foreground hover:underline">
-            <Link to="/messages" className="flex items-center gap-1">Go to Box <ArrowUpRight className="h-3.5 w-3.5" /></Link>
+          <Button asChild variant="link" className="p-0 h-auto self-start mt-3 font-bold text-foreground hover:underline text-xs sm:text-sm">
+            <Link to="/messages" className="flex items-center gap-1">Go to Box <ArrowUpRight className="h-3 w-3" /></Link>
           </Button>
         </Card>
 
         {/* STAT 4 */}
-        <Card className="p-6 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
+        <Card className="p-4 sm:p-5 border-2 border-foreground bg-card shadow-[3px_3px_0_0_hsl(var(--foreground))] rounded-xl flex flex-col justify-between hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-muted-foreground text-sm uppercase tracking-wider">Views</span>
-              <Badge className="bg-[hsl(var(--pastel-blue))] text-foreground border-none text-xs">Analytics</Badge>
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-bold text-muted-foreground text-xs sm:text-sm uppercase tracking-wider">Views</span>
+              <Badge className="bg-[hsl(var(--pastel-blue))] text-foreground border-none text-[10px] sm:text-xs px-2 py-0">Analytics</Badge>
             </div>
-            <p className="text-4xl font-extrabold text-foreground font-display">{totalViews}</p>
-            <p className="text-sm text-muted-foreground mt-1 font-semibold">(This month)</p>
+            <p className="text-3xl font-extrabold text-foreground font-display">{totalViews}</p>
+            <p className="text-xs text-muted-foreground mt-0.5 font-semibold">(This month)</p>
           </div>
-          <Button asChild variant="link" className="p-0 h-auto self-start mt-4 font-bold text-foreground hover:underline">
-            <Link to="/pitches/view" className="flex items-center gap-1">View All <ArrowUpRight className="h-3.5 w-3.5" /></Link>
+          <Button asChild variant="link" className="p-0 h-auto self-start mt-3 font-bold text-foreground hover:underline text-xs sm:text-sm">
+            <Link to="/analytics" className="flex items-center gap-1">View All <ArrowUpRight className="h-3 w-3" /></Link>
           </Button>
         </Card>
       </div>

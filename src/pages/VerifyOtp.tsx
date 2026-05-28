@@ -19,6 +19,20 @@ export default function VerifyOtp() {
 
   const destination = role === "investor" ? "/onboarding/investor" : "/onboarding/student";
 
+const base64ToBlob = (base64: string): Blob | null => {
+  try {
+    const parts = base64.split(";base64,");
+    if (parts.length !== 2) return null;
+    const contentType = parts[0].split(":")[1];
+    const raw = window.atob(parts[1]);
+    const uInt8Array = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; ++i) uInt8Array[i] = raw.charCodeAt(i);
+    return new Blob([uInt8Array], { type: contentType });
+  } catch (err) {
+    return null;
+  }
+};
+
   const verifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) {
@@ -33,11 +47,31 @@ export default function VerifyOtp() {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: "signup" });
+      const { data: sessionData, error } = await supabase.auth.verifyOtp({ email, token: otp, type: "signup" });
       if (error) {
         toast.error(error.message);
         return;
       }
+      
+      const pendingIdCard = sessionStorage.getItem("pendingIdCard");
+      if (pendingIdCard && sessionData?.user) {
+        const blob = base64ToBlob(pendingIdCard);
+        if (blob) {
+          const filePath = `${sessionData.user.id}/id-card.jpg`;
+          const { error: uploadError } = await supabase.storage
+            .from("identity-cards")
+            .upload(filePath, blob, { upsert: true, contentType: "image/jpeg" });
+            
+          if (!uploadError) {
+            const { data: publicUrlData } = supabase.storage.from("identity-cards").getPublicUrl(filePath);
+            await supabase.from("student_profiles").update({
+              identity_card_url: publicUrlData.publicUrl
+            }).eq("user_id", sessionData.user.id);
+          }
+        }
+        sessionStorage.removeItem("pendingIdCard");
+      }
+
       toast.success("Email verified. Welcome to UniShark!");
       navigate(destination);
     } catch (err: any) {
