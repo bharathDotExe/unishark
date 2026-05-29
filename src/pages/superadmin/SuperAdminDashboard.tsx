@@ -85,11 +85,11 @@ export default function SuperAdminDashboard() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <div className="h-10 w-10 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/30">
-              <Crown className="h-5 w-5 text-white" />
+              <Crown className="h-5 w-5 text-foreground" />
             </div>
             <div>
-              <h1 className="text-3xl font-display font-extrabold text-white tracking-tight">Platform Overview</h1>
-              <p className="text-white/40 text-sm">
+              <h1 className="text-3xl font-display font-extrabold text-foreground tracking-tight">Platform Overview</h1>
+              <p className="text-muted-foreground text-sm">
                 {new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
               </p>
             </div>
@@ -106,19 +106,19 @@ export default function SuperAdminDashboard() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpiRows[0].map((kpi) => (
-          <Card key={kpi.label} className={`relative overflow-hidden border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.05] transition-all duration-300 hover:translate-y-[-2px] ${kpi.urgent ? "ring-1 ring-amber-500/40" : ""}`}>
+          <Card key={kpi.label} className={`relative overflow-hidden border border-border bg-muted/40 hover:bg-muted/40 transition-all duration-300 hover:translate-y-[-2px] ${kpi.urgent ? "ring-1 ring-amber-500/40" : ""}`}>
             <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -translate-y-12 translate-x-12 bg-gradient-to-br ${kpi.grad} opacity-10 blur-2xl`} />
             <div className="p-5 relative">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-xs font-medium text-white/40">{kpi.label}</p>
+                <p className="text-xs font-medium text-muted-foreground">{kpi.label}</p>
                 <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${kpi.grad} flex items-center justify-center shadow-lg ${kpi.glow}`}>
-                  <kpi.icon className="h-4 w-4 text-white" />
+                  <kpi.icon className="h-4 w-4 text-foreground" />
                 </div>
               </div>
-              <p className="text-3xl font-extrabold text-white">
-                {loading ? <span className="inline-block h-8 w-16 bg-white/10 rounded animate-pulse" /> : kpi.value}
+              <p className="text-3xl font-extrabold text-foreground">
+                {loading ? <span className="inline-block h-8 w-16 bg-muted rounded animate-pulse" /> : kpi.value}
               </p>
-              <p className="text-xs text-white/30 mt-1">{kpi.sub}</p>
+              <p className="text-xs text-muted-foreground/70 mt-1">{kpi.sub}</p>
               {kpi.urgent && <p className="text-[10px] font-bold text-amber-400 mt-1 uppercase tracking-wider flex items-center gap-1"><AlertTriangle className="h-3 w-3" />Needs attention</p>}
             </div>
           </Card>
@@ -128,7 +128,7 @@ export default function SuperAdminDashboard() {
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Quick Nav */}
         <div className="lg:col-span-2">
-          <h2 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
             <Zap className="h-4 w-4 text-yellow-400" /> Quick Navigation
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -136,7 +136,7 @@ export default function SuperAdminDashboard() {
               <Link key={link.href} to={link.href}>
                 <Card className={`p-4 border bg-gradient-to-br ${link.color} transition-all duration-200 cursor-pointer hover:translate-y-[-2px] group`}>
                   <link.icon className={`h-5 w-5 ${link.text} mb-2`} />
-                  <p className="font-bold text-sm text-white/80 group-hover:text-white">{link.name}</p>
+                  <p className="font-bold text-sm text-foreground group-hover:text-foreground">{link.name}</p>
                 </Card>
               </Link>
             ))}
@@ -147,15 +147,15 @@ export default function SuperAdminDashboard() {
         <div className="space-y-5">
           {/* System Status */}
           <div>
-            <h2 className="text-sm font-bold text-white/60 uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Server className="h-4 w-4 text-white/40" /> System Status
+            <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+              <Server className="h-4 w-4 text-muted-foreground" /> System Status
             </h2>
-            <Card className="border border-white/[0.08] bg-white/[0.03] divide-y divide-white/[0.05]">
+            <Card className="border border-border bg-muted/40 divide-y divide-border">
               {systemStatus.map((s) => (
                 <div key={s.label} className="flex items-center justify-between px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <s.icon className="h-3.5 w-3.5 text-white/40" />
-                    <span className="text-sm text-white/70 font-medium">{s.label}</span>
+                    <s.icon className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-sm text-muted-foreground font-medium">{s.label}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
@@ -169,29 +169,29 @@ export default function SuperAdminDashboard() {
           {/* Recent Pitches */}
           <div>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-white/60 uppercase tracking-wider flex items-center gap-2">
-                <FileText className="h-4 w-4 text-white/40" /> Recent Pitches
+              <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                <FileText className="h-4 w-4 text-muted-foreground" /> Recent Pitches
               </h2>
               <Link to="/superadmin/pitches">
-                <Button variant="ghost" size="sm" className="text-xs h-7 rounded-lg text-white/40 hover:text-white">
+                <Button variant="ghost" size="sm" className="text-xs h-7 rounded-lg text-muted-foreground hover:text-foreground">
                   All <ArrowRight className="h-3 w-3 ml-1" />
                 </Button>
               </Link>
             </div>
             <div className="space-y-2">
               {loading ? Array(4).fill(0).map((_, i) => (
-                <Card key={i} className="p-3 border border-white/[0.08] bg-white/[0.03] animate-pulse">
-                  <div className="h-4 bg-white/10 rounded w-3/4" />
+                <Card key={i} className="p-3 border border-border bg-muted/40 animate-pulse">
+                  <div className="h-4 bg-muted rounded w-3/4" />
                 </Card>
               )) : recentPitches.map((p) => (
-                <Card key={p.id} className="p-3 border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.05] transition-all">
+                <Card key={p.id} className="p-3 border border-border bg-muted/40 hover:bg-muted/40 transition-all">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-white/80 truncate flex-1">{p.title}</p>
+                    <p className="text-sm font-semibold text-foreground truncate flex-1">{p.title}</p>
                     <Badge className={`text-[10px] border font-bold px-1.5 py-0.5 ${getStatusColor(p.status)}`}>
                       {p.status === "SUBMITTED" ? "PENDING" : p.status}
                     </Badge>
                   </div>
-                  <p className="text-xs text-white/30 mt-0.5">
+                  <p className="text-xs text-muted-foreground/70 mt-0.5">
                     {new Date(p.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
                     {p.stage && ` · ${p.stage}`}
                   </p>

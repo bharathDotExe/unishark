@@ -93,8 +93,8 @@ export default function SuperAdminDeals() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-display font-extrabold text-white">Deal Management</h1>
-        <p className="text-white/40 text-sm mt-0.5">Monitor and manage investor-founder deal flow</p>
+        <h1 className="text-2xl font-display font-extrabold text-foreground">Deal Management</h1>
+        <p className="text-muted-foreground text-sm mt-0.5">Monitor and manage investor-founder deal flow</p>
       </div>
 
       {/* KPI row */}
@@ -105,16 +105,16 @@ export default function SuperAdminDeals() {
           { label: "Signed",        value: loading ? "—" : fmt(signedVolume),                  sub: `${counts.SIGNED || 0} deals signed`, icon: CheckCircle2, grad: "from-blue-500 to-indigo-600" },
           { label: "Negotiating",   value: loading ? "—" : counts.NEGOTIATING || 0,                 sub: "in progress",           icon: TrendingUp,  grad: "from-amber-500 to-orange-600", urgent: counts.NEGOTIATING > 0 },
         ].map(kpi => (
-          <Card key={kpi.label} className="p-4 border border-white/[0.08] bg-white/[0.03] relative overflow-hidden">
+          <Card key={kpi.label} className="p-4 border border-border bg-muted/40 relative overflow-hidden">
             <div className={`absolute top-0 right-0 w-20 h-20 rounded-full -translate-y-10 translate-x-10 bg-gradient-to-br ${kpi.grad} opacity-10 blur-2xl`}/>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs text-white/40">{kpi.label}</p>
+              <p className="text-xs text-muted-foreground">{kpi.label}</p>
               <div className={`h-8 w-8 rounded-lg bg-gradient-to-br ${kpi.grad} flex items-center justify-center`}>
-                <kpi.icon className="h-4 w-4 text-white"/>
+                <kpi.icon className="h-4 w-4 text-foreground"/>
               </div>
             </div>
-            <p className="text-xl font-extrabold text-white">{kpi.value}</p>
-            <p className="text-[10px] text-white/30 mt-0.5">{kpi.sub}</p>
+            <p className="text-xl font-extrabold text-foreground">{kpi.value}</p>
+            <p className="text-[10px] text-muted-foreground/70 mt-0.5">{kpi.sub}</p>
           </Card>
         ))}
       </div>
@@ -123,7 +123,7 @@ export default function SuperAdminDeals() {
       <div className="flex flex-wrap gap-3">
         {STATUS_TABS.map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${tab === t ? "bg-white text-black border-white" : "border-white/10 text-white/50 hover:border-white/30 hover:text-white"}`}>
+            className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${tab === t ? "bg-white text-black border-white" : "border-border text-muted-foreground hover:border-white/30 hover:text-foreground"}`}>
             {t.charAt(0) + t.slice(1).toLowerCase()}<span className="ml-2 text-xs opacity-60">{counts[t] || 0}</span>
           </button>
         ))}
@@ -131,42 +131,42 @@ export default function SuperAdminDeals() {
 
       {/* Deal Cards */}
       {loading ? (
-        <div className="space-y-3">{Array(3).fill(0).map((_, i) => <Card key={i} className="h-28 bg-white/5 animate-pulse rounded-xl" />)}</div>
+        <div className="space-y-3">{Array(3).fill(0).map((_, i) => <Card key={i} className="h-28 bg-muted/50 animate-pulse rounded-xl" />)}</div>
       ) : filtered.length === 0 ? (
-        <Card className="p-10 border border-white/[0.08] bg-white/[0.03] text-center">
-          <Handshake className="h-10 w-10 text-white/20 mx-auto mb-3"/>
-          <p className="text-white/50">No deals in this category</p>
+        <Card className="p-10 border border-border bg-muted/40 text-center">
+          <Handshake className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3"/>
+          <p className="text-muted-foreground">No deals in this category</p>
         </Card>
       ) : (
         <div className="space-y-3">
           {filtered.map(deal => (
-            <Card key={deal.id} className="p-5 border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.05] transition-all">
+            <Card key={deal.id} className="p-5 border border-border bg-muted/40 hover:bg-muted/40 transition-all">
               <div className="flex items-start justify-between flex-wrap gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-mono text-white/30">{deal.id.slice(0,8)}</span>
-                    <h3 className="font-bold text-white">{deal.pitchTitle}</h3>
+                    <span className="text-xs font-mono text-muted-foreground/70">{deal.id.slice(0,8)}</span>
+                    <h3 className="font-bold text-foreground">{deal.pitchTitle}</h3>
                     <Badge className={`border text-xs font-bold ${STATUS_COLORS[deal.status]}`}>{deal.status}</Badge>
                   </div>
                   <div className="grid sm:grid-cols-3 gap-3 mt-3 text-sm">
-                    <div className="flex items-center gap-2 text-white/50">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <Building2 className="h-3.5 w-3.5 text-cyan-400"/>
-                      <div><p className="text-[10px] text-white/30 leading-tight">Investor</p><p className="font-medium text-white/70">{deal.investorName}</p></div>
+                      <div><p className="text-[10px] text-muted-foreground/70 leading-tight">Investor</p><p className="font-medium text-muted-foreground">{deal.investorName}</p></div>
                     </div>
-                    <div className="flex items-center gap-2 text-white/50">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <FileText className="h-3.5 w-3.5 text-sky-400"/>
-                      <div><p className="text-[10px] text-white/30 leading-tight">Founder</p><p className="font-medium text-white/70">{deal.founderName}</p></div>
+                      <div><p className="text-[10px] text-muted-foreground/70 leading-tight">Founder</p><p className="font-medium text-muted-foreground">{deal.founderName}</p></div>
                     </div>
-                    <div className="flex items-center gap-2 text-white/50">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <DollarSign className="h-3.5 w-3.5 text-green-400"/>
                       <div>
-                        <p className="text-[10px] text-white/30 leading-tight">Amount · Equity</p>
-                        <p className="font-bold text-white/90">{fmt(deal.amount)} <span className="text-white/40 font-normal">· {deal.equity}%</span></p>
+                        <p className="text-[10px] text-muted-foreground/70 leading-tight">Amount · Equity</p>
+                        <p className="font-bold text-foreground">{fmt(deal.amount)} <span className="text-muted-foreground font-normal">· {deal.equity}%</span></p>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 mt-2 text-xs text-white/30">
-                    <Badge className="bg-white/5 text-white/40 border border-white/[0.08]">{deal.stage}</Badge>
+                  <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground/70">
+                    <Badge className="bg-muted/50 text-muted-foreground border border-border">{deal.stage}</Badge>
                     <span className="flex items-center gap-1"><Clock className="h-3 w-3"/>{new Date(deal.created_at).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</span>
                   </div>
                 </div>
@@ -186,7 +186,7 @@ export default function SuperAdminDeals() {
                       <ArrowRight className="h-3.5 w-3.5 mr-1.5"/>Close Deal
                     </Button>
                   )}
-                  <Button size="sm" variant="ghost" className="rounded-xl text-white/30 hover:text-white text-xs">
+                  <Button size="sm" variant="ghost" className="rounded-xl text-muted-foreground/70 hover:text-foreground text-xs">
                     <Eye className="h-3.5 w-3.5 mr-1.5"/>View
                   </Button>
                 </div>

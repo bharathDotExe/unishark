@@ -389,7 +389,7 @@ export default function Profile() {
             onClick={() => coverPhotoInputRef.current?.click()}
             className="absolute top-4 right-4 bg-background border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-foreground text-xs font-black px-3 py-1.5 rounded-xl hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all"
           >
-            📸 Change Cover
+            Change Cover
           </button>
         </div>
 
@@ -487,7 +487,7 @@ export default function Profile() {
         {activeTab === "basic" && (
           <Card className="border-[3px] border-foreground bg-card shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] overflow-hidden p-6 sm:p-8">
             <h3 className="font-display font-black text-lg text-foreground uppercase tracking-wider mb-6 flex items-center gap-2">
-              <span>📋</span> TAB 1: BASIC INFO
+              Basic Info
             </h3>
 
             {isEditingBasic ? (
@@ -624,7 +624,7 @@ export default function Profile() {
                   {/* Right Socials Column */}
                   <div className="space-y-4 font-bold text-xs text-muted-foreground">
                     <p className="font-black text-foreground uppercase tracking-wider text-[10px] mb-2 flex items-center gap-1.5">
-                      <span>🔗</span> Profile Contacts
+                      Profile Contacts
                     </p>
                     <p className="flex items-center gap-2 hover:text-foreground">
                       <Linkedin className="h-4 w-4 text-foreground flex-shrink-0" />
@@ -784,7 +784,7 @@ export default function Profile() {
         {activeTab === "experience" && (
           <Card className="border-[3px] border-foreground bg-card shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] overflow-hidden p-6 sm:p-8">
             <h3 className="font-display font-black text-lg text-foreground uppercase tracking-wider mb-6 flex items-center gap-2">
-              <span>💼</span> TAB 3: EXPERIENCE
+              Experience
             </h3>
 
             <div className="space-y-6">
@@ -793,36 +793,28 @@ export default function Profile() {
                   No experience blocks found. Click add more underneath to record your past roles!
                 </div>
               ) : (
-                experiences.map((exp, index) => (
-                  <div key={exp.id} className={cn("space-y-3", index > 0 && "pt-6 border-t-2 border-foreground/10")}>
-                    <div>
-                      <h4 className="font-black text-base text-foreground flex items-center gap-1.5 flex-wrap">
-                        Experience {index + 1}:
-                      </h4>
-                    </div>
-
-                    <div className="pl-4 border-l-[3px] border-foreground/30 text-xs text-muted-foreground font-bold space-y-1.5 leading-relaxed">
-                      <p>├─ <span className="font-black text-foreground">Title:</span> {exp.title}</p>
-                      <p>├─ <span className="font-black text-foreground">Company:</span> {exp.company}</p>
-                      <p>├─ <span className="font-black text-foreground">Duration:</span> {exp.duration}</p>
-                      {exp.description && (
-                        <p>├─ <span className="font-black text-foreground">Description:</span> {exp.description}</p>
-                      )}
-                      <p className="flex gap-2 mt-1">
-                        └─ 
-                        <button 
-                          onClick={() => handleActionToast(`Editing ${exp.title} role`)} 
-                          className="underline text-foreground font-black hover:text-muted-foreground text-[10px] ml-1"
-                        >
-                          [Edit]
-                        </button> 
-                        <button 
-                          onClick={() => handleDeleteExperience(exp.id)} 
-                          className="underline text-destructive font-black hover:text-destructive/80 text-[10px]"
-                        >
-                          [Delete]
-                        </button>
-                      </p>
+                experiences.map((exp) => (
+                  <div key={exp.id} className="p-5 rounded-2xl border border-border bg-card shadow-sm hover:shadow-md transition-all">
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <h4 className="font-bold text-base text-foreground">{exp.title}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          <span className="font-semibold text-foreground">{exp.company}</span>
+                          <span className="mx-1.5 text-muted-foreground/50">·</span>
+                          {exp.duration}
+                        </p>
+                        {exp.description && (
+                          <p className="text-sm text-muted-foreground leading-relaxed mt-2">{exp.description}</p>
+                        )}
+                      </div>
+                      <Button
+                        onClick={() => handleDeleteExperience(exp.id)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:bg-destructive/5 rounded-lg"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -911,7 +903,7 @@ export default function Profile() {
           <Card className="border-[3px] border-foreground bg-card shadow-[6px_6px_0_0_hsl(var(--foreground))] rounded-[24px] overflow-hidden">
             <div className="bg-muted/40 border-b-2 border-foreground p-4">
               <h3 className="font-display font-black text-md text-foreground uppercase tracking-wider flex items-center gap-2">
-                <span>⚙️</span> Account Settings
+                Account Settings
               </h3>
             </div>
 
@@ -928,7 +920,7 @@ export default function Profile() {
                       onChange={(e) => setNotifications({ ...notifications, investors: e.target.checked })}
                       className="w-4 h-4 border-2 border-foreground rounded cursor-pointer accent-foreground"
                     />
-                    <span>☑ Messages from investors</span>
+                    <span>&nbsp;Messages from investors</span>
                   </label>
                   <label className="flex items-center gap-2.5 font-bold text-xs text-muted-foreground hover:text-foreground cursor-pointer select-none">
                     <input 
@@ -937,7 +929,7 @@ export default function Profile() {
                       onChange={(e) => setNotifications({ ...notifications, weeklyReport: e.target.checked })}
                       className="w-4 h-4 border-2 border-foreground rounded cursor-pointer accent-foreground"
                     />
-                    <span>☑ Weekly pitch performance report</span>
+                    <span>&nbsp;Weekly pitch performance report</span>
                   </label>
                   <label className="flex items-center gap-2.5 font-bold text-xs text-muted-foreground hover:text-foreground cursor-pointer select-none">
                     <input 
@@ -946,7 +938,7 @@ export default function Profile() {
                       onChange={(e) => setNotifications({ ...notifications, recommendations: e.target.checked })}
                       className="w-4 h-4 border-2 border-foreground rounded cursor-pointer accent-foreground"
                     />
-                    <span>☑ Investor recommendations</span>
+                    <span>&nbsp;Investor recommendations</span>
                   </label>
                   <label className="flex items-center gap-2.5 font-bold text-xs text-muted-foreground hover:text-foreground cursor-pointer select-none">
                     <input 
@@ -955,7 +947,7 @@ export default function Profile() {
                       onChange={(e) => setNotifications({ ...notifications, marketing: e.target.checked })}
                       className="w-4 h-4 border-2 border-foreground rounded cursor-pointer accent-foreground"
                     />
-                    <span>☐ Marketing emails</span>
+                    <span>Marketing emails</span>
                   </label>
                 </div>
               </div>
@@ -975,7 +967,7 @@ export default function Profile() {
                       onChange={() => setPrivacy("public")}
                       className="w-4 h-4 accent-foreground cursor-pointer"
                     />
-                    <span>○ Public profile (anyone can see)</span>
+                    <span>Public profile (anyone can see)</span>
                   </label>
                   <label className="flex items-center gap-2.5 hover:text-foreground cursor-pointer select-none">
                     <input 
@@ -986,7 +978,7 @@ export default function Profile() {
                       onChange={() => setPrivacy("investors")}
                       className="w-4 h-4 accent-foreground cursor-pointer"
                     />
-                    <span>●○ Investors only (verified investors can see)</span>
+                    <span>●Investors only (verified investors can see)</span>
                   </label>
                   <label className="flex items-center gap-2.5 hover:text-foreground cursor-pointer select-none">
                     <input 
@@ -997,7 +989,7 @@ export default function Profile() {
                       onChange={() => setPrivacy("private")}
                       className="w-4 h-4 accent-foreground cursor-pointer"
                     />
-                    <span>○ Private (no one can see except you)</span>
+                    <span>Private (no one can see except you)</span>
                   </label>
                 </div>
               </div>
@@ -1046,8 +1038,8 @@ export default function Profile() {
                   >
                     Delete Account
                   </Button>
-                  <p className="text-[10px] text-destructive font-bold italic leading-relaxed pl-1">
-                    └─ Warning: This action is permanent and cannot be undone. All pitches, documents, and logs will be expunged.
+                  <p className="text-[11px] text-destructive font-semibold leading-relaxed pl-1">
+                    Warning: This action is permanent and cannot be undone. All pitches, documents, and logs will be expunged.
                   </p>
                 </div>
               </div>

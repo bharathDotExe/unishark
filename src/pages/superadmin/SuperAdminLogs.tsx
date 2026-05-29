@@ -97,23 +97,23 @@ export default function SuperAdminLogs() {
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-display font-extrabold text-white">Activity Logs & Audit</h1>
-          <p className="text-white/40 text-sm mt-0.5">Complete trail of all admin and system actions</p>
+          <h1 className="text-2xl font-display font-extrabold text-foreground">Activity Logs & Audit</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Complete trail of all admin and system actions</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="rounded-xl text-white/50 hover:text-white border border-white/[0.08] text-xs" onClick={exportCSV}><Download className="h-4 w-4 mr-1.5"/>Export Logs</Button>
-          <Button variant="ghost" size="sm" className="rounded-xl text-white/50 hover:text-white border border-white/[0.08] text-xs" onClick={loadLogs}><RefreshCw className="h-4 w-4 mr-1.5"/>Refresh</Button>
+          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border text-xs" onClick={exportCSV}><Download className="h-4 w-4 mr-1.5"/>Export Logs</Button>
+          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border text-xs" onClick={loadLogs}><RefreshCw className="h-4 w-4 mr-1.5"/>Refresh</Button>
         </div>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: "Total Logs",   value: loading ? "—" : logs.length,                             color: "text-white",       b: "border-white/10" },
+          { label: "Total Logs",   value: loading ? "—" : logs.length,                             color: "text-foreground",       b: "border-border" },
           { label: "Warnings",     value: loading ? "—" : logs.filter(l=>l.severity==="WARN").length, color: "text-amber-400", b: "border-amber-500/20" },
           { label: "Errors",       value: loading ? "—" : logs.filter(l=>l.severity==="ERROR").length, color: "text-red-400",  b: "border-red-500/20" },
         ].map(s=>(
-          <Card key={s.label} className={`p-4 border ${s.b} bg-white/[0.03]`}><p className="text-xs text-white/40 mb-1">{s.label}</p><p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p></Card>
+          <Card key={s.label} className={`p-4 border ${s.b} bg-muted/40`}><p className="text-xs text-muted-foreground mb-1">{s.label}</p><p className={`text-2xl font-extrabold ${s.color}`}>{s.value}</p></Card>
         ))}
       </div>
 
@@ -122,7 +122,7 @@ export default function SuperAdminLogs() {
         <div className="flex gap-2">
           {["ALL","INFO","WARN","ERROR"].map(s=>(
             <button key={s} onClick={()=>setSevFilter(s)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${sevFilter===s?"bg-white text-black border-white":"border-white/10 text-white/50 hover:border-white/30 hover:text-white"}`}>
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${sevFilter===s?"bg-white text-black border-white":"border-border text-muted-foreground hover:border-white/30 hover:text-foreground"}`}>
               {s}
             </button>
           ))}
@@ -130,31 +130,31 @@ export default function SuperAdminLogs() {
         <div className="flex gap-2 flex-wrap">
           {["ALL","AUTH","PITCH","INVESTOR","USER","SETTINGS","SYSTEM"].map(c=>(
             <button key={c} onClick={()=>setCatFilter(c)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${catFilter===c?"bg-white text-black border-white":"border-white/10 text-white/50 hover:border-white/30 hover:text-white"}`}>
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold border-2 transition-all ${catFilter===c?"bg-white text-black border-white":"border-border text-muted-foreground hover:border-white/30 hover:text-foreground"}`}>
               {c}
             </button>
           ))}
         </div>
         <div className="relative flex-1 min-w-48">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-white/30"/>
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/70"/>
           <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search logs..."
-            className="pl-9 h-9 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-white/30 rounded-xl focus-visible:ring-0 text-sm"/>
+            className="pl-9 h-9 bg-muted/40 border-border text-foreground placeholder:text-muted-foreground/70 rounded-xl focus-visible:ring-0 text-sm"/>
         </div>
       </div>
 
       {/* Log Table */}
       {loading ? (
-        <div className="space-y-2">{Array(5).fill(0).map((_, i) => <Card key={i} className="h-16 bg-white/5 animate-pulse rounded-xl" />)}</div>
+        <div className="space-y-2">{Array(5).fill(0).map((_, i) => <Card key={i} className="h-16 bg-muted/50 animate-pulse rounded-xl" />)}</div>
       ) : filtered.length === 0 ? (
-        <Card className="p-10 border border-white/[0.08] bg-white/[0.03] text-center">
-          <Filter className="h-10 w-10 text-white/20 mx-auto mb-3"/><p className="text-white/50">No logs match your filters</p>
+        <Card className="p-10 border border-border bg-muted/40 text-center">
+          <Filter className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3"/><p className="text-muted-foreground">No logs match your filters</p>
         </Card>
       ) : (
         <div className="space-y-1.5">
           {filtered.map(log => {
             const CatIcon = CATEGORY_ICONS[log.category] || Shield;
             return (
-              <Card key={log.id} className={`px-4 py-3 border bg-white/[0.02] hover:bg-white/[0.04] transition-all ${log.severity === "ERROR" ? "border-red-500/20" : log.severity === "WARN" ? "border-amber-500/15" : "border-white/[0.06]"}`}>
+              <Card key={log.id} className={`px-4 py-3 border bg-muted/40 hover:bg-muted/40 transition-all ${log.severity === "ERROR" ? "border-red-500/20" : log.severity === "WARN" ? "border-amber-500/15" : "border-border"}`}>
                 <div className="flex items-start gap-3">
                   <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${CATEGORY_COLORS[log.category]}`}>
                     <CatIcon className="h-3.5 w-3.5"/>
@@ -162,15 +162,15 @@ export default function SuperAdminLogs() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={`text-xs font-bold ${ROLE_COLORS[log.actorRole]}`}>{log.actor}</span>
-                      <span className="text-white/20 text-xs">·</span>
-                      <p className="text-sm text-white/70 font-medium">{log.action}</p>
+                      <span className="text-muted-foreground/50 text-xs">·</span>
+                      <p className="text-sm text-muted-foreground font-medium">{log.action}</p>
                     </div>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <Badge className={`border text-[10px] font-bold ${CATEGORY_COLORS[log.category]}`}>{log.category}</Badge>
                       <Badge className={`border text-[10px] font-bold ${SEVERITY_COLORS[log.severity]}`}>{log.severity}</Badge>
-                      <span className="text-[10px] text-white/30">→ {log.target}</span>
-                      {log.ip && <span className="text-[10px] text-white/20 font-mono">{log.ip}</span>}
-                      <span className="text-[10px] text-white/25 flex items-center gap-1 ml-auto"><Clock className="h-2.5 w-2.5"/>{new Date(log.timestamp).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</span>
+                      <span className="text-[10px] text-muted-foreground/70">→ {log.target}</span>
+                      {log.ip && <span className="text-[10px] text-muted-foreground/50 font-mono">{log.ip}</span>}
+                      <span className="text-[10px] text-foreground/25 flex items-center gap-1 ml-auto"><Clock className="h-2.5 w-2.5"/>{new Date(log.timestamp).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</span>
                     </div>
                   </div>
                 </div>

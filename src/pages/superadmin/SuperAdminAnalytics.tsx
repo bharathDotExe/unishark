@@ -57,12 +57,12 @@ export default function SuperAdminAnalytics() {
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-display font-extrabold text-white">Complete Analytics</h1>
-          <p className="text-white/40 text-sm mt-0.5">Full platform performance intelligence</p>
+          <h1 className="text-2xl font-display font-extrabold text-foreground">Complete Analytics</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Full platform performance intelligence</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-white/30">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground/70">
           <Calendar className="h-3.5 w-3.5"/>Live data
-          <Button variant="ghost" size="sm" className="rounded-xl text-white/50 hover:text-white border border-white/[0.08] ml-2" onClick={load}><RefreshCw className="h-4 w-4 mr-2"/>Refresh</Button>
+          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border ml-2" onClick={load}><RefreshCw className="h-4 w-4 mr-2"/>Refresh</Button>
         </div>
       </div>
 
@@ -74,30 +74,30 @@ export default function SuperAdminAnalytics() {
           { label:"Verified Inv.",  value:stats.verifiedInvestors, sub:`${verifyRate}% of investors`,  grad:"from-green-500 to-emerald-600",glow:"shadow-green-500/20",  icon:ShieldCheck },
           { label:"Platform Score", value:"9.2/10",             sub:"operational health",              grad:"from-yellow-400 to-orange-500",glow:"shadow-yellow-500/20", icon:Activity },
         ].map(k=>(
-          <Card key={k.label} className="p-5 border border-white/[0.08] bg-white/[0.03] relative overflow-hidden hover:bg-white/[0.05] transition-all hover:translate-y-[-2px]">
+          <Card key={k.label} className="p-5 border border-border bg-muted/40 relative overflow-hidden hover:bg-muted/40 transition-all hover:translate-y-[-2px]">
             <div className={`absolute top-0 right-0 w-24 h-24 rounded-full -translate-y-12 translate-x-12 bg-gradient-to-br ${k.grad} opacity-10 blur-2xl`}/>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs text-white/40">{k.label}</p>
+              <p className="text-xs text-muted-foreground">{k.label}</p>
               <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${k.grad} flex items-center justify-center shadow-lg ${k.glow}`}>
-                <k.icon className="h-4 w-4 text-white"/>
+                <k.icon className="h-4 w-4 text-foreground"/>
               </div>
             </div>
-            {loading?<div className="h-8 bg-white/10 rounded animate-pulse"/>:<p className="text-3xl font-extrabold text-white">{k.value}</p>}
-            <p className="text-xs text-white/30 mt-1">{k.sub}</p>
+            {loading?<div className="h-8 bg-muted rounded animate-pulse"/>:<p className="text-3xl font-extrabold text-foreground">{k.value}</p>}
+            <p className="text-xs text-muted-foreground/70 mt-1">{k.sub}</p>
           </Card>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* 7-day Activity */}
-        <Card className="p-5 border border-white/[0.08] bg-white/[0.03]">
-          <h2 className="text-base font-bold text-white mb-1 flex items-center gap-2"><Activity className="h-4 w-4 text-white/40"/>7-Day Activity</h2>
+        <Card className="p-5 border border-border bg-muted/40">
+          <h2 className="text-base font-bold text-foreground mb-1 flex items-center gap-2"><Activity className="h-4 w-4 text-muted-foreground"/>7-Day Activity</h2>
           <div className="flex items-center gap-4 mb-4">
             {[{label:"Pitches",color:"bg-sky-400"},{label:"Students",color:"bg-blue-400"},{label:"Investors",color:"bg-cyan-400"}].map(l=>(
-              <div key={l.label} className="flex items-center gap-1.5"><span className={`w-2 h-2 rounded-full ${l.color}`}/><span className="text-xs text-white/40">{l.label}</span></div>
+              <div key={l.label} className="flex items-center gap-1.5"><span className={`w-2 h-2 rounded-full ${l.color}`}/><span className="text-xs text-muted-foreground">{l.label}</span></div>
             ))}
           </div>
-          {loading?<div className="h-32 bg-white/5 rounded animate-pulse"/>:(
+          {loading?<div className="h-32 bg-muted/50 rounded animate-pulse"/>:(
             <div className="flex items-end gap-2 h-32">
               {stats.recentActivity.map(d=>(
                 <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
@@ -106,7 +106,7 @@ export default function SuperAdminAnalytics() {
                       <div key={i} className={`flex-1 ${b.c} rounded-t-sm opacity-70 hover:opacity-100 transition-opacity min-h-[2px]`} style={{height:`${(b.v/maxBar)*96}px`}}/>
                     ))}
                   </div>
-                  <span className="text-[9px] text-white/30 whitespace-nowrap">{d.date}</span>
+                  <span className="text-[9px] text-muted-foreground/70 whitespace-nowrap">{d.date}</span>
                 </div>
               ))}
             </div>
@@ -114,9 +114,9 @@ export default function SuperAdminAnalytics() {
         </Card>
 
         {/* Status Distribution */}
-        <Card className="p-5 border border-white/[0.08] bg-white/[0.03]">
-          <h2 className="text-base font-bold text-white mb-5 flex items-center gap-2"><PieChart className="h-4 w-4 text-white/40"/>Pitch Status</h2>
-          {loading?<div className="space-y-3">{Array(4).fill(0).map((_,i)=><div key={i} className="h-8 bg-white/5 rounded animate-pulse"/>)}</div>:(
+        <Card className="p-5 border border-border bg-muted/40">
+          <h2 className="text-base font-bold text-foreground mb-5 flex items-center gap-2"><PieChart className="h-4 w-4 text-muted-foreground"/>Pitch Status</h2>
+          {loading?<div className="space-y-3">{Array(4).fill(0).map((_,i)=><div key={i} className="h-8 bg-muted/50 rounded animate-pulse"/>)}</div>:(
             <div className="space-y-4">
               {[
                 {label:"Approved", value:stats.approvedPitches, color:"bg-green-400", text:"text-green-400"},
@@ -127,10 +127,10 @@ export default function SuperAdminAnalytics() {
                 return (
                   <div key={s.label}>
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-sm font-medium text-white/70">{s.label}</span>
-                      <span className={`text-sm font-bold ${s.text}`}>{s.value} <span className="text-white/30 font-normal text-xs">({pct.toFixed(0)}%)</span></span>
+                      <span className="text-sm font-medium text-muted-foreground">{s.label}</span>
+                      <span className={`text-sm font-bold ${s.text}`}>{s.value} <span className="text-muted-foreground/70 font-normal text-xs">({pct.toFixed(0)}%)</span></span>
                     </div>
-                    <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
                       <div className={`h-full ${s.color} rounded-full transition-all duration-700`} style={{width:`${pct}%`}}/>
                     </div>
                   </div>
@@ -141,20 +141,20 @@ export default function SuperAdminAnalytics() {
         </Card>
 
         {/* Stage Breakdown */}
-        <Card className="p-5 border border-white/[0.08] bg-white/[0.03] lg:col-span-2">
-          <h2 className="text-base font-bold text-white mb-5 flex items-center gap-2"><BarChart3 className="h-4 w-4 text-white/40"/>Pitches by Stage</h2>
-          {loading?<div className="grid sm:grid-cols-3 gap-3">{Array(6).fill(0).map((_,i)=><div key={i} className="h-16 bg-white/5 rounded animate-pulse"/>)}</div>:
-          stats.pitchesByStage.length===0?<p className="text-white/30 text-sm text-center py-6">No stage data</p>:(
+        <Card className="p-5 border border-border bg-muted/40 lg:col-span-2">
+          <h2 className="text-base font-bold text-foreground mb-5 flex items-center gap-2"><BarChart3 className="h-4 w-4 text-muted-foreground"/>Pitches by Stage</h2>
+          {loading?<div className="grid sm:grid-cols-3 gap-3">{Array(6).fill(0).map((_,i)=><div key={i} className="h-16 bg-muted/50 rounded animate-pulse"/>)}</div>:
+          stats.pitchesByStage.length===0?<p className="text-muted-foreground/70 text-sm text-center py-6">No stage data</p>:(
             <div className="grid sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {stats.pitchesByStage.map((s:any)=>{
                 const pct = (s.count/maxStage)*100;
                 return (
-                  <Card key={s.stage} className="p-4 border border-white/[0.06] bg-white/[0.02]">
+                  <Card key={s.stage} className="p-4 border border-border bg-muted/40">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-white/50">{s.stage}</span>
-                      <span className="text-sm font-extrabold text-white">{s.count}</span>
+                      <span className="text-xs font-medium text-muted-foreground">{s.stage}</span>
+                      <span className="text-sm font-extrabold text-foreground">{s.count}</span>
                     </div>
-                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-indigo-400 to-blue-400 rounded-full" style={{width:`${pct}%`}}/>
                     </div>
                   </Card>
@@ -165,9 +165,9 @@ export default function SuperAdminAnalytics() {
         </Card>
 
         {/* User Split */}
-        <Card className="p-5 border border-white/[0.08] bg-white/[0.03] lg:col-span-2">
-          <h2 className="text-base font-bold text-white mb-5 flex items-center gap-2"><Users className="h-4 w-4 text-white/40"/>User Distribution</h2>
-          {loading?<div className="h-6 bg-white/5 rounded animate-pulse"/>:(
+        <Card className="p-5 border border-border bg-muted/40 lg:col-span-2">
+          <h2 className="text-base font-bold text-foreground mb-5 flex items-center gap-2"><Users className="h-4 w-4 text-muted-foreground"/>User Distribution</h2>
+          {loading?<div className="h-6 bg-muted/50 rounded animate-pulse"/>:(
             <div className="flex items-center gap-4">
               <div className="flex-1">
                 <div className="flex h-6 rounded-full overflow-hidden">
@@ -177,14 +177,14 @@ export default function SuperAdminAnalytics() {
                   ].map(b=>{
                     const total=stats.totalStudents+stats.totalInvestors||1;
                     return <div key={b.l} className={`${b.c} transition-all duration-700 flex items-center justify-center`} style={{width:`${(b.v/total)*100}%`}}>
-                      <span className="text-[10px] font-bold text-white/80 px-1 truncate">{b.l}</span>
+                      <span className="text-[10px] font-bold text-foreground px-1 truncate">{b.l}</span>
                     </div>;
                   })}
                 </div>
               </div>
               <div className="flex gap-4 text-sm shrink-0">
-                <span className="flex items-center gap-1.5 text-white/60"><span className="w-3 h-3 rounded-full bg-blue-500 inline-block"/>{stats.totalStudents} Students</span>
-                <span className="flex items-center gap-1.5 text-white/60"><span className="w-3 h-3 rounded-full bg-cyan-500 inline-block"/>{stats.totalInvestors} Investors</span>
+                <span className="flex items-center gap-1.5 text-muted-foreground"><span className="w-3 h-3 rounded-full bg-blue-500 inline-block"/>{stats.totalStudents} Students</span>
+                <span className="flex items-center gap-1.5 text-muted-foreground"><span className="w-3 h-3 rounded-full bg-cyan-500 inline-block"/>{stats.totalInvestors} Investors</span>
               </div>
             </div>
           )}

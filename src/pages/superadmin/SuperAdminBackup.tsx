@@ -74,8 +74,8 @@ export default function SuperAdminBackup() {
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-display font-extrabold text-white">Database Backup & Recovery</h1>
-          <p className="text-white/40 text-sm mt-0.5">Manage database backups and point-in-time recovery</p>
+          <h1 className="text-2xl font-display font-extrabold text-foreground">Database Backup & Recovery</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Manage database backups and point-in-time recovery</p>
         </div>
       </div>
 
@@ -87,15 +87,15 @@ export default function SuperAdminBackup() {
           { label: "Tables",        value: "18",                 icon: Database,  grad: "from-purple-500 to-indigo-600",glow:"shadow-purple-500/20" },
           { label: "Next Backup",   value: "03:00 UTC",         icon: Clock,     grad: "from-amber-500 to-orange-600",glow:"shadow-amber-500/20" },
         ].map(k=>(
-          <Card key={k.label} className="p-4 border border-white/[0.08] bg-white/[0.03] relative overflow-hidden">
+          <Card key={k.label} className="p-4 border border-border bg-muted/40 relative overflow-hidden">
             <div className={`absolute top-0 right-0 w-16 h-16 rounded-full -translate-y-8 translate-x-8 bg-gradient-to-br ${k.grad} opacity-10 blur-xl`}/>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs text-white/40">{k.label}</p>
+              <p className="text-xs text-muted-foreground">{k.label}</p>
               <div className={`h-8 w-8 rounded-xl bg-gradient-to-br ${k.grad} flex items-center justify-center shadow-lg ${k.glow}`}>
-                <k.icon className="h-4 w-4 text-white"/>
+                <k.icon className="h-4 w-4 text-foreground"/>
               </div>
             </div>
-            <p className="text-xl font-extrabold text-white">{k.value}</p>
+            <p className="text-xl font-extrabold text-foreground">{k.value}</p>
           </Card>
         ))}
       </div>
@@ -110,17 +110,17 @@ export default function SuperAdminBackup() {
       </div>
 
       {/* Trigger Backup */}
-      <Card className="p-5 border border-white/[0.08] bg-white/[0.03]">
-        <h2 className="text-base font-bold text-white mb-4 flex items-center gap-2">
+      <Card className="p-5 border border-border bg-muted/40">
+        <h2 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
           <Zap className="h-4 w-4 text-yellow-400"/> Manual Backup
         </h2>
         <div className="flex flex-wrap gap-3">
           {([["FULL","Full Backup","~4 min","from-blue-500 to-indigo-600"],["INCREMENTAL","Incremental","~45 sec","from-sky-500 to-cyan-600"],["SCHEMA_ONLY","Schema Only","~5 sec","from-purple-500 to-indigo-600"]] as const).map(([type,label,est,grad])=>(
             <Button key={type} disabled={running}
-              className={`bg-gradient-to-r ${grad} text-white border-0 rounded-xl shadow-lg hover:opacity-90 text-sm`}
+              className={`bg-gradient-to-r ${grad} text-foreground border-0 rounded-xl shadow-lg hover:opacity-90 text-sm`}
               onClick={()=>triggerBackup(type as any)}>
               {running ? <RefreshCw className="h-4 w-4 mr-2 animate-spin"/> : <Play className="h-4 w-4 mr-2"/>}
-              {label} <span className="ml-1.5 text-white/60 text-xs">({est})</span>
+              {label} <span className="ml-1.5 text-muted-foreground text-xs">({est})</span>
             </Button>
           ))}
         </div>
@@ -128,25 +128,25 @@ export default function SuperAdminBackup() {
 
       {/* Backup History */}
       <div>
-        <h2 className="text-base font-bold text-white mb-4 flex items-center gap-2">
-          <Archive className="h-4 w-4 text-white/40"/> Backup History
+        <h2 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
+          <Archive className="h-4 w-4 text-muted-foreground"/> Backup History
         </h2>
         <div className="space-y-2">
           {backups.map(backup => {
             const sc = STATUS_COLORS[backup.status];
             const StatusIcon = sc.icon;
             return (
-              <Card key={backup.id} className="px-4 py-3 border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.05] transition-all">
+              <Card key={backup.id} className="px-4 py-3 border border-border bg-muted/40 hover:bg-muted/40 transition-all">
                 <div className="flex items-center justify-between gap-4 flex-wrap">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <StatusIcon className={`h-4 w-4 shrink-0 ${sc.color} ${backup.status==="IN_PROGRESS"?"animate-spin":""}`}/>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-mono font-medium text-white/80 truncate">{backup.name}</p>
+                        <p className="text-sm font-mono font-medium text-foreground truncate">{backup.name}</p>
                         <Badge className={`border text-[10px] font-bold ${TYPE_COLORS[backup.type]}`}>{backup.type.replace("_"," ")}</Badge>
                         <Badge className={`border text-[10px] font-bold ${sc.badge}`}>{backup.status.replace("_"," ")}</Badge>
                       </div>
-                      <div className="flex items-center gap-3 mt-0.5 text-xs text-white/30">
+                      <div className="flex items-center gap-3 mt-0.5 text-xs text-muted-foreground/70">
                         <span>{backup.size}</span>
                         {backup.duration && <span>Duration: {backup.duration}</span>}
                         {backup.tables && <span>{backup.tables} tables</span>}
@@ -156,13 +156,13 @@ export default function SuperAdminBackup() {
                   </div>
                   {backup.status === "COMPLETED" && (
                     <div className="flex gap-2 shrink-0">
-                      <Button size="sm" className="bg-white/5 hover:bg-white/10 text-white/50 hover:text-white border border-white/[0.08] rounded-xl text-xs" onClick={()=>restore(backup.name)}>
+                      <Button size="sm" className="bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border rounded-xl text-xs" onClick={()=>restore(backup.name)}>
                         <RefreshCw className="h-3.5 w-3.5 mr-1.5"/>Restore
                       </Button>
-                      <Button size="sm" className="bg-white/5 hover:bg-white/10 text-white/50 hover:text-white border border-white/[0.08] rounded-xl text-xs">
+                      <Button size="sm" className="bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground border border-border rounded-xl text-xs">
                         <Download className="h-3.5 w-3.5"/>
                       </Button>
-                      <Button size="sm" className="bg-white/5 hover:bg-red-500/20 text-white/30 hover:text-red-400 border border-white/[0.08] hover:border-red-500/30 rounded-xl text-xs" onClick={()=>deleteBackup(backup.id)}>
+                      <Button size="sm" className="bg-muted/50 hover:bg-red-500/20 text-muted-foreground/70 hover:text-red-400 border border-border hover:border-red-500/30 rounded-xl text-xs" onClick={()=>deleteBackup(backup.id)}>
                         <Trash2 className="h-3.5 w-3.5"/>
                       </Button>
                     </div>
