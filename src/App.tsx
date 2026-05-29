@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +15,32 @@ import PitchForm from "./pages/PitchForm.tsx";
 import BrowsePitches from "./pages/BrowsePitches.tsx";
 import PitchDetail from "./pages/PitchDetail.tsx";
 import Admin from "./pages/Admin.tsx";
+import AdminLayout from "./components/AdminLayout.tsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.tsx";
+import AdminPitches from "./pages/admin/AdminPitches.tsx";
+import AdminInvestors from "./pages/admin/AdminInvestors.tsx";
+import AdminUsers from "./pages/admin/AdminUsers.tsx";
+import AdminFlagged from "./pages/admin/AdminFlagged.tsx";
+import AdminDisputes from "./pages/admin/AdminDisputes.tsx";
+import AdminMessages from "./pages/admin/AdminMessages.tsx";
+import AdminReports from "./pages/admin/AdminReports.tsx";
+import AdminSupport from "./pages/admin/AdminSupport.tsx";
+import AdminAnalytics from "./pages/admin/AdminAnalytics.tsx";
+
+// SuperAdmin pages & layout
+import SuperAdminLayout from "./components/SuperAdminLayout.tsx";
+import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard.tsx";
+import SuperAdminAdmins from "./pages/superadmin/SuperAdminAdmins.tsx";
+import SuperAdminUsers from "./pages/superadmin/SuperAdminUsers.tsx";
+import SuperAdminPitches from "./pages/superadmin/SuperAdminPitches.tsx";
+import SuperAdminInvestors from "./pages/superadmin/SuperAdminInvestors.tsx";
+import SuperAdminDeals from "./pages/superadmin/SuperAdminDeals.tsx";
+import SuperAdminRevenue from "./pages/superadmin/SuperAdminRevenue.tsx";
+import SuperAdminSettings from "./pages/superadmin/SuperAdminSettings.tsx";
+import SuperAdminLogs from "./pages/superadmin/SuperAdminLogs.tsx";
+import SuperAdminAnalytics from "./pages/superadmin/SuperAdminAnalytics.tsx";
+import SuperAdminCompliance from "./pages/superadmin/SuperAdminCompliance.tsx";
+import SuperAdminBackup from "./pages/superadmin/SuperAdminBackup.tsx";
 import Profile from "./pages/Profile.tsx";
 import MyPitches from "./pages/MyPitches.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -40,6 +66,8 @@ const queryClient = new QueryClient();
 // Role-based Wrappers
 const DashboardWrapper = () => {
   const { roles } = useAuth();
+  if (roles.includes("superadmin")) return <Navigate to="/superadmin/dashboard" replace />;
+  if (roles.includes("admin")) return <Navigate to="/admin/dashboard" replace />;
   if (roles.includes("investor")) return <InvestorLayout><InvestorDashboard /></InvestorLayout>;
   return <StudentLayout><Dashboard /></StudentLayout>;
 };
@@ -116,8 +144,38 @@ const App = () => (
               <Route path="/deals" element={<ProtectedRoute requireRole="student"><div className="p-8">Deals (Coming Soon)</div></ProtectedRoute>} />
             </Route>
 
-            {/* Admin */}
+            {/* Admin legacy */}
             <Route path="/admin" element={<ProtectedRoute requireRole="admin"><Admin /></ProtectedRoute>} />
+
+            {/* Admin Dashboard (new multi-page) */}
+            <Route path="/admin" element={<ProtectedRoute requireRole="admin"><AdminLayout /></ProtectedRoute>}>
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="pitches" element={<AdminPitches />} />
+              <Route path="investors" element={<AdminInvestors />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="flagged" element={<AdminFlagged />} />
+              <Route path="disputes" element={<AdminDisputes />} />
+              <Route path="messages" element={<AdminMessages />} />
+              <Route path="reports" element={<AdminReports />} />
+              <Route path="support" element={<AdminSupport />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+            </Route>
+
+            {/* Super Admin Dashboard */}
+            <Route path="/superadmin" element={<ProtectedRoute requireRole="superadmin"><SuperAdminLayout /></ProtectedRoute>}>
+              <Route path="dashboard"  element={<SuperAdminDashboard />} />
+              <Route path="admins"     element={<SuperAdminAdmins />} />
+              <Route path="users"      element={<SuperAdminUsers />} />
+              <Route path="pitches"    element={<SuperAdminPitches />} />
+              <Route path="investors"  element={<SuperAdminInvestors />} />
+              <Route path="deals"      element={<SuperAdminDeals />} />
+              <Route path="revenue"    element={<SuperAdminRevenue />} />
+              <Route path="settings"   element={<SuperAdminSettings />} />
+              <Route path="logs"       element={<SuperAdminLogs />} />
+              <Route path="analytics"  element={<SuperAdminAnalytics />} />
+              <Route path="compliance" element={<SuperAdminCompliance />} />
+              <Route path="backup"     element={<SuperAdminBackup />} />
+            </Route>
 
             <Route path="*" element={<NotFound />} />
           </Routes>

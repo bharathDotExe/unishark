@@ -126,6 +126,8 @@ const Index = () => {
         navigate("/dashboard", { replace: true });
       } else if (roles.includes("investor")) {
         navigate("/pitches", { replace: true });
+      } else if (roles.includes("superadmin")) {
+        navigate("/superadmin/dashboard", { replace: true });
       } else if (roles.includes("admin")) {
         navigate("/admin", { replace: true });
       }

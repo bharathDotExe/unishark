@@ -33,7 +33,8 @@ export default function Login() {
       const roles = (rolesData ?? []).map((r) => r.role);
       toast.success("Welcome back!");
 
-      if (roles.includes("admin")) navigate("/admin");
+      if (roles.includes("superadmin")) navigate("/superadmin/dashboard");
+      else if (roles.includes("admin")) navigate("/admin/dashboard");
       else navigate("/dashboard");
     } catch (err: any) {
       toast.error(err.message || "Login failed");
