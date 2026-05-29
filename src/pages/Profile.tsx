@@ -793,36 +793,28 @@ export default function Profile() {
                   No experience blocks found. Click add more underneath to record your past roles!
                 </div>
               ) : (
-                experiences.map((exp, index) => (
-                  <div key={exp.id} className={cn("space-y-3", index > 0 && "pt-6 border-t-2 border-foreground/10")}>
-                    <div>
-                      <h4 className="font-black text-base text-foreground flex items-center gap-1.5 flex-wrap">
-                        Experience {index + 1}:
-                      </h4>
-                    </div>
-
-                    <div className="pl-4 border-l-[3px] border-foreground/30 text-xs text-muted-foreground font-bold space-y-1.5 leading-relaxed">
-                      <p>├─ <span className="font-black text-foreground">Title:</span> {exp.title}</p>
-                      <p>├─ <span className="font-black text-foreground">Company:</span> {exp.company}</p>
-                      <p>├─ <span className="font-black text-foreground">Duration:</span> {exp.duration}</p>
-                      {exp.description && (
-                        <p>├─ <span className="font-black text-foreground">Description:</span> {exp.description}</p>
-                      )}
-                      <p className="flex gap-2 mt-1">
-                        └─ 
-                        <button 
-                          onClick={() => handleActionToast(`Editing ${exp.title} role`)} 
-                          className="underline text-foreground font-black hover:text-muted-foreground text-[10px] ml-1"
-                        >
-                          [Edit]
-                        </button> 
-                        <button 
-                          onClick={() => handleDeleteExperience(exp.id)} 
-                          className="underline text-destructive font-black hover:text-destructive/80 text-[10px]"
-                        >
-                          [Delete]
-                        </button>
-                      </p>
+                experiences.map((exp) => (
+                  <div key={exp.id} className="p-5 rounded-2xl border border-border bg-card shadow-sm hover:shadow-md transition-all">
+                    <div className="flex items-start justify-between gap-4 flex-wrap">
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <h4 className="font-bold text-base text-foreground">{exp.title}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          <span className="font-semibold text-foreground">{exp.company}</span>
+                          <span className="mx-1.5 text-muted-foreground/50">·</span>
+                          {exp.duration}
+                        </p>
+                        {exp.description && (
+                          <p className="text-sm text-muted-foreground leading-relaxed mt-2">{exp.description}</p>
+                        )}
+                      </div>
+                      <Button
+                        onClick={() => handleDeleteExperience(exp.id)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive hover:bg-destructive/5 rounded-lg"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
                     </div>
                   </div>
                 ))
@@ -1046,8 +1038,8 @@ export default function Profile() {
                   >
                     Delete Account
                   </Button>
-                  <p className="text-[10px] text-destructive font-bold italic leading-relaxed pl-1">
-                    └─ Warning: This action is permanent and cannot be undone. All pitches, documents, and logs will be expunged.
+                  <p className="text-[11px] text-destructive font-semibold leading-relaxed pl-1">
+                    Warning: This action is permanent and cannot be undone. All pitches, documents, and logs will be expunged.
                   </p>
                 </div>
               </div>
