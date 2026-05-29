@@ -90,11 +90,11 @@ export default function SuperAdminRevenue() {
     <div className="p-6 max-w-5xl mx-auto space-y-8">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-display font-extrabold text-white">Revenue & Payments</h1>
-          <p className="text-white/40 text-sm mt-0.5">Platform financial overview and transaction log</p>
+          <h1 className="text-2xl font-display font-extrabold text-foreground">Revenue & Payments</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Platform financial overview and transaction log</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="rounded-xl text-white/50 hover:text-white border border-white/[0.08] text-xs" onClick={exportCSV}><Download className="h-4 w-4 mr-1.5"/>Export</Button>
+          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border text-xs" onClick={exportCSV}><Download className="h-4 w-4 mr-1.5"/>Export</Button>
         </div>
       </div>
 
@@ -106,24 +106,24 @@ export default function SuperAdminRevenue() {
           { label: "Total Payouts",  value: loading ? "—" : fmt(outgo),     sub: "refunds + payouts",icon: ArrowDownRight,grad:"from-red-500 to-rose-600",     glow: "shadow-red-500/20",   pos: false },
           { label: "Pending",        value: loading ? "—" : fmt(pending),   sub: "awaiting settlement",icon:Clock,       grad: "from-amber-500 to-orange-600",  glow: "shadow-amber-500/20", pos: true },
         ].map(k=>(
-          <Card key={k.label} className="p-5 border border-white/[0.08] bg-white/[0.03] relative overflow-hidden hover:bg-white/[0.05] transition-all">
+          <Card key={k.label} className="p-5 border border-border bg-muted/40 relative overflow-hidden hover:bg-muted/40 transition-all">
             <div className={`absolute top-0 right-0 w-20 h-20 rounded-full -translate-y-10 translate-x-10 bg-gradient-to-br ${k.grad} opacity-10 blur-2xl`}/>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-xs text-white/40">{k.label}</p>
+              <p className="text-xs text-muted-foreground">{k.label}</p>
               <div className={`h-8 w-8 rounded-xl bg-gradient-to-br ${k.grad} flex items-center justify-center shadow-lg ${k.glow}`}>
-                <k.icon className="h-4 w-4 text-white"/>
+                <k.icon className="h-4 w-4 text-foreground"/>
               </div>
             </div>
-            <p className={`text-2xl font-extrabold ${k.pos?"text-white":"text-red-400"}`}>{k.value}</p>
-            <p className="text-[10px] text-white/30 mt-0.5">{k.sub}</p>
+            <p className={`text-2xl font-extrabold ${k.pos?"text-foreground":"text-red-400"}`}>{k.value}</p>
+            <p className="text-[10px] text-muted-foreground/70 mt-0.5">{k.sub}</p>
           </Card>
         ))}
       </div>
 
       {/* Monthly Bar Chart */}
-      <Card className="p-5 border border-white/[0.08] bg-white/[0.03]">
+      <Card className="p-5 border border-border bg-muted/40">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-white flex items-center gap-2"><TrendingUp className="h-4 w-4 text-green-400"/>Monthly Revenue (6 months)</h2>
+          <h2 className="text-base font-bold text-foreground flex items-center gap-2"><TrendingUp className="h-4 w-4 text-green-400"/>Monthly Revenue (6 months)</h2>
           <Badge className="bg-green-500/10 text-green-400 border border-green-500/30 text-xs font-bold">+32% MoM</Badge>
         </div>
         <div className="flex items-end gap-3 h-32">
@@ -137,7 +137,7 @@ export default function SuperAdminRevenue() {
                   </div>
                 </div>
               </div>
-              <span className="text-[10px] text-white/40">{d.month}</span>
+              <span className="text-[10px] text-muted-foreground">{d.month}</span>
             </div>
           ))}
         </div>
@@ -146,38 +146,38 @@ export default function SuperAdminRevenue() {
       {/* Transaction Log */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-white flex items-center gap-2"><DollarSign className="h-4 w-4 text-white/40"/>Transaction Log</h2>
+          <h2 className="text-base font-bold text-foreground flex items-center gap-2"><DollarSign className="h-4 w-4 text-muted-foreground"/>Transaction Log</h2>
         </div>
         <div className="flex flex-wrap gap-2 mb-4">
           {["ALL","SUBSCRIPTION","COMMISSION","OTHER"].map(f=>(
             <button key={f} onClick={()=>setTxFilter(f)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${txFilter===f?"bg-white text-black border-white":"border-white/10 text-white/50 hover:border-white/30 hover:text-white"}`}>
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${txFilter===f?"bg-white text-black border-white":"border-border text-muted-foreground hover:border-white/30 hover:text-foreground"}`}>
               {f.charAt(0)+f.slice(1).toLowerCase()}
             </button>
           ))}
         </div>
         {loading ? (
-          <div className="space-y-2">{Array(4).fill(0).map((_, i) => <Card key={i} className="h-16 bg-white/5 animate-pulse rounded-xl" />)}</div>
+          <div className="space-y-2">{Array(4).fill(0).map((_, i) => <Card key={i} className="h-16 bg-muted/50 animate-pulse rounded-xl" />)}</div>
         ) : filtered.length === 0 ? (
-          <Card className="p-8 border border-white/[0.08] bg-white/[0.03] text-center">
-            <DollarSign className="h-8 w-8 text-white/20 mx-auto mb-2"/>
-            <p className="text-white/50 text-sm">No transactions found</p>
+          <Card className="p-8 border border-border bg-muted/40 text-center">
+            <DollarSign className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2"/>
+            <p className="text-muted-foreground text-sm">No transactions found</p>
           </Card>
         ) : (
           <div className="space-y-2">
             {filtered.map(tx=>(
-              <Card key={tx.id} className="px-4 py-3 border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.05] transition-all">
+              <Card key={tx.id} className="px-4 py-3 border border-border bg-muted/40 hover:bg-muted/40 transition-all">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${tx.amount>0?"bg-green-500/10":"bg-red-500/10"}`}>
                       {tx.amount>0?<ArrowUpRight className="h-4 w-4 text-green-400"/>:<ArrowDownRight className="h-4 w-4 text-red-400"/>}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-white/80 truncate">{tx.description}</p>
+                      <p className="text-sm font-medium text-foreground truncate">{tx.description}</p>
                       <div className="flex items-center gap-2 mt-0.5">
                         <Badge className={`text-[10px] border font-bold ${TYPE_COLORS[tx.type]}`}>{tx.type}</Badge>
                         <Badge className={`text-[10px] border font-bold ${STATUS_COLORS[tx.status]}`}>{tx.status}</Badge>
-                        <span className="text-[10px] text-white/30 flex items-center gap-1"><Calendar className="h-2.5 w-2.5"/>{new Date(tx.date).toLocaleDateString("en-IN",{day:"numeric",month:"short"})}</span>
+                        <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1"><Calendar className="h-2.5 w-2.5"/>{new Date(tx.date).toLocaleDateString("en-IN",{day:"numeric",month:"short"})}</span>
                       </div>
                     </div>
                   </div>

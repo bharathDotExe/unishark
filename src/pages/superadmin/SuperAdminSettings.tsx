@@ -130,15 +130,15 @@ export default function SuperAdminSettings() {
     );
     if (s.type === "number") return (
       <Input type="number" value={val} onChange={e => update(s.key, parseFloat(e.target.value))}
-        className="w-28 bg-white/[0.05] border-white/[0.1] text-white rounded-xl focus-visible:ring-0 text-sm h-8 text-right" />
+        className="w-28 bg-muted/40 border-border text-foreground rounded-xl focus-visible:ring-0 text-sm h-8 text-right" />
     );
     if (s.type === "textarea") return (
       <Textarea value={val} onChange={e => update(s.key, e.target.value)} rows={3}
-        className="bg-white/[0.05] border-white/[0.1] text-white placeholder:text-white/30 rounded-xl focus-visible:ring-0 text-sm" />
+        className="bg-muted/40 border-border text-foreground placeholder:text-muted-foreground/70 rounded-xl focus-visible:ring-0 text-sm" />
     );
     return (
       <Input value={val} onChange={e => update(s.key, e.target.value)}
-        className="w-56 bg-white/[0.05] border-white/[0.1] text-white rounded-xl focus-visible:ring-0 text-sm h-8" />
+        className="w-56 bg-muted/40 border-border text-foreground rounded-xl focus-visible:ring-0 text-sm h-8" />
     );
   };
 
@@ -146,14 +146,14 @@ export default function SuperAdminSettings() {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-display font-extrabold text-white">Platform Settings</h1>
-          <p className="text-white/40 text-sm mt-0.5">Configure global platform behaviour and limits</p>
+          <h1 className="text-2xl font-display font-extrabold text-foreground">Platform Settings</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Configure global platform behaviour and limits</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="rounded-xl text-white/50 hover:text-white border border-white/[0.08]" onClick={loadSettings} disabled={loading}>
+          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border" onClick={loadSettings} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`}/>Reset
           </Button>
-          <Button className="rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0 shadow-lg shadow-blue-500/20" onClick={save} disabled={saving || loading}>
+          <Button className="rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 text-foreground border-0 shadow-lg shadow-blue-500/20" onClick={save} disabled={saving || loading}>
             {saving ? <RefreshCw className="h-4 w-4 mr-2 animate-spin"/> : saved ? <CheckCircle2 className="h-4 w-4 mr-2"/> : <Save className="h-4 w-4 mr-2"/>}
             {saving ? "Saving…" : saved ? "Saved!" : "Save Changes"}
           </Button>
@@ -174,17 +174,17 @@ export default function SuperAdminSettings() {
       {/* Settings sections */}
       <div className="space-y-5">
         {SECTIONS.map(section => (
-          <Card key={section.title} className="border border-white/[0.08] bg-white/[0.03] overflow-hidden">
-            <div className="px-5 py-3 border-b border-white/[0.06] flex items-center gap-2">
+          <Card key={section.title} className="border border-border bg-muted/40 overflow-hidden">
+            <div className="px-5 py-3 border-b border-border flex items-center gap-2">
               <section.icon className={`h-4 w-4 ${section.color}`}/>
-              <h2 className="font-bold text-white text-sm">{section.title}</h2>
+              <h2 className="font-bold text-foreground text-sm">{section.title}</h2>
             </div>
-            <div className="divide-y divide-white/[0.04]">
+            <div className="divide-y divide-border">
               {section.settings.map(s => (
                 <div key={s.key} className="px-5 py-4 flex items-center justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-white/80">{s.label}</p>
-                    <p className="text-xs text-white/30 mt-0.5">{s.desc}</p>
+                    <p className="text-sm font-medium text-foreground">{s.label}</p>
+                    <p className="text-xs text-muted-foreground/70 mt-0.5">{s.desc}</p>
                   </div>
                   <div className="shrink-0">{renderControl(s)}</div>
                 </div>

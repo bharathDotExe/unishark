@@ -102,14 +102,14 @@ export default function SuperAdminUsers() {
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-display font-extrabold text-white">Full User Management</h1>
-          <p className="text-white/40 text-sm mt-0.5">Complete control over all platform accounts</p>
+          <h1 className="text-2xl font-display font-extrabold text-foreground">Full User Management</h1>
+          <p className="text-muted-foreground text-sm mt-0.5">Complete control over all platform accounts</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="rounded-xl text-white/50 hover:text-white border border-white/[0.08] text-xs" onClick={exportCSV}>
+          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border text-xs" onClick={exportCSV}>
             <Download className="h-4 w-4 mr-1.5" /> Export CSV
           </Button>
-          <Button variant="ghost" size="sm" className="rounded-xl text-white/50 hover:text-white border border-white/[0.08]" onClick={load}>
+          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border" onClick={load}>
             <RefreshCw className="h-4 w-4 mr-2" /> Refresh
           </Button>
         </div>
@@ -118,13 +118,13 @@ export default function SuperAdminUsers() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-3">
         {[
-          { label: "Total",     value: users.length,                              color: "text-white",      bg: "border-white/10" },
+          { label: "Total",     value: users.length,                              color: "text-foreground",      bg: "border-border" },
           { label: "Students",  value: counts.student,                            color: "text-blue-400",   bg: "border-blue-500/20" },
           { label: "Investors", value: counts.investor,                           color: "text-cyan-400",   bg: "border-cyan-500/20" },
           { label: "Suspended", value: counts.suspended,                          color: "text-red-400",    bg: "border-red-500/20" },
         ].map(s => (
-          <Card key={s.label} className={`p-4 border ${s.bg} bg-white/[0.03]`}>
-            <p className="text-xs text-white/40 mb-1">{s.label}</p>
+          <Card key={s.label} className={`p-4 border ${s.bg} bg-muted/40`}>
+            <p className="text-xs text-muted-foreground mb-1">{s.label}</p>
             <p className={`text-2xl font-extrabold ${s.color}`}>{loading ? "—" : s.value}</p>
           </Card>
         ))}
@@ -134,65 +134,65 @@ export default function SuperAdminUsers() {
       <div className="flex flex-wrap gap-3">
         {ROLE_FILTERS.map(f => (
           <button key={f} onClick={() => setRoleFilter(f)}
-            className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all capitalize ${roleFilter === f ? "bg-white text-black border-white" : "border-white/10 text-white/50 hover:border-white/30 hover:text-white"}`}>
+            className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all capitalize ${roleFilter === f ? "bg-white text-black border-white" : "border-border text-muted-foreground hover:border-white/30 hover:text-foreground"}`}>
             {f === "ALL" ? "All Users" : f}
             <span className="ml-2 text-xs opacity-60">{counts[f]}</span>
           </button>
         ))}
         <div className="relative flex-1 min-w-48">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-white/30" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/70" />
           <Input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..."
-            className="pl-9 h-9 bg-white/[0.04] border-white/[0.08] text-white placeholder:text-white/30 rounded-xl focus-visible:ring-0 text-sm" />
+            className="pl-9 h-9 bg-muted/40 border-border text-foreground placeholder:text-muted-foreground/70 rounded-xl focus-visible:ring-0 text-sm" />
         </div>
       </div>
 
       {/* User Table */}
       {loading ? (
         <div className="space-y-2">{Array(6).fill(0).map((_, i) => (
-          <Card key={i} className="p-4 border border-white/[0.08] bg-white/[0.03] animate-pulse"><div className="h-4 bg-white/10 rounded w-1/3" /></Card>
+          <Card key={i} className="p-4 border border-border bg-muted/40 animate-pulse"><div className="h-4 bg-muted rounded w-1/3" /></Card>
         ))}</div>
       ) : filtered.length === 0 ? (
-        <Card className="p-10 border border-white/[0.08] bg-white/[0.03] text-center">
-          <Users className="h-10 w-10 text-white/20 mx-auto mb-3" />
-          <p className="font-semibold text-white/60">No users found</p>
+        <Card className="p-10 border border-border bg-muted/40 text-center">
+          <Users className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3" />
+          <p className="font-semibold text-muted-foreground">No users found</p>
         </Card>
       ) : (
         <div className="space-y-1.5">
-          <div className="hidden md:grid grid-cols-[1fr_200px_120px_110px_80px] gap-4 px-4 py-2 text-[10px] font-bold text-white/30 uppercase tracking-wider">
+          <div className="hidden md:grid grid-cols-[1fr_200px_120px_110px_80px] gap-4 px-4 py-2 text-[10px] font-bold text-muted-foreground/70 uppercase tracking-wider">
             <span>User</span><span>Email</span><span>Role</span><span>Joined</span><span>Actions</span>
           </div>
           {filtered.map(u => (
-            <Card key={u.id} className={`px-4 py-3 border bg-white/[0.03] hover:bg-white/[0.05] transition-all ${u.is_suspended ? 'border-red-500/30 opacity-70' : 'border-white/[0.08]'}`}>
+            <Card key={u.id} className={`px-4 py-3 border bg-muted/40 hover:bg-muted/40 transition-all ${u.is_suspended ? 'border-red-500/30 opacity-70' : 'border-border'}`}>
               <div className="md:grid md:grid-cols-[1fr_200px_120px_110px_80px] md:gap-4 md:items-center flex flex-col gap-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className={`font-bold text-sm ${u.is_suspended ? 'text-red-400 line-through decoration-red-500/50' : 'text-white'}`}>{u.full_name || "Unnamed"}</p>
+                    <p className={`font-bold text-sm ${u.is_suspended ? 'text-red-400 line-through decoration-red-500/50' : 'text-foreground'}`}>{u.full_name || "Unnamed"}</p>
                     {u.is_suspended && <Badge className="bg-red-500/20 text-red-400 border-red-500/30 text-[9px] px-1.5 py-0">Suspended</Badge>}
                   </div>
-                  <p className="text-xs text-white/30 font-mono mt-0.5">{u.id?.slice(0, 12)}…</p>
+                  <p className="text-xs text-muted-foreground/70 font-mono mt-0.5">{u.id?.slice(0, 12)}…</p>
                 </div>
-                <div className="flex items-center gap-1.5 text-sm text-white/40">
+                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                   <Mail className="h-3.5 w-3.5 shrink-0" />
                   <span className="truncate">{u.email || "—"}</span>
                 </div>
                 <div>
-                  <Badge className={`border text-xs font-bold gap-1 ${roleBadgeClass[u.role] || "bg-white/10 text-white/50 border-white/20"}`}>
+                  <Badge className={`border text-xs font-bold gap-1 ${roleBadgeClass[u.role] || "bg-muted text-muted-foreground border-white/20"}`}>
                     {roleIcon(u.role)} {u.role || "—"}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-white/30">
+                <div className="flex items-center gap-1 text-xs text-muted-foreground/70">
                   <Calendar className="h-3 w-3 shrink-0" />
                   {u.created_at ? new Date(u.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "2-digit" }) : "—"}
                 </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl text-white/30 hover:text-white hover:bg-white/10">
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-xl text-muted-foreground/70 hover:text-foreground hover:bg-muted">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-[#0f0f1e] border border-white/[0.08] rounded-xl text-white">
-                    <DropdownMenuItem className="text-xs cursor-pointer text-white/70 hover:text-white"><Eye className="h-3.5 w-3.5 mr-2" />View Profile</DropdownMenuItem>
-                    <DropdownMenuItem className="text-xs cursor-pointer text-white/70 hover:text-white"><Mail className="h-3.5 w-3.5 mr-2" />Send Email</DropdownMenuItem>
+                  <DropdownMenuContent align="end" className="bg-card border border-border rounded-xl text-foreground">
+                    <DropdownMenuItem className="text-xs cursor-pointer text-muted-foreground hover:text-foreground"><Eye className="h-3.5 w-3.5 mr-2" />View Profile</DropdownMenuItem>
+                    <DropdownMenuItem className="text-xs cursor-pointer text-muted-foreground hover:text-foreground"><Mail className="h-3.5 w-3.5 mr-2" />Send Email</DropdownMenuItem>
                     
                     {!u.is_suspended ? (
                       <DropdownMenuItem className="text-xs cursor-pointer text-red-400 hover:bg-red-500/10" onClick={() => toggleSuspend(u.id, false)}>
