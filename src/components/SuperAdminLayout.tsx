@@ -71,21 +71,21 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
   );
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-[#0a0a14] border-r border-white/[0.06]">
+    <div className="flex flex-col h-full bg-card/80 backdrop-blur-xl border-r border-border">
       {/* Logo */}
-      <div className="p-5 border-b border-white/[0.06] flex items-center gap-3">
+      <div className="p-5 border-b border-border flex items-center gap-3">
         <Link to="/superadmin/dashboard" className="flex items-center gap-3" onClick={() => setOpen(false)}>
           <div className="relative">
             <img src={logo} alt="UniShark" className="h-8 w-8 rounded-lg object-contain" />
-            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-lg shadow-yellow-500/30">
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-md shadow-amber-500/30">
               <Crown className="w-2.5 h-2.5 text-white" />
             </div>
           </div>
           <div>
-            <span className="text-lg font-display font-extrabold tracking-wider text-white block leading-tight">
+            <span className="text-lg font-display font-extrabold tracking-wider text-foreground block leading-tight">
               UniShark
             </span>
-            <span className="text-[10px] font-bold tracking-[0.25em] bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent uppercase leading-tight">
+            <span className="text-[10px] font-bold tracking-[0.25em] bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent uppercase leading-tight">
               Super Admin
             </span>
           </div>
@@ -104,21 +104,18 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group relative overflow-hidden",
                 isActive
-                  ? "bg-white/10 text-white shadow-inner"
-                  : "text-white/50 hover:bg-white/5 hover:text-white/90"
+                  ? "bg-primary/10 text-primary shadow-sm"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               {isActive && (
-                <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent pointer-events-none" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-gradient-to-b from-amber-400 to-orange-500 rounded-r-full" />
               )}
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-gradient-to-b from-yellow-400 to-orange-400 rounded-r-full" />
-              )}
-              <link.icon className={cn("h-4 w-4 shrink-0 transition-colors", isActive ? link.color : "text-white/40 group-hover:text-white/70")} />
+              <link.icon className={cn("h-4 w-4 shrink-0 transition-colors", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
               <span className="flex-1 font-medium">{link.name}</span>
               <span className={cn(
                 "text-[9px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-md transition-all",
-                isActive ? "bg-white/10 text-white/60" : "text-white/20 group-hover:text-white/40"
+                isActive ? "bg-primary/10 text-primary/70" : "text-muted-foreground/60 group-hover:text-muted-foreground"
               )}>
                 {link.tag}
               </span>
@@ -128,14 +125,14 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
       </nav>
 
       {/* Sign Out */}
-      <div className="p-3 border-t border-white/[0.06]">
-        <div className="mb-2 px-3 py-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center gap-2">
-          <Zap className="h-3.5 w-3.5 text-yellow-400" />
-          <span className="text-xs font-bold text-yellow-400">Super Admin Access</span>
+      <div className="p-3 border-t border-border">
+        <div className="mb-2 px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-2">
+          <Zap className="h-3.5 w-3.5 text-amber-600" />
+          <span className="text-xs font-bold text-amber-700">Super Admin Access</span>
         </div>
         <Button
-          variant="ghost"
-          className="w-full justify-start text-white/40 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all text-sm"
+          variant="outline"
+          className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl border border-border transition-all text-sm"
           onClick={() => signOut()}
         >
           <LogOut className="h-4 w-4 mr-2" />
@@ -146,46 +143,35 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
   );
 
   return (
-    <div className="min-h-screen bg-[#080810] flex w-full relative text-white">
-      {/* Subtle grid background */}
-      <div className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage: `radial-gradient(circle at 20% 20%, rgba(139,92,246,0.04) 0%, transparent 50%),
-                            radial-gradient(circle at 80% 80%, rgba(99,102,241,0.04) 0%, transparent 50%),
-                            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)`,
-          backgroundSize: "100% 100%, 100% 100%, 32px 32px, 32px 32px",
-        }}
-      />
-
+    <div className="app-shell min-h-screen bg-background flex w-full relative">
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 w-full border-b border-white/[0.06] bg-[#0a0a14]/90 backdrop-blur-xl z-50 flex items-center justify-between p-4 h-16">
+      <div className="md:hidden fixed top-0 left-0 w-full border-b border-border bg-background/80 backdrop-blur-xl z-50 flex items-center justify-between p-4 h-16">
         <div className="flex items-center gap-2">
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="mr-2 text-white/60 hover:text-white hover:bg-white/10 rounded-xl border border-white/[0.08]">
+              <Button variant="ghost" size="icon" className="mr-2 hover:bg-muted rounded-xl border border-border">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64 flex flex-col border-r border-white/[0.06] bg-transparent">
+            <SheetContent side="left" className="p-0 w-64 flex flex-col border-r border-border bg-background">
               <SidebarContent />
             </SheetContent>
           </Sheet>
-          <Crown className="h-4 w-4 text-yellow-400" />
-          <span className="text-base font-display font-extrabold tracking-wider text-white">Super Admin</span>
+          <Crown className="h-4 w-4 text-amber-500" />
+          <span className="text-base font-display font-extrabold tracking-wider text-foreground">Super Admin</span>
         </div>
         <div className="flex items-center gap-2">
-          <Badge className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 border border-yellow-500/30 text-xs font-bold">SUPER</Badge>
+          <Badge className="bg-amber-500/10 text-amber-700 border border-amber-500/30 text-xs font-bold">SUPER</Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-9 w-9 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-0 hover:bg-yellow-500/20">
-                <Crown className="h-4 w-4 text-yellow-400" />
+              <Button variant="ghost" className="h-9 w-9 rounded-xl border border-amber-500/30 bg-amber-500/10 p-0 hover:bg-amber-500/20">
+                <Crown className="h-4 w-4 text-amber-600" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-[#0f0f1e] border border-white/[0.08] rounded-xl text-white">
-              <DropdownMenuLabel className="text-xs text-white/40">{user?.email}</DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-white/[0.06]" />
-              <DropdownMenuItem onClick={() => signOut()} className="text-red-400 hover:bg-red-500/10 cursor-pointer rounded-lg">
+            <DropdownMenuContent align="end" className="bg-popover border border-border rounded-xl">
+              <DropdownMenuLabel className="text-xs text-muted-foreground">{user?.email}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => signOut()} className="text-destructive hover:bg-destructive/5 cursor-pointer rounded-lg">
                 <LogOut className="h-4 w-4 mr-2" /> Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -211,57 +197,57 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
         )}
       >
         {/* Desktop Header */}
-        <header className="hidden md:flex sticky top-0 z-30 h-16 w-full items-center justify-between border-b border-white/[0.06] bg-[#080810]/80 backdrop-blur-xl px-6 gap-4">
+        <header className="hidden md:flex sticky top-0 z-30 h-16 w-full items-center justify-between border-b border-border bg-background/60 backdrop-blur-xl px-6 gap-4">
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setSidebarOpen((v) => !v)}
-              className="h-9 w-9 rounded-xl border border-white/[0.08] text-white/50 hover:text-white hover:bg-white/10 transition-all"
+              className="h-9 w-9 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
             >
               <Menu className="h-5 w-5" />
             </Button>
             {!sidebarOpen && (
               <Link to="/superadmin/dashboard" className="flex items-center gap-2">
-                <Crown className="h-4 w-4 text-yellow-400" />
-                <span className="font-display font-extrabold text-lg tracking-wider text-white">Super Admin</span>
+                <Crown className="h-4 w-4 text-amber-500" />
+                <span className="font-display font-extrabold text-lg tracking-wider text-foreground">Super Admin</span>
               </Link>
             )}
             {currentPage && (
-              <div className="flex items-center gap-1.5 text-sm text-white/40">
-                <Crown className="h-3 w-3 text-yellow-400" />
-                <span className="text-yellow-400/70 font-medium">Super Admin</span>
+              <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <Crown className="h-3 w-3 text-amber-500" />
+                <span className="text-amber-700 font-medium">Super Admin</span>
                 <ChevronRight className="h-3.5 w-3.5" />
-                <span className={cn("font-bold", currentPage.color)}>{currentPage.name}</span>
+                <span className="font-bold text-foreground">{currentPage.name}</span>
               </div>
             )}
           </div>
 
           <div className="flex items-center gap-3">
-            <Badge className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 text-yellow-400 border border-yellow-500/30 text-xs font-bold px-3">
-              ⚡ SUPER ADMIN
+            <Badge className="bg-amber-500/10 text-amber-700 border border-amber-500/30 text-xs font-bold px-3">
+              SUPER ADMIN
             </Badge>
-            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl border border-white/[0.06] text-white/40 hover:text-white hover:bg-white/10 transition-all">
+            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
               <Bell className="h-5 w-5" />
             </Button>
-            <div className="h-6 w-px bg-white/[0.08]" />
+            <div className="h-6 w-px bg-border" />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-10 px-3 gap-2 rounded-xl border border-yellow-500/30 bg-yellow-500/10 hover:bg-yellow-500/20 flex items-center">
-                  <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/30">
+                <Button variant="ghost" className="h-10 px-3 gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 flex items-center">
+                  <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/30">
                     <Crown className="h-3.5 w-3.5 text-white" />
                   </div>
-                  <span className="text-sm font-bold text-white max-w-[120px] truncate">{fullName || "Super Admin"}</span>
+                  <span className="text-sm font-bold text-foreground max-w-[120px] truncate">{fullName || "Super Admin"}</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 mt-2 bg-[#0f0f1e] border border-white/[0.08] rounded-2xl text-white shadow-2xl">
-                <DropdownMenuLabel className="font-normal border-b border-white/[0.06] pb-2 mb-2">
+              <DropdownMenuContent align="end" className="w-56 mt-2 bg-popover border border-border rounded-2xl shadow-xl">
+                <DropdownMenuLabel className="font-normal border-b border-border pb-2 mb-2">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-bold leading-none text-white">{fullName || "Super Admin"}</p>
-                    <p className="text-xs leading-none text-white/40 truncate">{user?.email}</p>
+                    <p className="text-sm font-bold leading-none">{fullName || "Super Admin"}</p>
+                    <p className="text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer font-bold text-red-400 hover:bg-red-500/10 rounded-lg m-1">
+                <DropdownMenuItem onClick={() => signOut()} className="cursor-pointer font-bold text-destructive hover:bg-destructive/5 rounded-lg m-1">
                   <LogOut className="h-4 w-4 mr-2" /> Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
