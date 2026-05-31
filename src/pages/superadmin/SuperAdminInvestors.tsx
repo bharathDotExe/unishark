@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { PageShell, PageHeader, SectionCard, StatCard, DataTable, StatusPill, RefreshButton, Column } from "@/components/admin/ui";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ShieldCheck, ShieldX, ExternalLink, Search, RefreshCw, Building2, DollarSign, Clock, Download, MoreHorizontal, Trash2 } from "lucide-react";
+import { ShieldCheck, ShieldX, ExternalLink, Search, Download, Building2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
+type Investor = any;
+
+const TABS = ["ALL", "VERIFIED", "PENDING", "REJECTED"];
 
 export default function SuperAdminInvestors() {
-  const [investors, setInvestors] = useState<any[]>([]);
-  const [filtered, setFiltered] = useState<any[]>([]);
+  const [investors, setInvestors] = useState<Investor[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState("ALL");
   const [search, setSearch] = useState("");
@@ -19,133 +20,112 @@ export default function SuperAdminInvestors() {
     setLoading(true);
     const { data, error } = await supabase.from("investor_profiles").select("*").order("created_at", { ascending: false });
     if (error) toast.error(error.message);
-    setInvestors(data ?? []);
-    setLoading(false);
+    setInvestors((data as any) ?? []); setLoading(false);
   };
   useEffect(() => { load(); }, []);
 
-  useEffect(() => {
-    let res = investors;
-    if (tab === "VERIFIED") res = res.filter(i => i.verified);
-    else if (tab === "PENDING") res = res.filter(i => !i.verified && i.verification_status !== "REJECTED");
-    else if (tab === "REJECTED") res = res.filter(i => i.verification_status === "REJECTED");
-    if (search.trim()) res = res.filter(i => (i.full_name||"").toLowerCase().includes(search.toLowerCase()) || (i.company_fund_name||"").toLowerCase().includes(search.toLowerCase()));
-    setFiltered(res);
-  }, [investors, tab, search]);
-
-  const verify = async (id: string) => {
-    await supabase.from("investor_profiles").update({ verified: true, verification_status: "APPROVED", verified_at: new Date().toISOString() }).eq("id", id);
-    toast.success("Verified ✓"); load();
-  };
-  const revoke = async (id: string) => {
-    await supabase.from("investor_profiles").update({ verified: false, verification_status: "REJECTED" }).eq("id", id);
-    toast.success("Verification revoked"); load();
-  };
-  const deleteInvestor = async (id: string) => {
-    await supabase.from("investor_profiles").delete().eq("id", id);
-    toast.success("Profile deleted"); load();
-  };
-
-  const fmt = (v: number|null) => !v ? "—" : v >= 10000000 ? `₹${(v/10000000).toFixed(1)}Cr` : v >= 100000 ? `₹${(v/100000).toFixed(1)}L` : `₹${v.toLocaleString()}`;
+  const filtered = investors.filter((i) => {
+    if (tab === "VERIFIED" && !i.verified) return false;
+    if (tab === "PENDING" && (i.verified || i.verification_status === "REJECTED")) return false;
+    if (tab === "REJECTED" && i.verification_status !== "REJECTED") return false;
+    if (search && !`${i.full_name ?? ""} ${i.company_fund_name ?? ""}`.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
 
   const counts = {
     ALL: investors.length,
-    VERIFIED: investors.filter(i => i.verified).length,
-    PENDING: investors.filter(i => !i.verified && i.verification_status !== "REJECTED").length,
-    REJECTED: investors.filter(i => i.verification_status === "REJECTED").length,
+    VERIFIED: investors.filter((i) => i.verified).length,
+    PENDING: investors.filter((i) => !i.verified && i.verification_status !== "REJECTED").length,
+    REJECTED: investors.filter((i) => i.verification_status === "REJECTED").length,
   };
 
-  const statusBadge = (i: any) => {
-    if (i.verified) return <Badge className="bg-green-500/10 text-green-400 border border-green-500/30 font-bold text-xs">Verified</Badge>;
-    if (i.verification_status === "REJECTED") return <Badge className="bg-red-500/10 text-red-400 border border-red-500/30 font-bold text-xs">Rejected</Badge>;
-    return <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 font-bold text-xs">Pending</Badge>;
+  const verify = async (id: string) => {
+    const { error } = await supabase.from("investor_profiles").update({ verified: true, verification_status: "APPROVED", verified_at: new Date().toISOString() } as any).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Verified"); load();
   };
+  const revoke = async (id: string) => {
+    const { error } = await supabase.from("investor_profiles").update({ verified: false, verification_status: "REJECTED" } as any).eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Revoked"); load();
+  };
+  const remove = async (id: string) => {
+    if (!confirm("Delete this investor profile?")) return;
+    const { error } = await supabase.from("investor_profiles").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Deleted"); load();
+  };
+
+  const fmt = (v: number | null) => !v ? "—" : v >= 1e7 ? `₹${(v/1e7).toFixed(1)}Cr` : v >= 1e5 ? `₹${(v/1e5).toFixed(1)}L` : `₹${v.toLocaleString("en-IN")}`;
+
+  const statusTone = (i: any) => i.verified ? "positive" : i.verification_status === "REJECTED" ? "danger" : "warning";
+  const statusLabel = (i: any) => i.verified ? "Verified" : i.verification_status === "REJECTED" ? "Rejected" : "Pending";
+
+  const columns: Column<Investor>[] = [
+    { key: "name", header: "Investor", cell: (i) => (
+      <div className="min-w-0">
+        <p className="text-sm font-medium text-foreground truncate">{i.full_name || `Investor ${i.user_id?.slice(0,8)}…`}</p>
+        {i.company_fund_name && <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1"><Building2 className="h-3 w-3" />{i.company_fund_name}</p>}
+      </div>
+    )},
+    { key: "ticket", header: "Ticket size", width: "180px", cell: (i) => <span className="text-sm text-muted-foreground">{fmt(i.ticket_size_min)} – {fmt(i.ticket_size_max)}</span> },
+    { key: "exp", header: "Experience", width: "120px", cell: (i) => <span className="text-sm text-muted-foreground">{i.investment_experience || "—"}</span> },
+    { key: "status", header: "Status", width: "120px", cell: (i) => <StatusPill label={statusLabel(i)} tone={statusTone(i) as any} /> },
+    { key: "actions", header: "", width: "240px", align: "right", cell: (i) => (
+      <div className="flex items-center gap-1 justify-end">
+        {i.linkedin_url && <Button asChild size="sm" variant="ghost" className="h-8 text-xs"><a href={i.linkedin_url} target="_blank" rel="noreferrer"><ExternalLink className="h-3.5 w-3.5" /></a></Button>}
+        {!i.verified && i.verification_status !== "REJECTED" && <Button size="sm" variant="ghost" className="h-8 text-xs text-emerald-700 hover:bg-emerald-50" onClick={() => verify(i.id)}><ShieldCheck className="h-3.5 w-3.5 mr-1" />Verify</Button>}
+        {i.verified && <Button size="sm" variant="ghost" className="h-8 text-xs text-amber-700 hover:bg-amber-50" onClick={() => revoke(i.id)}><ShieldX className="h-3.5 w-3.5 mr-1" />Revoke</Button>}
+        <Button size="sm" variant="ghost" className="h-8 text-xs text-red-600 hover:bg-red-50" onClick={() => remove(i.id)}><Trash2 className="h-3.5 w-3.5" /></Button>
+      </div>
+    )},
+  ];
 
   const exportCSV = () => {
-    const rows = [["ID","Name","Company","Verified","Experience","Min","Max"],
-      ...filtered.map(i=>[i.id,i.full_name||"",i.company_fund_name||"",i.verified,i.investment_experience||"",i.ticket_size_min||"",i.ticket_size_max||""])];
-    const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([rows.map(r=>r.join(",")).join("\n")],{type:"text/csv"})); a.download="investors.csv"; a.click();
-    toast.success("Exported ✓");
+    const rows = [["Name","Company","Verified","Min","Max"], ...filtered.map((i) => [i.full_name ?? "", i.company_fund_name ?? "", i.verified ? "Y" : "N", i.ticket_size_min ?? "", i.ticket_size_max ?? ""])];
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([rows.map((r) => r.join(",")).join("\n")], { type: "text/csv" })); a.download = "investors.csv"; a.click();
+    toast.success("Exported");
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto space-y-6">
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-display font-extrabold text-foreground">All Investors</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">Complete investor roster — verify, revoke, manage</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border text-xs" onClick={exportCSV}><Download className="h-4 w-4 mr-1.5"/>Export</Button>
-          <Button variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border" onClick={load}><RefreshCw className="h-4 w-4 mr-2"/>Refresh</Button>
-        </div>
+    <PageShell>
+      <PageHeader
+        eyebrow="Super admin"
+        title="All investors"
+        subtitle="Verify, revoke and manage investor profiles."
+        actions={<>
+          <Button variant="outline" size="sm" className="h-9 rounded-lg gap-2 shadow-none" onClick={exportCSV}><Download className="h-3.5 w-3.5" />Export CSV</Button>
+          <RefreshButton onClick={load} loading={loading} />
+        </>}
+      />
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <StatCard label="Total" value={counts.ALL} icon={ShieldCheck} loading={loading} />
+        <StatCard label="Verified" value={counts.VERIFIED} icon={ShieldCheck} tone="positive" loading={loading} />
+        <StatCard label="Pending" value={counts.PENDING} tone="warning" loading={loading} />
+        <StatCard label="Rejected" value={counts.REJECTED} icon={ShieldX} tone="danger" loading={loading} />
       </div>
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-4 gap-3">
-        {[{l:"Total",v:counts.ALL,c:"text-foreground",b:"border-border"},{l:"Verified",v:counts.VERIFIED,c:"text-green-400",b:"border-green-500/20"},{l:"Pending",v:counts.PENDING,c:"text-amber-400",b:"border-amber-500/20"},{l:"Rejected",v:counts.REJECTED,c:"text-red-400",b:"border-red-500/20"}].map(s=>(
-          <Card key={s.l} className={`p-4 border ${s.b} bg-muted/40`}><p className="text-xs text-muted-foreground mb-1">{s.l}</p><p className={`text-2xl font-extrabold ${s.c}`}>{loading?"—":s.v}</p></Card>
-        ))}
-      </div>
-
-      {/* Tabs + Search */}
-      <div className="flex flex-wrap gap-3">
-        {["ALL","VERIFIED","PENDING","REJECTED"].map(t=>(
-          <button key={t} onClick={()=>setTab(t)}
-            className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all ${tab===t?"bg-white text-black border-white":"border-border text-muted-foreground hover:border-white/30 hover:text-foreground"}`}>
-            {t.charAt(0)+t.slice(1).toLowerCase()}<span className="ml-2 text-xs opacity-60">{counts[t as keyof typeof counts]}</span>
-          </button>
-        ))}
-        <div className="relative flex-1 min-w-48">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/70"/>
-          <Input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search by name or fund..."
-            className="pl-9 h-9 bg-muted/40 border-border text-foreground placeholder:text-muted-foreground/70 rounded-xl focus-visible:ring-0 text-sm"/>
-        </div>
-      </div>
-
-      {/* List */}
-      {loading?(
-        <div className="space-y-3">{Array(4).fill(0).map((_,i)=><Card key={i} className="p-5 border border-border bg-muted/40 animate-pulse"><div className="h-5 bg-muted rounded w-1/4 mb-2"/><div className="h-4 bg-muted rounded w-1/2"/></Card>)}</div>
-      ):filtered.length===0?(
-        <Card className="p-10 border border-border bg-muted/40 text-center"><ShieldCheck className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3"/><p className="text-muted-foreground">No investors found</p></Card>
-      ):(
-        <div className="space-y-3">
-          {filtered.map(inv=>(
-            <Card key={inv.id} className="p-5 border border-border bg-muted/40 hover:bg-muted/40 transition-all">
-              <div className="flex items-start justify-between flex-wrap gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-foreground">{inv.full_name||`Investor ${inv.user_id?.slice(0,8)}…`}</h3>
-                    {statusBadge(inv)}
-                  </div>
-                  <div className="flex flex-wrap gap-4 mt-2 text-xs text-muted-foreground">
-                    {inv.company_fund_name&&<span className="flex items-center gap-1"><Building2 className="h-3.5 w-3.5"/>{inv.company_fund_name}</span>}
-                    {(inv.ticket_size_min||inv.ticket_size_max)&&<span className="flex items-center gap-1"><DollarSign className="h-3.5 w-3.5"/>{fmt(inv.ticket_size_min)} – {fmt(inv.ticket_size_max)}</span>}
-                    <span className="flex items-center gap-1"><Clock className="h-3 w-3"/>{new Date(inv.created_at).toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"})}</span>
-                  </div>
-                  {(inv.investment_sectors||inv.sectors)&&(
-                    <div className="flex flex-wrap gap-1 mt-2">
-                      {((inv.investment_sectors||inv.sectors)??[]).slice(0,4).map((s:string)=>(
-                        <Badge key={s} className="bg-muted/50 text-muted-foreground border border-border text-[10px]">{s}</Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  {inv.linkedin_url&&<Button asChild variant="ghost" size="sm" className="rounded-xl text-muted-foreground hover:text-foreground border border-border text-xs"><a href={inv.linkedin_url} target="_blank" rel="noreferrer"><ExternalLink className="h-3.5 w-3.5 mr-1.5"/>LinkedIn</a></Button>}
-                  {!inv.verified&&inv.verification_status!=="REJECTED"&&(
-                    <Button size="sm" className="bg-green-500/20 hover:bg-green-500/30 text-green-400 border border-green-500/30 rounded-xl text-xs" onClick={()=>verify(inv.id)}><ShieldCheck className="h-3.5 w-3.5 mr-1.5"/>Verify</Button>
-                  )}
-                  {inv.verified&&(
-                    <Button size="sm" className="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 rounded-xl text-xs" onClick={()=>revoke(inv.id)}><ShieldX className="h-3.5 w-3.5 mr-1.5"/>Revoke</Button>
-                  )}
-                  <Button size="sm" className="bg-muted/50 hover:bg-red-500/20 text-muted-foreground/70 hover:text-red-400 border border-border hover:border-red-500/30 rounded-xl text-xs" onClick={()=>deleteInvestor(inv.id)}><Trash2 className="h-3.5 w-3.5"/></Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-    </div>
+      <SectionCard
+        title="Investor directory"
+        actions={
+          <div className="flex items-center gap-2">
+            <div className="flex p-1 rounded-lg bg-muted">
+              {TABS.map((t) => (
+                <button key={t} onClick={() => setTab(t)} className={`px-3 h-7 rounded-md text-[12px] font-medium transition-colors ${tab === t ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+                  {t.charAt(0) + t.slice(1).toLowerCase()}
+                </button>
+              ))}
+            </div>
+            <div className="relative w-56">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search investors…" className="pl-8 h-9 text-[13px] rounded-lg" />
+            </div>
+          </div>
+        }
+      >
+        <DataTable columns={columns} rows={filtered} loading={loading} empty="No investors match." />
+      </SectionCard>
+    </PageShell>
   );
 }
