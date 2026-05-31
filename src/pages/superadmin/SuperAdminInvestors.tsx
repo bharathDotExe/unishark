@@ -31,6 +31,7 @@ type Investor = {
   // resolved from profiles
   email: string;
   avatar_url: string | null;
+  has_profile?: boolean;
 };
 
 const TABS = ["ALL", "VERIFIED", "PENDING", "REJECTED"] as const;
@@ -91,6 +92,7 @@ export default function SuperAdminInvestors() {
           created_at: profile.created_at ?? "",
           email: profile.email ?? "",
           avatar_url: profile.avatar_url ?? null,
+          has_profile: !!ip.id,
         };
       });
 
@@ -122,41 +124,50 @@ export default function SuperAdminInvestors() {
     REJECTED: investors.filter((i) => i.verification_status === "REJECTED").length,
   };
 
-  const verify = async (id: string) => {
-    const { error } = await supabase
-      .from("investor_profiles")
-      .update({ verified: true, verification_status: "APPROVED", verified_at: new Date().toISOString() } as any)
-      .eq("id", id);
-    if (error) return toast.error(error.message);
+  const verify = async (i: Investor) => {
+    if (i.has_profile) {
+      const { error } = await supabase.from("investor_profiles").update({ verified: true, verification_status: "APPROVED", verified_at: new Date().toISOString() } as any).eq("user_id", i.user_id);
+      if (error) return toast.error(error.message);
+    } else {
+      const payload = { user_id: i.user_id, verified: true, verification_status: "APPROVED", verified_at: new Date().toISOString(), full_name: i.full_name || "—", contact_number: "—", city: "—", linkedin_url: "—", investment_experience: i.investment_experience || "First-time" };
+      const { error } = await supabase.from("investor_profiles").insert(payload as any);
+      if (error) return toast.error(error.message + " Payload: " + JSON.stringify(payload));
+    }
     toast.success("Investor verified.");
     load();
   };
 
-  const reject = async (id: string) => {
+  const reject = async (i: Investor) => {
     if (!confirm("Reject this investor's verification?")) return;
-    const { error } = await supabase
-      .from("investor_profiles")
-      .update({ verified: false, verification_status: "REJECTED" } as any)
-      .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (i.has_profile) {
+      const { error } = await supabase.from("investor_profiles").update({ verified: false, verification_status: "REJECTED" } as any).eq("user_id", i.user_id);
+      if (error) return toast.error(error.message);
+    } else {
+      const payload = { user_id: i.user_id, verified: false, verification_status: "REJECTED", full_name: i.full_name || "—", contact_number: "—", city: "—", linkedin_url: "—", investment_experience: i.investment_experience || "First-time" };
+      const { error } = await supabase.from("investor_profiles").insert(payload as any);
+      if (error) return toast.error(error.message + " Payload: " + JSON.stringify(payload));
+    }
     toast.success("Verification rejected.");
     load();
   };
 
-  const revoke = async (id: string) => {
+  const revoke = async (i: Investor) => {
     if (!confirm("Revoke this investor's verified status?")) return;
-    const { error } = await supabase
-      .from("investor_profiles")
-      .update({ verified: false, verification_status: null, verified_at: null } as any)
-      .eq("id", id);
-    if (error) return toast.error(error.message);
+    if (i.has_profile) {
+      const { error } = await supabase.from("investor_profiles").update({ verified: false, verification_status: "PENDING", verified_at: null } as any).eq("user_id", i.user_id);
+      if (error) return toast.error(error.message);
+    } else {
+      const payload = { user_id: i.user_id, verified: false, verification_status: "PENDING", verified_at: null, full_name: i.full_name || "—", contact_number: "—", city: "—", linkedin_url: "—", investment_experience: i.investment_experience || "First-time" };
+      const { error } = await supabase.from("investor_profiles").insert(payload as any);
+      if (error) return toast.error(error.message + " Payload: " + JSON.stringify(payload));
+    }
     toast.success("Verification revoked.");
     load();
   };
 
-  const remove = async (id: string) => {
+  const remove = async (i: Investor) => {
     if (!confirm("Delete this investor profile permanently?")) return;
-    const { error } = await supabase.from("investor_profiles").delete().eq("id", id);
+    const { error } = await supabase.from("investor_profiles").delete().eq("user_id", i.user_id);
     if (error) return toast.error(error.message);
     toast.success("Profile deleted.");
     load();
@@ -295,14 +306,14 @@ export default function SuperAdminInvestors() {
               <Button
                 size="sm" variant="ghost"
                 className="h-8 text-xs text-emerald-700 hover:bg-emerald-50"
-                onClick={() => verify(i.id)}
+                onClick={() => verify(i)}
               >
                 <ShieldCheck className="h-3.5 w-3.5 mr-1" />Verify
               </Button>
               <Button
                 size="sm" variant="ghost"
                 className="h-8 text-xs text-red-600 hover:bg-red-50"
-                onClick={() => reject(i.id)}
+                onClick={() => reject(i)}
               >
                 <ShieldX className="h-3.5 w-3.5 mr-1" />Reject
               </Button>
@@ -313,7 +324,7 @@ export default function SuperAdminInvestors() {
             <Button
               size="sm" variant="ghost"
               className="h-8 text-xs text-emerald-700 hover:bg-emerald-50"
-              onClick={() => verify(i.id)}
+              onClick={() => verify(i)}
             >
               <ShieldCheck className="h-3.5 w-3.5 mr-1" />Verify
             </Button>
@@ -323,7 +334,7 @@ export default function SuperAdminInvestors() {
             <Button
               size="sm" variant="ghost"
               className="h-8 text-xs text-amber-700 hover:bg-amber-50"
-              onClick={() => revoke(i.id)}
+              onClick={() => revoke(i)}
             >
               <ShieldX className="h-3.5 w-3.5 mr-1" />Revoke
             </Button>
@@ -331,7 +342,7 @@ export default function SuperAdminInvestors() {
           <Button
             size="sm" variant="ghost"
             className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-600"
-            onClick={() => remove(i.id)}
+            onClick={() => remove(i)}
           >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>

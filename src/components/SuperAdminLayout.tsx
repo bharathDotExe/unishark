@@ -77,28 +77,30 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
   const initials = (user?.email || "S").slice(0, 1).toUpperCase();
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-card border-r border-border">
+    <div className="flex flex-col h-full bg-background/30 backdrop-blur-md border-r border-foreground/10">
       {/* Logo */}
-      <Link
-        to="/superadmin/dashboard"
-        onClick={() => setOpen(false)}
-        className="px-5 h-14 border-b border-border flex items-center gap-2.5 shrink-0"
-      >
-        <img src={logo} alt="UniShark" className="h-7 w-7 rounded-md object-contain" />
-        <div className="leading-tight">
-          <div className="text-sm font-semibold text-foreground tracking-tight">UniShark</div>
-          <div className="text-[10px] font-medium uppercase tracking-[0.15em] text-amber-600">Super Admin</div>
-        </div>
-      </Link>
+      <div className="p-6 border-b border-foreground/10 flex items-center gap-3">
+        <Link
+          to="/superadmin/dashboard"
+          onClick={() => setOpen(false)}
+          className="flex items-center gap-3"
+        >
+          <img src={logo} alt="UniShark" className="h-8 w-8 rounded-lg object-contain" />
+          <span className="text-xl font-display font-extrabold tracking-wider text-foreground flex flex-col justify-center">
+            UniShark
+            <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-amber-600 block leading-none mt-1">Super Admin</span>
+          </span>
+        </Link>
+      </div>
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
+      <nav className="flex-1 overflow-y-auto p-4 space-y-4">
         {navGroups.map((group) => (
           <div key={group.label}>
-            <p className="px-2 pb-1.5 text-[10px] font-semibold tracking-[0.16em] uppercase text-muted-foreground/70">
+            <p className="px-2 pb-2 text-[10px] font-semibold tracking-[0.16em] uppercase text-muted-foreground/70">
               {group.label}
             </p>
-            <div className="space-y-0.5">
+            <div className="space-y-1">
               {group.items.map((link) => {
                 const isActive =
                   location.pathname === link.href || location.pathname.startsWith(link.href + "/");
@@ -108,14 +110,14 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
                     to={link.href}
                     onClick={() => setOpen(false)}
                     className={cn(
-                      "flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-colors",
+                      "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 border-2 border-transparent",
                       isActive
-                        ? "bg-foreground/[0.06] text-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        ? "bg-foreground text-background shadow-[4px_4px_0_0_hsl(var(--foreground))] translate-x-[-2px] translate-y-[-2px] border-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground hover:translate-x-[-1px] hover:translate-y-[-1px]"
                     )}
                   >
                     <link.icon
-                      className={cn("h-4 w-4 shrink-0", isActive ? "text-amber-600" : "text-muted-foreground")}
+                      className={cn("h-4 w-4 shrink-0", isActive ? "text-amber-500" : "")}
                       strokeWidth={2}
                     />
                     <span className="flex-1 truncate">{link.name}</span>
@@ -128,109 +130,100 @@ export default function SuperAdminLayout({ children }: { children?: React.ReactN
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-border p-3">
-        <div className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted transition-colors">
-          <div className="h-8 w-8 rounded-full bg-amber-600 text-white text-xs font-semibold flex items-center justify-center shrink-0">
-            {initials}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-[12px] font-medium text-foreground truncate">{user?.email}</p>
-            <p className="text-[10px] text-muted-foreground">Super admin</p>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => signOut()}
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-          </Button>
-        </div>
+      <div className="p-4 border-t border-foreground/10">
+        <Button
+          variant="outline"
+          className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-xl border-2 border-foreground/10 hover:border-destructive transition-all"
+          onClick={() => signOut()}
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Sign out
+        </Button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="app-shell min-h-screen bg-background flex w-full relative">
       {/* ── Fixed sidebar (desktop) ── z-40 ──────────────────────── */}
-      <aside className="hidden md:block fixed inset-y-0 left-0 w-60 z-40">
+      <aside className="hidden md:block fixed inset-y-0 left-0 w-64 z-40">
         <SidebarContent />
       </aside>
 
-      {/* ── Fixed topbar (desktop) — explicitly starts at left-60 ── z-30 ── */}
-      {/* left-60 = 15rem = 240px, matching sidebar width exactly */}
-      <header className="hidden md:flex fixed top-0 left-60 right-0 z-30 h-14 items-center justify-between gap-4 bg-card/90 backdrop-blur-md border-b border-border px-6">
-        <div className="flex items-center gap-2 text-[13px] text-muted-foreground min-w-0">
-          <Crown className="h-3.5 w-3.5 text-amber-600" />
-          <span className="font-medium">Super Admin</span>
-          {currentPage && (
-            <>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
-              <span className="font-semibold text-foreground truncate">{currentPage.name}</span>
-            </>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="relative hidden lg:block w-72">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Search across the platform…"
-              className="h-9 pl-8 text-[13px] bg-muted/50 border-border rounded-lg focus-visible:ring-1 focus-visible:ring-ring focus-visible:bg-card"
-            />
+      {/* ── MAIN CONTENT ── */}
+      <div className="flex-1 flex flex-col min-w-0 md:pl-64 pt-16 md:pt-0">
+        {/* ── Fixed topbar (desktop) ── z-30 ── */}
+        <header className="hidden md:flex sticky top-0 z-30 h-16 w-full items-center justify-between border-b border-foreground/10 bg-background/25 backdrop-blur-md px-8 gap-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground min-w-0">
+            <Crown className="h-4 w-4 text-amber-600" />
+            <span className="font-bold text-foreground">Super Admin</span>
+            {currentPage && (
+              <>
+                <ChevronRight className="h-4 w-4 text-muted-foreground/60" />
+                <span className="font-semibold text-foreground truncate">{currentPage.name}</span>
+              </>
+            )}
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-9 px-2 gap-2 rounded-lg hover:bg-muted">
-                <div className="h-7 w-7 rounded-full bg-amber-600 text-white text-xs font-semibold flex items-center justify-center">
-                  {initials}
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 mt-1 border border-border rounded-xl">
-              <DropdownMenuLabel className="font-normal py-2">
-                <p className="text-[13px] font-semibold leading-tight">{user?.email}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5">Super administrator</p>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => signOut()}
-                className="text-[13px] cursor-pointer text-red-600 focus:text-red-700"
-              >
-                <LogOut className="h-3.5 w-3.5 mr-2" /> Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </header>
 
-      {/* ── Mobile topbar ─────────────────────────────────────────── */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-14 border-b border-border bg-card z-50 flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-64 border-r border-border">
-              <SidebarContent />
-            </SheetContent>
-          </Sheet>
-          <Crown className="h-4 w-4 text-amber-600" />
-          <span className="text-sm font-semibold text-foreground">Super Admin</span>
+          <div className="flex items-center gap-4">
+            <form className="relative w-full max-w-md hidden lg:block">
+              <Search className="absolute left-3.5 top-3 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search across the platform…"
+                className="pl-10 pr-4 h-10 w-72 border-2 border-foreground/10 focus-visible:border-foreground focus-visible:ring-0 rounded-full bg-background/50 hover:border-foreground/20 transition-all font-medium text-sm"
+              />
+            </form>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 px-2 gap-2 rounded-xl border-2 border-foreground bg-card hover:bg-muted overflow-hidden shadow-sm flex items-center">
+                  <div className="h-7 w-7 rounded-lg bg-amber-600 text-white text-xs font-bold flex items-center justify-center">
+                    {initials}
+                  </div>
+                  <span className="text-sm font-bold max-w-[120px] truncate hidden sm:block">{user?.email}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 mt-2 border-2 border-foreground rounded-2xl shadow-[6px_6px_0_0_hsl(var(--foreground))] bg-background">
+                <DropdownMenuLabel className="font-normal border-b pb-2 mb-2">
+                  <p className="text-sm font-bold leading-tight truncate">{user?.email}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Super administrator</p>
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => signOut()}
+                  className="cursor-pointer font-bold text-destructive hover:bg-destructive/5 rounded-lg m-1"
+                >
+                  <LogOut className="h-4 w-4 mr-2" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
+
+        {/* ── Mobile topbar ─────────────────────────────────────────── */}
+        <div className="md:hidden fixed top-0 left-0 right-0 h-16 border-b border-foreground/10 bg-background/80 backdrop-blur-xl z-50 flex items-center justify-between p-4">
+          <div className="flex items-center gap-2">
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="mr-2 hover:bg-muted border border-foreground/10 rounded-xl h-9 w-9">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 w-64 border-r border-foreground/10 bg-background/95">
+                <SidebarContent />
+              </SheetContent>
+            </Sheet>
+            <Crown className="h-5 w-5 text-amber-600" />
+            <span className="text-lg font-display font-extrabold tracking-wider text-foreground">Super Admin</span>
+          </div>
+          <Button variant="ghost" size="icon" onClick={() => signOut()} className="h-9 w-9 rounded-xl border border-foreground/10">
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => signOut()} className="h-9 w-9">
-          <LogOut className="h-4 w-4" />
-        </Button>
+
+        {/* ── Page content ─────────────────────────────────────────── */}
+        <main className="flex-1 overflow-y-auto">
+          {children || <Outlet />}
+        </main>
       </div>
-
-      {/* ── Page content ─────────────────────────────────────────── */}
-      {/* pt-14: clears the topbar height on all screens             */}
-      {/* md:pl-60: clears the sidebar width on desktop              */}
-      <main className="pt-14 md:pl-60">
-        {children || <Outlet />}
-      </main>
     </div>
   );
 }

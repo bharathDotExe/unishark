@@ -285,7 +285,7 @@ export function RefreshButton({ onClick, loading }: { onClick: () => void; loadi
 /* ------------------------------------------------------------------ */
 export function PageShell({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cn("mx-auto w-full max-w-7xl px-6 md:px-8 py-8 space-y-7", className)}>
+    <div className={cn("w-full px-4 md:px-6 lg:px-8 py-6 md:py-8 space-y-7", className)}>
       {children}
     </div>
   );
