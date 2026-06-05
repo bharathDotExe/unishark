@@ -9,13 +9,11 @@ import { toast } from "sonner";
 import {
   AlertCircle,
   ArrowUpRight,
-  Bookmark,
   CheckCircle2,
   Copy,
   Edit3,
   Eye,
   FileText,
-  MessageSquare,
   Plus,
   RefreshCw,
   Search,
