@@ -251,6 +251,13 @@ export default function PitchDetail() {
 
   const interestScore = Math.min(10, Math.max(1, Math.round((pitch.view_count + messagesCount * 2 + bookmarksCount * 3) / 5) || 1));
 
+  const metaTiles = [
+    { label: "Stage", value: pitch.stage || "" },
+    { label: "Funding ask", value: parsedFundingAsk },
+    { label: "Target market", value: targetMarket && targetMarket !== "—" ? targetMarket : "" },
+  ].filter((t) => t.value && t.value.trim() !== "");
+  const showOverview = metaTiles.length > 0 || !!pitch.thumbnail_url;
+
   return (
     <div className="min-h-screen bg-muted/20">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8">
@@ -320,18 +327,29 @@ export default function PitchDetail() {
           {/* MAIN */}
           <div className="lg:col-span-2 space-y-6">
             {/* Overview */}
-            <Section icon={Target} title="Overview" accent="indigo">
-              {pitch.thumbnail_url && (
-                <div className="w-full aspect-[21/9] rounded-lg overflow-hidden bg-muted mb-5 border border-border">
-                  <img src={pitch.thumbnail_url} alt={pitch.title} className="w-full h-full object-cover" />
-                </div>
-              )}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <MetaTile label="Stage" value={pitch.stage || "—"} />
-                <MetaTile label="Funding ask" value={formattedAsk} />
-                <MetaTile label="Target market" value={targetMarket} />
-              </div>
-            </Section>
+            {showOverview && (
+              <Section icon={Target} title="Overview" accent="indigo">
+                {pitch.thumbnail_url && (
+                  <div className="w-full aspect-[21/9] rounded-lg overflow-hidden bg-muted mb-5 border border-border">
+                    <img src={pitch.thumbnail_url} alt={pitch.title} className="w-full h-full object-cover" />
+                  </div>
+                )}
+                {metaTiles.length > 0 && (
+                  <div
+                    className={cn(
+                      "grid gap-3",
+                      metaTiles.length === 1 && "grid-cols-1",
+                      metaTiles.length === 2 && "grid-cols-1 sm:grid-cols-2",
+                      metaTiles.length === 3 && "grid-cols-1 sm:grid-cols-3"
+                    )}
+                  >
+                    {metaTiles.map((t) => (
+                      <MetaTile key={t.label} label={t.label} value={t.value} />
+                    ))}
+                  </div>
+                )}
+              </Section>
+            )}
 
             {/* Problem */}
             {pitch.problem && (
