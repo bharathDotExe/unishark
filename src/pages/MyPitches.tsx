@@ -1,18 +1,27 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { 
-  Plus, Eye, MessageSquare, Bookmark, Search, Edit3, Trash2, 
-  Copy, RefreshCw, AlertCircle, ArrowUpRight, CheckCircle2, ShieldCheck, 
-  Send, HelpCircle, FileText
-} from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import {
+  AlertCircle,
+  ArrowUpRight,
+  CheckCircle2,
+  Copy,
+  Edit3,
+  Eye,
+  FileText,
+  Plus,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DataTable, EmptyState, PageHeader, SectionCard, StatCard, StatusPill, type Column } from "@/components/admin/ui";
 
 type Pitch = {
   id: string;
@@ -31,6 +40,15 @@ type Pitch = {
   bookmark_count?: number;
 };
 
+const STATUS_OPTIONS = ["ALL", "DRAFT", "SUBMITTED", "APPROVED", "REJECTED"] as const;
+
+const statusMeta: Record<Pitch["status"], { label: string; tone: "positive" | "warning" | "danger" | "info" }> = {
+  APPROVED: { label: "Approved", tone: "positive" },
+  DRAFT: { label: "Draft", tone: "warning" },
+  REJECTED: { label: "Rejected", tone: "danger" },
+  SUBMITTED: { label: "Under review", tone: "info" },
+};
+
 export default function MyPitches() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -38,11 +56,9 @@ export default function MyPitches() {
   const [pitches, setPitches] = useState<Pitch[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | "DRAFT" | "SUBMITTED" | "APPROVED" | "REJECTED">("ALL");
+  const [statusFilter, setStatusFilter] = useState<(typeof STATUS_OPTIONS)[number]>("ALL");
   const [sortBy, setSortBy] = useState<"RECENT" | "VIEWS" | "MESSAGES">("RECENT");
   const [actioningId, setActioningId] = useState<string | null>(null);
-
-
 
   const loadData = async () => {
     if (!user) return;
@@ -57,20 +73,18 @@ export default function MyPitches() {
       const loadedPitches = (realPitches ?? []) as Pitch[];
 
       if (loadedPitches.length > 0) {
-        // Fetch bookmarks and message counts for real pitches
-        const { data: bookmarks } = await supabase.from("bookmarks").select("pitch_id");
-        const { data: messages } = await supabase.from("messages").select("pitch_id");
+        const [{ data: bookmarks }, { data: messages }] = await Promise.all([
+          supabase.from("bookmarks").select("pitch_id"),
+          supabase.from("messages").select("pitch_id"),
+        ]);
 
-        const enrichedPitches = loadedPitches.map(p => {
-          const bCount = (bookmarks ?? []).filter(b => b.pitch_id === p.id).length;
-          const mCount = (messages ?? []).filter(m => m.pitch_id === p.id).length;
-          return {
+        setPitches(
+          loadedPitches.map((p) => ({
             ...p,
-            bookmark_count: bCount,
-            message_count: mCount
-          };
-        });
-        setPitches(enrichedPitches);
+            bookmark_count: (bookmarks ?? []).filter((b) => b.pitch_id === p.id).length,
+            message_count: (messages ?? []).filter((m) => m.pitch_id === p.id).length,
+          }))
+        );
       } else {
         setPitches([]);
       }
@@ -86,16 +100,9 @@ export default function MyPitches() {
   }, [user]);
 
   const handleDuplicate = async (pitch: Pitch) => {
-
     try {
       setActioningId(pitch.id);
-      
-      const { data: fullPitch } = await supabase
-        .from("pitches")
-        .select("*")
-        .eq("id", pitch.id)
-        .single();
-        
+      const { data: fullPitch } = await supabase.from("pitches").select("*").eq("id", pitch.id).single();
       if (!fullPitch) throw new Error("Source pitch not found");
 
       const payload = {
@@ -111,7 +118,7 @@ export default function MyPitches() {
         team_members: fullPitch.team_members,
         deck_url: fullPitch.deck_url,
         status: "DRAFT" as const,
-        view_count: 0
+        view_count: 0,
       };
 
       const { error } = await supabase.from("pitches").insert(payload);
@@ -127,7 +134,6 @@ export default function MyPitches() {
   };
 
   const handleDelete = async (pitch: Pitch) => {
-
     if (!window.confirm(`Are you sure you want to delete "${pitch.title}"?`)) return;
     try {
       setActioningId(pitch.id);
@@ -144,16 +150,11 @@ export default function MyPitches() {
   };
 
   const handleSubmit = async (pitchId: string) => {
-
     try {
       setActioningId(pitchId);
-      const { error } = await supabase
-        .from("pitches")
-        .update({ status: "APPROVED" }) // Approved instantly for local demo
-        .eq("id", pitchId);
-
+      const { error } = await supabase.from("pitches").update({ status: "APPROVED" }).eq("id", pitchId);
       if (error) throw error;
-      toast.success("Your pitch is now APPROVED and visible to investors!");
+      toast.success("Your pitch is now approved and visible to investors!");
       loadData();
     } catch (e: any) {
       toast.error("Failed to submit pitch: " + e.message);
@@ -166,13 +167,11 @@ export default function MyPitches() {
     toast.success(`Review requested for "${pitchTitle}". We'll audit this shortly!`);
   };
 
-  // Helper to extract clean funding ask from JSON or text
   const getAskDisplay = (askVal: string | null) => {
-    if (!askVal) return "N/A";
+    if (!askVal) return "—";
     if (askVal.trim().startsWith("{")) {
       try {
-        const parsed = JSON.parse(askVal);
-        return parsed.funding_ask || "N/A";
+        return JSON.parse(askVal).funding_ask || "—";
       } catch {
         return askVal;
       }
@@ -180,287 +179,206 @@ export default function MyPitches() {
     return askVal;
   };
 
+  const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-  // Filter & Sort logic
-  const filteredPitches = pitches.filter(p => {
-    const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (p.one_liner || "").toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "ALL" || p.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const sortedPitches = useMemo(() => {
+    return pitches
+      .filter((p) => {
+        const query = searchQuery.toLowerCase();
+        const matchesSearch = p.title.toLowerCase().includes(query) || (p.one_liner || "").toLowerCase().includes(query);
+        const matchesStatus = statusFilter === "ALL" || p.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        if (sortBy === "VIEWS") return b.view_count - a.view_count;
+        if (sortBy === "MESSAGES") return (b.message_count ?? 0) - (a.message_count ?? 0);
+        return new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime();
+      });
+  }, [pitches, searchQuery, statusFilter, sortBy]);
 
-  // Sort pitches
-  const sortedPitches = [...filteredPitches].sort((a, b) => {
-    if (sortBy === "VIEWS") {
-      return b.view_count - a.view_count;
-    } else if (sortBy === "MESSAGES") {
-      return (b.message_count ?? 0) - (a.message_count ?? 0);
-    } else {
-      // RECENT
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    }
-  });
-
-  const formatDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const counts = {
+    total: pitches.length,
+    approved: pitches.filter((p) => p.status === "APPROVED").length,
+    review: pitches.filter((p) => p.status === "SUBMITTED").length,
+    engagement: pitches.reduce((sum, p) => sum + (p.view_count || 0) + (p.message_count || 0) + (p.bookmark_count || 0), 0),
   };
 
-  return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl pb-24">
-      {/* HEADER SECTION */}
-      <div className="flex items-center justify-between flex-wrap gap-4 mb-8 border-b border-foreground/10 pb-6">
-        <div>
-          <span className="text-xs uppercase tracking-widest font-extrabold text-[hsl(var(--pastel-blue))] bg-[hsl(var(--pastel-blue))]/10 border border-[hsl(var(--pastel-blue))]/20 px-2.5 py-1 rounded-full mb-1 inline-block">
-            MY WORKSPACE
-          </span>
-          <h1 className="text-4xl font-display font-extrabold tracking-wide text-foreground mt-1">My Pitches</h1>
-          <p className="text-muted-foreground font-semibold mt-1">Submit, edit, and duplicate your start-up presentations.</p>
-        </div>
-        <Button asChild size="lg" className="border-2 border-foreground bg-foreground text-background hover:bg-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-xl font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
-          <Link to="/pitches/create">
-            <Plus className="mr-2 h-5 w-5" /> Submit New Pitch
-          </Link>
-        </Button>
-      </div>
-
-      {/* FILTER OPTIONS */}
-      <Card className="p-6 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl mb-8 space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          
-          {/* Status Filter buttons */}
-          <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-xs font-extrabold text-muted-foreground mr-1 uppercase">Status:</span>
-            {(["ALL", "DRAFT", "SUBMITTED", "APPROVED", "REJECTED"] as const).map((status) => {
-              const isActive = statusFilter === status;
-              return (
-                <button
-                  key={status}
-                  onClick={() => setStatusFilter(status)}
-                  className={cn(
-                    "px-3 py-1.5 border-2 border-foreground rounded-lg text-xs font-bold transition-all",
-                    isActive 
-                      ? "bg-[hsl(var(--pastel-blue))] text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] translate-y-[-1px]" 
-                      : "bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  {status === "ALL" ? "All" : status.charAt(0) + status.slice(1).toLowerCase()}
-                </button>
-              );
-            })}
+  const columns: Column<Pitch>[] = [
+    {
+      key: "pitch",
+      header: "Pitch",
+      width: "minmax(260px, 1.7fr)",
+      cell: (p) => (
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <button onClick={() => navigate(`/pitches/${p.id}`)} className="text-sm font-semibold text-foreground truncate hover:underline text-left">
+              {p.title}
+            </button>
+            {p.status === "APPROVED" && <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />}
           </div>
-
-          {/* Sort By options */}
-          <div className="flex flex-wrap gap-2 items-center">
-            <span className="text-xs font-extrabold text-muted-foreground mr-1 uppercase">Sort By:</span>
-            {[
-              { val: "RECENT", label: "Most Recent" },
-              { val: "VIEWS", label: "Most Views" },
-              { val: "MESSAGES", label: "Most Messages" }
-            ].map((opt) => {
-              const isActive = sortBy === opt.val;
-              return (
-                <button
-                  key={opt.val}
-                  onClick={() => setSortBy(opt.val as any)}
-                  className={cn(
-                    "px-3 py-1.5 border-2 border-foreground rounded-lg text-xs font-bold transition-all",
-                    isActive 
-                      ? "bg-[hsl(var(--pastel-pink))] text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] translate-y-[-1px]" 
-                      : "bg-background text-muted-foreground hover:bg-muted hover:text-foreground"
-                  )}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
+          <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{p.one_liner || "No one-line summary added yet."}</p>
+          {p.status === "REJECTED" && (
+            <div className="mt-2 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2">
+              <p className="text-xs font-medium text-destructive line-clamp-2">{p.rejection_reason || "Unclear differentiation from existing platforms"}</p>
+              <button onClick={() => handleRequestReview(p.title)} className="mt-1 text-[11px] font-semibold text-foreground underline-offset-2 hover:underline">
+                Request review
+              </button>
+            </div>
+          )}
         </div>
-
-        {/* Search bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search pitches by title or keyword..."
-            className="pl-9 border-2 border-foreground/15 focus-visible:border-foreground focus-visible:ring-0 rounded-xl h-10 bg-background/50 hover:border-foreground/30 font-medium"
-          />
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      width: "132px",
+      cell: (p) => <StatusPill label={statusMeta[p.status].label} tone={statusMeta[p.status].tone} />,
+    },
+    {
+      key: "stage",
+      header: "Stage / ask",
+      width: "150px",
+      cell: (p) => (
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-foreground">{p.stage || "—"}</p>
+          <p className="text-xs text-muted-foreground truncate" title={getAskDisplay(p.funding_ask)}>{getAskDisplay(p.funding_ask)}</p>
         </div>
-      </Card>
-
-      {/* PITCH LIST */}
-      {loading ? (
-        <Card className="p-12 text-center border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl">
-          <RefreshCw className="h-10 w-10 text-muted-foreground animate-spin mx-auto mb-3" />
-          <p className="text-muted-foreground font-semibold">Loading your pitches...</p>
-        </Card>
-      ) : pitches.length === 0 ? (
-        <Card className="p-10 text-center border-2 border-dashed border-foreground/30 rounded-2xl bg-card/50">
-          <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[hsl(var(--pastel-blue))]/20 border-2 border-foreground/10">
-            <FileText className="h-7 w-7 text-foreground/40" />
-          </div>
-          <h3 className="text-xl font-display font-extrabold text-foreground mb-2">No pitches yet</h3>
-          <p className="text-muted-foreground font-medium text-sm mb-6 max-w-xs mx-auto">
-            Submit your first pitch to start connecting with investors. It only takes a few minutes.
-          </p>
-          <Button asChild className="border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] bg-foreground text-background hover:bg-foreground rounded-xl font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all">
-            <Link to="/pitches/create">
-              <Plus className="mr-2 h-4 w-4" /> Submit Your First Pitch
-            </Link>
+      ),
+    },
+    {
+      key: "metrics",
+      header: "Metrics",
+      width: "180px",
+      cell: (p) => (
+        <div className="grid grid-cols-3 gap-2 text-center w-full">
+          <div><p className="text-sm font-semibold text-foreground tabular-nums">{p.view_count || 0}</p><p className="text-[10px] text-muted-foreground">Views</p></div>
+          <div><p className="text-sm font-semibold text-foreground tabular-nums">{p.message_count || 0}</p><p className="text-[10px] text-muted-foreground">Msgs</p></div>
+          <div><p className="text-sm font-semibold text-foreground tabular-nums">{p.bookmark_count || 0}</p><p className="text-[10px] text-muted-foreground">Saves</p></div>
+        </div>
+      ),
+    },
+    {
+      key: "updated",
+      header: "Updated",
+      width: "92px",
+      cell: (p) => <span className="text-xs font-medium text-muted-foreground">{formatDate(p.updated_at || p.created_at)}</span>,
+    },
+    {
+      key: "actions",
+      header: "Actions",
+      width: "210px",
+      align: "right",
+      cell: (p) => (
+        <div className="flex items-center justify-end gap-1.5 flex-wrap">
+          <Button asChild size="sm" variant="outline" className="h-8 rounded-md border-border px-2.5 text-xs">
+            <Link to={`/pitches/${p.id}`}><ArrowUpRight className="h-3.5 w-3.5 mr-1" /> View</Link>
           </Button>
-        </Card>
-      ) : sortedPitches.length === 0 ? (
-        <Card className="p-12 text-center border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl bg-card">
-          <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-xl font-display font-extrabold">No pitches match your filters</h3>
-          <p className="text-muted-foreground mt-2 mb-6 max-w-sm mx-auto font-medium">Try adjusting your search or status filter.</p>
-          <Button onClick={() => { setSearchQuery(""); setStatusFilter("ALL"); }} className="border-2 border-foreground bg-foreground text-background font-bold rounded-xl mr-2">Reset Filters</Button>
-        </Card>
-      ) : (
-        <div className="space-y-6">
-          {sortedPitches.map((p) => (
-              <Card 
-                key={p.id} 
-                className="p-6 sm:p-8 border-2 border-foreground shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl bg-card relative overflow-hidden transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]"
-              >
-
-                <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2.5 flex-wrap mb-2">
-                      <h4 className="font-display font-extrabold text-2xl text-foreground tracking-wide truncate">{p.title}</h4>
-                      
-                      {/* Dynamic Status Badges */}
-                      {p.status === "APPROVED" && (
-                        <Badge className="bg-success text-success-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          APPROVED (visible to investors)
-                        </Badge>
-                      )}
-                      {p.status === "DRAFT" && (
-                        <Badge className="bg-[hsl(var(--pastel-pink))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          DRAFT (not visible to investors)
-                        </Badge>
-                      )}
-                      {p.status === "REJECTED" && (
-                        <Badge className="bg-destructive text-destructive-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          REJECTED (not visible to investors)
-                        </Badge>
-                      )}
-                      {p.status === "SUBMITTED" && (
-                        <Badge className="bg-[hsl(var(--pastel-blue))] text-foreground border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] text-xs font-bold font-sans px-2.5 py-0.5">
-                          SUBMITTED (under review)
-                        </Badge>
-                      )}
-                    </div>
-
-                    <p className="text-sm font-medium text-foreground/80 leading-relaxed italic border-l-4 border-foreground/15 pl-3 py-1 my-3 bg-muted/20 rounded-r-lg">
-                      "{p.one_liner || "Describe what your startup does in 1 sentence."}"
-                    </p>
-
-                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs font-bold text-muted-foreground mt-2 border-b border-foreground/5 pb-3">
-                      <span>Stage: <span className="text-foreground">{p.stage || "N/A"}</span></span>
-                      <span className="text-foreground/20">|</span>
-                      <span>Funding Ask: <span className="text-foreground">{getAskDisplay(p.funding_ask)}</span></span>
-                      <span className="text-foreground/20">|</span>
-                      <span>Created: <span className="text-foreground">{formatDate(p.created_at)}</span></span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Rejection Details Block */}
-                {p.status === "REJECTED" && (
-                  <div className="border-2 border-destructive bg-destructive/5 rounded-xl p-4 my-4 space-y-2">
-                    <div className="flex items-center gap-1.5 text-destructive font-bold text-sm">
-                      <AlertCircle className="h-4 w-4" /> Rejection Reason:
-                    </div>
-                    <p className="text-xs font-semibold text-foreground/90 leading-relaxed pl-5 italic">
-                      "{p.rejection_reason || "Unclear differentiation from existing platforms"}"
-                    </p>
-                    <Button 
-                      onClick={() => handleRequestReview(p.title)} 
-                      size="sm" 
-                      className="border-2 border-foreground bg-background hover:bg-muted text-foreground font-bold rounded-lg shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] transition-all ml-5 text-xs"
-                    >
-                      Request Review
-                    </Button>
-                  </div>
-                )}
-
-                {/* STATS ROW */}
-                <div className="flex flex-wrap gap-4 text-xs font-bold text-muted-foreground bg-muted/40 p-3 rounded-xl border border-foreground/10 mb-5 w-fit">
-                  <span className="flex items-center gap-1.5">{p.view_count} Views</span>
-                  <span className="text-foreground/10">|</span>
-                  <span className="flex items-center gap-1.5">{p.message_count ?? 0} Messages</span>
-                  <span className="text-foreground/10">|</span>
-                  <span className="flex items-center gap-1.5">{p.bookmark_count ?? 0} Bookmarks</span>
-                </div>
-
-                {/* BUTTONS ACTION STRIP */}
-                <div className="flex flex-wrap gap-2.5 pt-2 border-t border-foreground/5">
-                  <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-lg transition-all">
-                    <Link to={`/pitches/${p.id}`}>
-                      View Details
-                    </Link>
-                  </Button>
-
-                  {/* Context-aware Actions */}
-                  {p.status === "APPROVED" && (
-                    <Button asChild size="sm" className="border-2 border-foreground bg-[hsl(var(--pastel-blue))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]">
-                      <Link to={`/pitches/${p.id}/security`}>
-                        Security
-                      </Link>
-                    </Button>
-                  )}
-                  {p.status === "DRAFT" && (
-                    <Button 
-                      disabled={actioningId === p.id}
-                      onClick={() => handleSubmit(p.id)}
-                      size="sm" 
-                      className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
-                    >
-                      Submit
-                    </Button>
-                  )}
-                  {p.status === "REJECTED" && (
-                    <Button asChild size="sm" className="border-2 border-foreground bg-[hsl(var(--pastel-mint))] hover:opacity-90 text-foreground font-bold rounded-lg transition-all shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]">
-                      <Link to={`/pitches/${p.id}/edit`}>
-                        Edit & Resubmit
-                      </Link>
-                    </Button>
-                  )}
-
-                  {/* Always Available Actions */}
-                  <Button asChild size="sm" variant="outline" className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-lg transition-all">
-                    <Link to={`/pitches/${p.id}/edit`}>
-                      <Edit3 className="h-3.5 w-3.5 mr-1" /> Edit
-                    </Link>
-                  </Button>
-
-                  <Button 
-                    disabled={actioningId === p.id}
-                    onClick={() => handleDuplicate(p)}
-                    size="sm" 
-                    variant="outline" 
-                    className="border-2 border-foreground bg-background hover:bg-muted font-bold rounded-lg transition-all"
-                  >
-                    <Copy className="h-3.5 w-3.5 mr-1" /> Duplicate
-                  </Button>
-
-                  <Button 
-                    disabled={actioningId === p.id}
-                    onClick={() => handleDelete(p)}
-                    size="sm" 
-                    variant="outline" 
-                    className="border-2 border-foreground hover:bg-destructive hover:text-destructive-foreground font-bold rounded-lg transition-all ml-auto hover:shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px]"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </Card>
-          ))}
+          {p.status === "DRAFT" && (
+            <Button disabled={actioningId === p.id} onClick={() => handleSubmit(p.id)} size="sm" className="h-8 rounded-md px-2.5 text-xs">
+              Submit
+            </Button>
+          )}
+          {p.status === "APPROVED" && (
+            <Button asChild size="icon" variant="outline" className="h-8 w-8 rounded-md border-border">
+              <Link to={`/pitches/${p.id}/security`} title="Security"><ShieldCheck className="h-3.5 w-3.5" /></Link>
+            </Button>
+          )}
+          <Button asChild size="icon" variant="outline" className="h-8 w-8 rounded-md border-border">
+            <Link to={`/pitches/${p.id}/edit`} title="Edit"><Edit3 className="h-3.5 w-3.5" /></Link>
+          </Button>
+          <Button disabled={actioningId === p.id} onClick={() => handleDuplicate(p)} size="icon" variant="outline" className="h-8 w-8 rounded-md border-border" title="Duplicate">
+            <Copy className="h-3.5 w-3.5" />
+          </Button>
+          <Button disabled={actioningId === p.id} onClick={() => handleDelete(p)} size="icon" variant="outline" className="h-8 w-8 rounded-md border-border hover:bg-destructive hover:text-destructive-foreground" title="Delete">
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
         </div>
-      )}
+      ),
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-muted/20">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 space-y-6 pb-24">
+        <PageHeader
+          eyebrow="Student workspace"
+          title="My Pitches"
+          subtitle="Track every pitch, investor signal, review state, and action from one compact workspace."
+          actions={
+            <Button asChild className="rounded-lg">
+              <Link to="/pitches/create"><Plus className="h-4 w-4 mr-2" /> Submit pitch</Link>
+            </Button>
+          }
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+          <StatCard label="Total pitches" value={counts.total} icon={FileText} loading={loading} />
+          <StatCard label="Approved" value={counts.approved} icon={CheckCircle2} tone="positive" loading={loading} />
+          <StatCard label="Under review" value={counts.review} icon={AlertCircle} tone="info" loading={loading} />
+          <StatCard label="Engagement" value={counts.engagement} icon={Eye} hint="views + messages + saves" loading={loading} />
+        </div>
+
+        <SectionCard
+          title="Pitch queue"
+          description={`${sortedPitches.length} shown from ${pitches.length} total`}
+          actions={
+            <Button variant="outline" size="sm" onClick={loadData} className="h-8 rounded-md border-border">
+              <RefreshCw className={cn("h-3.5 w-3.5 mr-1.5", loading && "animate-spin")} /> Refresh
+            </Button>
+          }
+        >
+          <div className="px-5 py-4 border-b border-border flex flex-col lg:flex-row gap-3 lg:items-center">
+            <div className="relative flex-1 min-w-0">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search by title or summary"
+                className="pl-9 h-9 rounded-lg border-border bg-background"
+              />
+            </div>
+            <div className="grid grid-cols-2 sm:flex gap-2">
+              <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as typeof statusFilter)}>
+                <SelectTrigger className="h-9 rounded-lg border-border sm:w-[150px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {STATUS_OPTIONS.map((status) => <SelectItem key={status} value={status}>{status === "ALL" ? "All status" : statusMeta[status as Pitch["status"]].label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
+                <SelectTrigger className="h-9 rounded-lg border-border sm:w-[150px]"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="RECENT">Recently updated</SelectItem>
+                  <SelectItem value="VIEWS">Most views</SelectItem>
+                  <SelectItem value="MESSAGES">Most messages</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {pitches.length === 0 && !loading ? (
+            <div className="p-5">
+              <EmptyState
+                icon={FileText}
+                title="No pitches yet"
+                description="Submit your first pitch to start connecting with investors."
+                action={<Button asChild className="mt-4 rounded-lg"><Link to="/pitches/create"><Plus className="h-4 w-4 mr-2" /> Submit your first pitch</Link></Button>}
+              />
+            </div>
+          ) : sortedPitches.length === 0 && !loading ? (
+            <div className="p-5">
+              <EmptyState
+                icon={Search}
+                title="No pitches match your filters"
+                description="Try a different keyword or status filter."
+                action={<Button variant="outline" className="mt-4 rounded-lg border-border" onClick={() => { setSearchQuery(""); setStatusFilter("ALL"); }}>Reset filters</Button>}
+              />
+            </div>
+          ) : (
+            <DataTable columns={columns} rows={sortedPitches} loading={loading} empty="No pitches found." />
+          )}
+        </SectionCard>
+      </div>
     </div>
   );
 }
