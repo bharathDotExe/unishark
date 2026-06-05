@@ -14,7 +14,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import InvestorPitchView from "./investor/InvestorPitchView";
-import { StatusPill } from "@/components/admin/ui";
+import { PageHeader, SectionCard, StatCard, StatusPill } from "@/components/admin/ui";
 
 type Pitch = {
   id: string;
@@ -51,22 +51,22 @@ function Section({
   accent?: "slate" | "indigo" | "emerald" | "amber" | "red" | "sky";
 }) {
   const tones: Record<string, string> = {
-    slate: "bg-slate-50 text-slate-600",
-    indigo: "bg-indigo-50 text-indigo-600",
-    emerald: "bg-emerald-50 text-emerald-600",
-    amber: "bg-amber-50 text-amber-600",
-    red: "bg-red-50 text-red-600",
-    sky: "bg-sky-50 text-sky-600",
+    slate: "bg-muted text-muted-foreground",
+    indigo: "bg-primary/10 text-primary",
+    emerald: "bg-success/10 text-success",
+    amber: "bg-warning/10 text-warning",
+    red: "bg-destructive/10 text-destructive",
+    sky: "bg-accent text-accent-foreground",
   };
   return (
     <Card className="border border-border bg-card rounded-xl shadow-none overflow-hidden">
-      <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border">
-        <div className={cn("h-7 w-7 rounded-md flex items-center justify-center", tones[accent])}>
+      <div className="flex items-center gap-2.5 px-5 py-3 border-b border-border bg-muted/20">
+        <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", tones[accent])}>
           <Icon className="h-3.5 w-3.5" />
         </div>
         <h3 className="text-sm font-semibold text-foreground tracking-tight">{title}</h3>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-5 md:p-6">{children}</div>
     </Card>
   );
 }
