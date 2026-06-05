@@ -260,69 +260,61 @@ export default function PitchDetail() {
 
   return (
     <div className="min-h-screen bg-muted/20">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8">
-        {/* Back link */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 space-y-6 pb-24">
         <Link
           to="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground mb-5 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Back to dashboard
         </Link>
 
-        {/* Header */}
-        <Card className="border border-border bg-card rounded-xl shadow-none p-6 mb-6">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2.5 flex-wrap mb-3">
-                <StatusPill label={statusLabel} tone={statusTone as any} />
-                {pitch.stage && (
-                  <span className="text-[11px] font-medium text-muted-foreground border border-border rounded-md px-2 py-0.5">
-                    {pitch.stage}
-                  </span>
-                )}
-              </div>
-              <h1 className="text-2xl md:text-[28px] font-semibold tracking-tight text-foreground leading-tight">
-                {pitch.title}
-              </h1>
-              {pitch.one_liner && (
-                <p className="text-sm text-muted-foreground mt-2 max-w-2xl">{pitch.one_liner}</p>
-              )}
-              <div className="flex items-center gap-4 mt-4 text-[12px] text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Users className="h-3.5 w-3.5" /> {authorName}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 shrink-0">
-              <Button asChild variant="outline" size="sm" className="h-9 rounded-lg border-border text-[13px] font-medium">
+        <PageHeader
+          eyebrow="Pitch detail"
+          title={pitch.title}
+          subtitle={pitch.one_liner || "Review and manage this pitch from one focused workspace."}
+          actions={
+            <>
+              <Button asChild variant="outline" size="sm" className="h-9 rounded-lg border-border">
                 <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-1.5" /> Edit</Link>
               </Button>
-              <Button variant="outline" size="sm" onClick={triggerSecurityAlert} className="h-9 rounded-lg border-border text-[13px] font-medium">
+              <Button variant="outline" size="sm" onClick={triggerSecurityAlert} className="h-9 rounded-lg border-border">
                 <ShieldCheck className="h-3.5 w-3.5 mr-1.5" /> Security
               </Button>
-              <Button variant="outline" size="sm" onClick={handleShareLink} className="h-9 rounded-lg border-border text-[13px] font-medium">
+              <Button variant="outline" size="sm" onClick={handleShareLink} className="h-9 rounded-lg border-border">
                 <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
               </Button>
-              <Button size="sm" onClick={handleDownloadDeck} className="h-9 rounded-lg text-[13px] font-medium">
-                <Download className="h-3.5 w-3.5 mr-1.5" /> Download deck
+              <Button size="sm" onClick={handleDownloadDeck} className="h-9 rounded-lg">
+                <Download className="h-3.5 w-3.5 mr-1.5" /> Deck
               </Button>
+            </>
+          }
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+          <StatCard label="Status" value={statusLabel} icon={FileText} tone={statusTone as any} />
+          <StatCard label="Views" value={pitch.view_count || 0} icon={Eye} />
+          <StatCard label="Messages" value={messagesCount} icon={MessageSquare} tone="info" />
+          <StatCard label="Bookmarks" value={bookmarksCount} icon={Bookmark} tone="positive" />
+        </div>
+
+        <SectionCard>
+          <div className="p-5 md:p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <StatusPill label={statusLabel} tone={statusTone as any} />
+              {pitch.stage && <span className="text-xs font-medium text-muted-foreground border border-border rounded-full px-2.5 py-1">{pitch.stage}</span>}
+              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar className="h-3.5 w-3.5" /> {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
+              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Users className="h-3.5 w-3.5" /> {authorName}</span>
             </div>
           </div>
 
           {pitch.status === "REJECTED" && pitch.rejection_reason && (
-            <div className="mt-5 p-4 bg-red-50/60 border border-red-200 rounded-lg">
-              <p className="text-[11px] font-semibold text-red-700 uppercase tracking-wider mb-1">Reason for rejection</p>
-              <p className="text-sm text-red-900">{pitch.rejection_reason}</p>
+            <div className="mx-5 md:mx-6 mb-5 p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
+              <p className="text-[11px] font-semibold text-destructive uppercase tracking-wider mb-1">Reason for rejection</p>
+              <p className="text-sm text-foreground">{pitch.rejection_reason}</p>
             </div>
           )}
-        </Card>
+        </SectionCard>
 
-        {/* Body grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* MAIN */}
           <div className="lg:col-span-2 space-y-6">
