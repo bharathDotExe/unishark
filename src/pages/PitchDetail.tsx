@@ -252,7 +252,6 @@ export default function PitchDetail() {
   const interestScore = Math.min(10, Math.max(1, Math.round((pitch.view_count + messagesCount * 2 + bookmarksCount * 3) / 5) || 1));
 
   const metaTiles = [
-    { label: "Stage", value: pitch.stage || "" },
     { label: "Funding ask", value: parsedFundingAsk },
     { label: "Target market", value: targetMarket && targetMarket !== "—" ? targetMarket : "" },
   ].filter((t) => t.value && t.value.trim() !== "");
