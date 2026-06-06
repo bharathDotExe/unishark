@@ -73,7 +73,7 @@ function Section({
 
 function MetaTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-border rounded-lg p-3.5 bg-card">
+    <div className="rounded-lg p-3.5 bg-muted/40">
       <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">{label}</p>
       <p className="text-sm font-semibold text-foreground mt-1 truncate" title={value}>{value}</p>
     </div>
