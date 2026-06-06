@@ -60,13 +60,13 @@ function Section({
   };
   return (
     <Card className="border border-border bg-card rounded-xl shadow-none overflow-hidden">
-      <div className="flex items-center gap-2.5 px-5 py-3 border-b border-border bg-muted/20">
-        <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", tones[accent])}>
+      <div className="px-5 md:px-6 pt-5 pb-4 flex items-center gap-2.5">
+        <div className={cn("h-7 w-7 rounded-md flex items-center justify-center", tones[accent])}>
           <Icon className="h-3.5 w-3.5" />
         </div>
         <h3 className="text-sm font-semibold text-foreground tracking-tight">{title}</h3>
       </div>
-      <div className="p-5 md:p-6">{children}</div>
+      <div className="px-5 md:px-6 pb-5 md:pb-6">{children}</div>
     </Card>
   );
 }
