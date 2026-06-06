@@ -334,9 +334,7 @@ export default function PitchDetail() {
                   <div
                     className={cn(
                       "grid gap-3",
-                      metaTiles.length === 1 && "grid-cols-1",
-                      metaTiles.length === 2 && "grid-cols-1 sm:grid-cols-2",
-                      metaTiles.length === 3 && "grid-cols-1 sm:grid-cols-3"
+                      metaTiles.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
                     )}
                   >
                     {metaTiles.map((t) => (
