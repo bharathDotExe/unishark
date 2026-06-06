@@ -270,7 +270,7 @@ export default function PitchDetail() {
 
         <PageHeader
           eyebrow="Pitch detail"
-          title={pitch.title}
+          title={pitch.title || "Untitled pitch"}
           subtitle={pitch.one_liner || "Review and manage this pitch from one focused workspace."}
           actions={
             <>
@@ -290,6 +290,22 @@ export default function PitchDetail() {
           }
         />
 
+        <div className="flex items-center gap-2.5 flex-wrap -mt-2">
+          <StatusPill label={statusLabel} tone={statusTone as any} />
+          {pitch.stage && (
+            <span className="text-xs font-medium text-muted-foreground border border-border rounded-full px-2.5 py-1">
+              {pitch.stage}
+            </span>
+          )}
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Users className="h-3.5 w-3.5" /> {authorName}
+          </span>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
           <StatCard label="Status" value={statusLabel} icon={FileText} tone={statusTone as any} />
           <StatCard label="Views" value={pitch.view_count || 0} icon={Eye} />
@@ -297,23 +313,12 @@ export default function PitchDetail() {
           <StatCard label="Bookmarks" value={bookmarksCount} icon={Bookmark} tone="positive" />
         </div>
 
-        <SectionCard>
-          <div className="p-5 md:p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <StatusPill label={statusLabel} tone={statusTone as any} />
-              {pitch.stage && <span className="text-xs font-medium text-muted-foreground border border-border rounded-full px-2.5 py-1">{pitch.stage}</span>}
-              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar className="h-3.5 w-3.5" /> {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Users className="h-3.5 w-3.5" /> {authorName}</span>
-            </div>
-          </div>
-
-          {pitch.status === "REJECTED" && pitch.rejection_reason && (
-            <div className="mx-5 md:mx-6 mb-5 p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
-              <p className="text-[11px] font-semibold text-destructive uppercase tracking-wider mb-1">Reason for rejection</p>
-              <p className="text-sm text-foreground">{pitch.rejection_reason}</p>
-            </div>
-          )}
-        </SectionCard>
+        {pitch.status === "REJECTED" && pitch.rejection_reason && (
+          <Card className="p-5 border border-destructive/30 bg-destructive/5 rounded-xl shadow-none">
+            <p className="text-[11px] font-semibold text-destructive uppercase tracking-wider mb-1">Reason for rejection</p>
+            <p className="text-sm text-foreground">{pitch.rejection_reason}</p>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* MAIN */}
