@@ -60,20 +60,20 @@ function Section({
   };
   return (
     <Card className="border border-border bg-card rounded-xl shadow-none overflow-hidden">
-      <div className="flex items-center gap-2.5 px-5 py-3 border-b border-border bg-muted/20">
-        <div className={cn("h-8 w-8 rounded-lg flex items-center justify-center", tones[accent])}>
+      <div className="px-5 md:px-6 pt-5 pb-4 flex items-center gap-2.5">
+        <div className={cn("h-7 w-7 rounded-md flex items-center justify-center", tones[accent])}>
           <Icon className="h-3.5 w-3.5" />
         </div>
         <h3 className="text-sm font-semibold text-foreground tracking-tight">{title}</h3>
       </div>
-      <div className="p-5 md:p-6">{children}</div>
+      <div className="px-5 md:px-6 pb-5 md:pb-6">{children}</div>
     </Card>
   );
 }
 
 function MetaTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-border rounded-lg p-3.5 bg-card">
+    <div className="rounded-lg p-3.5 bg-muted/40">
       <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">{label}</p>
       <p className="text-sm font-semibold text-foreground mt-1 truncate" title={value}>{value}</p>
     </div>
@@ -252,7 +252,6 @@ export default function PitchDetail() {
   const interestScore = Math.min(10, Math.max(1, Math.round((pitch.view_count + messagesCount * 2 + bookmarksCount * 3) / 5) || 1));
 
   const metaTiles = [
-    { label: "Stage", value: pitch.stage || "" },
     { label: "Funding ask", value: parsedFundingAsk },
     { label: "Target market", value: targetMarket && targetMarket !== "—" ? targetMarket : "" },
   ].filter((t) => t.value && t.value.trim() !== "");
@@ -270,7 +269,7 @@ export default function PitchDetail() {
 
         <PageHeader
           eyebrow="Pitch detail"
-          title={pitch.title}
+          title={pitch.title || "Untitled pitch"}
           subtitle={pitch.one_liner || "Review and manage this pitch from one focused workspace."}
           actions={
             <>
@@ -290,6 +289,22 @@ export default function PitchDetail() {
           }
         />
 
+        <div className="flex items-center gap-2.5 flex-wrap -mt-2">
+          <StatusPill label={statusLabel} tone={statusTone as any} />
+          {pitch.stage && (
+            <span className="text-xs font-medium text-muted-foreground border border-border rounded-full px-2.5 py-1">
+              {pitch.stage}
+            </span>
+          )}
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Users className="h-3.5 w-3.5" /> {authorName}
+          </span>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
           <StatCard label="Status" value={statusLabel} icon={FileText} tone={statusTone as any} />
           <StatCard label="Views" value={pitch.view_count || 0} icon={Eye} />
@@ -297,23 +312,12 @@ export default function PitchDetail() {
           <StatCard label="Bookmarks" value={bookmarksCount} icon={Bookmark} tone="positive" />
         </div>
 
-        <SectionCard>
-          <div className="p-5 md:p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <StatusPill label={statusLabel} tone={statusTone as any} />
-              {pitch.stage && <span className="text-xs font-medium text-muted-foreground border border-border rounded-full px-2.5 py-1">{pitch.stage}</span>}
-              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Calendar className="h-3.5 w-3.5" /> {new Date(pitch.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
-              <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground"><Users className="h-3.5 w-3.5" /> {authorName}</span>
-            </div>
-          </div>
-
-          {pitch.status === "REJECTED" && pitch.rejection_reason && (
-            <div className="mx-5 md:mx-6 mb-5 p-4 bg-destructive/5 border border-destructive/20 rounded-lg">
-              <p className="text-[11px] font-semibold text-destructive uppercase tracking-wider mb-1">Reason for rejection</p>
-              <p className="text-sm text-foreground">{pitch.rejection_reason}</p>
-            </div>
-          )}
-        </SectionCard>
+        {pitch.status === "REJECTED" && pitch.rejection_reason && (
+          <Card className="p-5 border border-destructive/30 bg-destructive/5 rounded-xl shadow-none">
+            <p className="text-[11px] font-semibold text-destructive uppercase tracking-wider mb-1">Reason for rejection</p>
+            <p className="text-sm text-foreground">{pitch.rejection_reason}</p>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* MAIN */}
@@ -330,9 +334,7 @@ export default function PitchDetail() {
                   <div
                     className={cn(
                       "grid gap-3",
-                      metaTiles.length === 1 && "grid-cols-1",
-                      metaTiles.length === 2 && "grid-cols-1 sm:grid-cols-2",
-                      metaTiles.length === 3 && "grid-cols-1 sm:grid-cols-3"
+                      metaTiles.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"
                     )}
                   >
                     {metaTiles.map((t) => (
