@@ -53,51 +53,33 @@ export default function SuperAdminBackup() {
     fetchBackups();
   }, []);
 
+  const downloadJson = (filename: string, json: string) => {
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const trigger = async (type: "FULL" | "INCREMENTAL" | "SCHEMA_ONLY") => {
     setRunning(true);
-    const names = { FULL: "full", INCREMENTAL: "incremental", SCHEMA_ONLY: "schema" };
-    const baseName = `${names[type]}-${new Date().toISOString().slice(0, 10)}`;
-    
-    const { data: inserted, error: insertError } = await supabase
-      .from("database_backups")
-      .insert({
-        name: baseName,
-        type,
-        status: "IN_PROGRESS",
-      })
-      .select()
-      .single();
-
-    if (insertError || !inserted) {
-      toast.error("Failed to start backup");
+    toast.loading("Running backup…", { id: "backup-run" });
+    const { data, error } = await supabase.functions.invoke("database-backup", {
+      body: { type },
+    });
+    toast.dismiss("backup-run");
+    if (error || !data?.backup) {
+      toast.error(error?.message || "Backup failed");
       setRunning(false);
       return;
     }
-
-    setBackups((prev) => [inserted, ...prev]);
-    toast.success("Backup started");
-
-    // Simulate backup duration
-    const simDuration = type === "FULL" ? 4000 : type === "INCREMENTAL" ? 2000 : 1000;
-    await new Promise((resolve) => setTimeout(resolve, simDuration));
-
-    // Finish backup
-    const simulatedSize = type === "FULL" ? 2500000000 : type === "INCREMENTAL" ? 85000000 : 1200000;
-    const { data: updated, error: updateError } = await supabase
-      .from("database_backups")
-      .update({
-        status: "COMPLETED",
-        size_bytes: simulatedSize,
-        duration_ms: simDuration,
-      })
-      .eq("id", inserted.id)
-      .select()
-      .single();
-
-    if (!updateError && updated) {
-      setBackups((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
-      toast.success("Backup complete");
-    }
+    setBackups((prev) => [data.backup, ...prev.filter((b) => b.id !== data.backup.id)]);
+    downloadJson(`${data.backup.name}.json`, data.file);
+    toast.success(`Backup complete · ${data.rows ?? 0} rows`);
     setRunning(false);
   };
 
@@ -111,22 +93,21 @@ export default function SuperAdminBackup() {
     }
   };
 
-  const handleDownload = (backup: Backup) => {
-    // Generate a mock SQL file content
-    const mockSqlContent = `-- Unishark Database Backup\n-- Backup Name: ${backup.name}\n-- Type: ${backup.type}\n-- Date: ${backup.created_at}\n\n-- This is a simulated backup file. In a production environment with a dedicated backend, this would contain the full pg_dump output.\n\nCREATE TABLE IF NOT EXISTS _mock_table (id uuid);\nINSERT INTO _mock_table (id) VALUES ('${backup.id}');\n`;
-    
-    // Create a Blob and a download link
-    const blob = new Blob([mockSqlContent], { type: "application/sql" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${backup.name}.sql`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    toast.success(`Started download for ${backup.name}.sql`);
+  const handleDownload = async (backup: Backup) => {
+    toast.loading("Regenerating snapshot…", { id: "backup-dl" });
+    const { data, error } = await supabase.functions.invoke("database-backup", {
+      body: { type: backup.type },
+    });
+    toast.dismiss("backup-dl");
+    if (error || !data?.file) {
+      toast.error(error?.message || "Download failed");
+      return;
+    }
+    if (data.backup) {
+      setBackups((prev) => [data.backup, ...prev.filter((b) => b.id !== data.backup.id)]);
+    }
+    downloadJson(`${backup.name}.json`, data.file);
+    toast.success("Download started");
   };
 
   const columns: Column<Backup>[] = [
