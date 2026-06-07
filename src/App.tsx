@@ -94,6 +94,7 @@ const PitchesWrapper = () => {
 
 const PitchDetailWrapper = () => {
   const { roles } = useAuth();
+  if (roles.includes("superadmin")) return <SuperAdminLayout><PitchDetail /></SuperAdminLayout>;
   if (roles.includes("investor")) return <InvestorLayout><PitchDetail /></InvestorLayout>;
   if (roles.includes("student")) return <StudentLayout><PitchDetail /></StudentLayout>;
   return <PitchDetail />;
@@ -167,6 +168,7 @@ const App = () => (
               <Route path="admins"     element={<SuperAdminAdmins />} />
               <Route path="users"      element={<SuperAdminUsers />} />
               <Route path="pitches"    element={<SuperAdminPitches />} />
+              <Route path="pitches/:id" element={<PitchDetail />} />
               <Route path="investors"  element={<SuperAdminInvestors />} />
               <Route path="deals"      element={<SuperAdminDeals />} />
               <Route path="revenue"    element={<SuperAdminRevenue />} />
