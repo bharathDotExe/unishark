@@ -43,25 +43,15 @@ function Section({
   icon: Icon,
   title,
   children,
-  accent = "slate",
 }: {
   icon: any;
   title: string;
   children: React.ReactNode;
-  accent?: "slate" | "indigo" | "emerald" | "amber" | "red" | "sky";
 }) {
-  const tones: Record<string, string> = {
-    slate: "bg-muted text-muted-foreground",
-    indigo: "bg-primary/10 text-primary",
-    emerald: "bg-success/10 text-success",
-    amber: "bg-warning/10 text-warning",
-    red: "bg-destructive/10 text-destructive",
-    sky: "bg-accent text-accent-foreground",
-  };
   return (
     <Card className="border border-border bg-card rounded-xl shadow-none overflow-hidden">
       <div className="px-5 md:px-6 pt-5 pb-4 flex items-center gap-2.5">
-        <div className={cn("h-7 w-7 rounded-md flex items-center justify-center", tones[accent])}>
+        <div className="h-7 w-7 rounded-md flex items-center justify-center bg-muted text-muted-foreground">
           <Icon className="h-3.5 w-3.5" />
         </div>
         <h3 className="text-sm font-semibold text-foreground tracking-tight">{title}</h3>
@@ -308,8 +298,8 @@ export default function PitchDetail() {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
           <StatCard label="Status" value={statusLabel} icon={FileText} tone={statusTone as any} />
           <StatCard label="Views" value={pitch.view_count || 0} icon={Eye} />
-          <StatCard label="Messages" value={messagesCount} icon={MessageSquare} tone="info" />
-          <StatCard label="Bookmarks" value={bookmarksCount} icon={Bookmark} tone="positive" />
+          <StatCard label="Messages" value={messagesCount} icon={MessageSquare} />
+          <StatCard label="Bookmarks" value={bookmarksCount} icon={Bookmark} />
         </div>
 
         {pitch.status === "REJECTED" && pitch.rejection_reason && (
@@ -324,7 +314,7 @@ export default function PitchDetail() {
           <div className="lg:col-span-2 space-y-6">
             {/* Overview */}
             {showOverview && (
-              <Section icon={Target} title="Overview" accent="indigo">
+              <Section icon={Target} title="Overview">
                 {pitch.thumbnail_url && (
                   <div className="w-full aspect-[21/9] rounded-lg overflow-hidden bg-muted mb-5 border border-border">
                     <img src={pitch.thumbnail_url} alt={pitch.title} className="w-full h-full object-cover" />
@@ -347,7 +337,7 @@ export default function PitchDetail() {
 
             {/* Problem */}
             {pitch.problem && (
-              <Section icon={AlertTriangle} title="The problem" accent="red">
+              <Section icon={AlertTriangle} title="The problem">
                 <p className="text-[15px] leading-relaxed text-foreground/85 whitespace-pre-line">
                   {pitch.problem}
                 </p>
@@ -356,7 +346,7 @@ export default function PitchDetail() {
 
             {/* Solution */}
             {pitch.solution && (
-              <Section icon={Lightbulb} title="The solution" accent="emerald">
+              <Section icon={Lightbulb} title="The solution">
                 <p className="text-[15px] leading-relaxed text-foreground/85 whitespace-pre-line">
                   {pitch.solution}
                 </p>
@@ -365,11 +355,11 @@ export default function PitchDetail() {
 
             {/* Traction */}
             {activeTraction.length > 0 && (
-              <Section icon={TrendingUp} title="Traction" accent="emerald">
+              <Section icon={TrendingUp} title="Traction">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {activeTraction.map((t, i) => (
                     <div key={i} className="flex items-start gap-2.5 text-sm text-foreground/85 p-3 rounded-lg bg-muted/40 border border-border">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 mt-2 shrink-0" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground mt-2 shrink-0" />
                       <span>{t}</span>
                     </div>
                   ))}
@@ -379,7 +369,7 @@ export default function PitchDetail() {
 
             {/* Market */}
             {(parsedMarketSize || competitors || advantage) && (
-              <Section icon={BarChart3} title="Market & competition" accent="sky">
+              <Section icon={BarChart3} title="Market & competition">
                 {parsedMarketSize && (
                   <div className="mb-5">
                     <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">Market size</p>
@@ -393,7 +383,7 @@ export default function PitchDetail() {
                       <div className="space-y-1.5">
                         {competitors.split(",").map((c, i) => (
                           <div key={i} className="flex items-start gap-2 text-sm text-foreground/85">
-                            <span className="text-red-500 mt-1">•</span><span>{c.trim()}</span>
+                            <span className="text-muted-foreground mt-1">•</span><span>{c.trim()}</span>
                           </div>
                         ))}
                       </div>
@@ -405,7 +395,7 @@ export default function PitchDetail() {
                       <div className="space-y-1.5">
                         {advantage.split(",").map((a, i) => (
                           <div key={i} className="flex items-start gap-2 text-sm text-foreground/85">
-                            <span className="text-emerald-500 mt-1">•</span><span>{a.trim()}</span>
+                            <span className="text-muted-foreground mt-1">•</span><span>{a.trim()}</span>
                           </div>
                         ))}
                       </div>
@@ -417,7 +407,7 @@ export default function PitchDetail() {
 
             {/* Team */}
             {activeTeam.length > 0 && (
-              <Section icon={Users} title="Team" accent="indigo">
+              <Section icon={Users} title="Team">
                 <div className="space-y-3">
                   {activeTeam.map((m: any, i: number) => (
                     <div key={i} className="flex items-center justify-between gap-4 p-4 border border-border rounded-lg bg-muted/30">
@@ -447,7 +437,7 @@ export default function PitchDetail() {
 
             {/* Use of funds */}
             {useOfFunds && (
-              <Section icon={DollarSign} title="Use of funds" accent="amber">
+              <Section icon={DollarSign} title="Use of funds">
                 <div className="space-y-2.5">
                   {useOfFunds.split("|").map((alloc, i) => {
                     const [label, desc] = alloc.split(":").map((s) => s.trim());
@@ -463,7 +453,7 @@ export default function PitchDetail() {
             )}
 
             {/* Pitch deck */}
-            <Section icon={FileText} title="Pitch deck" accent="slate">
+            <Section icon={FileText} title="Pitch deck">
               {deckSignedUrl ? (
                 <div className="aspect-[16/9] w-full overflow-hidden rounded-lg border border-border bg-muted mb-4">
                   <iframe src={deckSignedUrl} title="Pitch Deck" className="w-full h-full" />
@@ -506,7 +496,7 @@ export default function PitchDetail() {
                 </div>
                 <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-emerald-500 rounded-full transition-all"
+                    className="h-full bg-foreground rounded-full transition-all"
                     style={{ width: `${interestScore * 10}%` }}
                   />
                 </div>
