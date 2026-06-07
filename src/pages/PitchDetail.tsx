@@ -234,8 +234,9 @@ export default function PitchDetail() {
     pitch.status === "APPROVED" ? "Approved" :
     pitch.status === "REJECTED" ? "Rejected" :
     pitch.status === "SUBMITTED" ? "Under review" : "Draft";
+  const isSuperAdmin = roles.includes("superadmin");
 
-  if (roles.includes("investor")) {
+  if (!isSuperAdmin && roles.includes("investor")) {
     return <InvestorPitchView pitch={pitch} authorProfile={authorProfile} deckSignedUrl={deckSignedUrl} />;
   }
 
@@ -248,30 +249,42 @@ export default function PitchDetail() {
   const showOverview = metaTiles.length > 0 || !!pitch.thumbnail_url;
 
   return (
-    <div className="min-h-screen bg-muted/20">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 space-y-6 pb-24">
+    <div className={cn("min-h-screen", isSuperAdmin ? "bg-background" : "bg-muted/20")}>
+      <div className={cn(
+        "mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 space-y-6 pb-24",
+        isSuperAdmin ? "max-w-none space-y-7" : "max-w-7xl"
+      )}>
         <Link
-          to="/dashboard"
+          to={isSuperAdmin ? "/superadmin/pitches" : "/dashboard"}
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to dashboard
+          <ArrowLeft className="h-3.5 w-3.5" /> {isSuperAdmin ? "Back to pitch queue" : "Back to dashboard"}
         </Link>
 
         <PageHeader
-          eyebrow="Pitch detail"
+          eyebrow={isSuperAdmin ? "Super admin / pitch review" : "Pitch detail"}
           title={pitch.title || "Untitled pitch"}
-          subtitle={pitch.one_liner || "Review and manage this pitch from one focused workspace."}
+          subtitle={pitch.one_liner || (isSuperAdmin ? "Audit and manage this pitch from the platform control room." : "Review and manage this pitch from one focused workspace.")}
           actions={
             <>
-              <Button asChild variant="outline" size="sm" className="h-9 rounded-lg border-border">
-                <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-1.5" /> Edit</Link>
-              </Button>
-              <Button variant="outline" size="sm" onClick={triggerSecurityAlert} className="h-9 rounded-lg border-border">
-                <ShieldCheck className="h-3.5 w-3.5 mr-1.5" /> Security
-              </Button>
+              {!isSuperAdmin && (
+                <>
+                  <Button asChild variant="outline" size="sm" className="h-9 rounded-lg border-border">
+                    <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-1.5" /> Edit</Link>
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={triggerSecurityAlert} className="h-9 rounded-lg border-border">
+                    <ShieldCheck className="h-3.5 w-3.5 mr-1.5" /> Security
+                  </Button>
+                </>
+              )}
               <Button variant="outline" size="sm" onClick={handleShareLink} className="h-9 rounded-lg border-border">
                 <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
               </Button>
+              {isSuperAdmin && (
+                <Button disabled={actioning} variant="destructive" size="sm" onClick={handleDelete} className="h-9 rounded-lg">
+                  <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
+                </Button>
+              )}
               <Button size="sm" onClick={handleDownloadDeck} className="h-9 rounded-lg">
                 <Download className="h-3.5 w-3.5 mr-1.5" /> Deck
               </Button>
@@ -296,15 +309,15 @@ export default function PitchDetail() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-          <StatCard label="Status" value={statusLabel} icon={FileText} tone={statusTone as any} />
+          <StatCard label="Status" value={statusLabel} icon={FileText} tone={isSuperAdmin ? "neutral" : statusTone as any} />
           <StatCard label="Views" value={pitch.view_count || 0} icon={Eye} />
           <StatCard label="Messages" value={messagesCount} icon={MessageSquare} />
           <StatCard label="Bookmarks" value={bookmarksCount} icon={Bookmark} />
         </div>
 
         {pitch.status === "REJECTED" && pitch.rejection_reason && (
-          <Card className="p-5 border border-destructive/30 bg-destructive/5 rounded-xl shadow-none">
-            <p className="text-[11px] font-semibold text-destructive uppercase tracking-wider mb-1">Reason for rejection</p>
+          <Card className={cn("p-5 rounded-xl shadow-none", isSuperAdmin ? "border border-border bg-card" : "border border-destructive/30 bg-destructive/5")}>
+            <p className={cn("text-[11px] font-semibold uppercase tracking-wider mb-1", isSuperAdmin ? "text-muted-foreground" : "text-destructive")}>Reason for rejection</p>
             <p className="text-sm text-foreground">{pitch.rejection_reason}</p>
           </Card>
         )}
@@ -462,7 +475,7 @@ export default function PitchDetail() {
                 <div className="aspect-[16/9] w-full flex flex-col items-center justify-center border border-dashed border-border bg-muted/30 rounded-lg mb-4">
                   <FileText className="h-8 w-8 text-muted-foreground mb-2" />
                   <p className="text-sm font-medium text-foreground">No deck attached</p>
-                  <p className="text-xs text-muted-foreground mt-1">Upload a deck from the edit page.</p>
+                    <p className="text-xs text-muted-foreground mt-1">{isSuperAdmin ? "This pitch was submitted without a deck." : "Upload a deck from the edit page."}</p>
                 </div>
               )}
               <div className="flex gap-2">
@@ -514,18 +527,27 @@ export default function PitchDetail() {
             {/* Actions */}
             <Card className="border border-border bg-card rounded-xl shadow-none overflow-hidden">
               <div className="px-5 py-3.5 border-b border-border">
-                <h3 className="text-sm font-semibold text-foreground">Quick actions</h3>
+                <h3 className="text-sm font-semibold text-foreground">{isSuperAdmin ? "Admin controls" : "Quick actions"}</h3>
               </div>
               <div className="p-2 flex flex-col">
-                <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
-                  <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-2" /> Edit pitch</Link>
-                </Button>
-                <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
-                  <Link to="/messages"><MessageSquare className="h-3.5 w-3.5 mr-2" /> View messages</Link>
-                </Button>
-                <Button onClick={triggerSecurityAlert} variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
-                  <ShieldCheck className="h-3.5 w-3.5 mr-2" /> Security dashboard
-                </Button>
+                {!isSuperAdmin && (
+                  <>
+                    <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                      <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-2" /> Edit pitch</Link>
+                    </Button>
+                    <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                      <Link to="/messages"><MessageSquare className="h-3.5 w-3.5 mr-2" /> View messages</Link>
+                    </Button>
+                    <Button onClick={triggerSecurityAlert} variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                      <ShieldCheck className="h-3.5 w-3.5 mr-2" /> Security dashboard
+                    </Button>
+                  </>
+                )}
+                {isSuperAdmin && (
+                  <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                    <Link to="/superadmin/pitches"><FileText className="h-3.5 w-3.5 mr-2" /> Return to queue</Link>
+                  </Button>
+                )}
                 <Button onClick={handleShareLink} variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
                   <Share2 className="h-3.5 w-3.5 mr-2" /> Share public link
                 </Button>
@@ -542,15 +564,17 @@ export default function PitchDetail() {
             </Card>
 
             {/* Tips */}
-            <Card className="border border-border bg-card rounded-xl shadow-none p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
-                <h3 className="text-sm font-semibold text-foreground">Boost your pitch</h3>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Pitches with a deck, traction numbers, and a clear funding ask get up to 3× more investor interest. Keep your overview tight and your problem statement sharp.
-              </p>
-            </Card>
+            {!isSuperAdmin && (
+              <Card className="border border-border bg-card rounded-xl shadow-none p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">Boost your pitch</h3>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Pitches with a deck, traction numbers, and a clear funding ask get up to 3× more investor interest. Keep your overview tight and your problem statement sharp.
+                </p>
+              </Card>
+            )}
           </div>
         </div>
       </div>

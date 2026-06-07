@@ -240,7 +240,7 @@ export default function SuperAdminPitches() {
       cell: (p) => (
         <div className="flex items-center gap-1 justify-end">
           <Button asChild size="sm" variant="ghost" className="h-8 w-8 p-0">
-            <Link to={`/pitches/${p.id}`}><ExternalLink className="h-3.5 w-3.5" /></Link>
+            <Link to={`/superadmin/pitches/${p.id}`}><ExternalLink className="h-3.5 w-3.5" /></Link>
           </Button>
           {p.status !== "APPROVED" && (
             <Button
