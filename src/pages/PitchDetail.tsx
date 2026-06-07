@@ -527,18 +527,27 @@ export default function PitchDetail() {
             {/* Actions */}
             <Card className="border border-border bg-card rounded-xl shadow-none overflow-hidden">
               <div className="px-5 py-3.5 border-b border-border">
-                <h3 className="text-sm font-semibold text-foreground">Quick actions</h3>
+                <h3 className="text-sm font-semibold text-foreground">{isSuperAdmin ? "Admin controls" : "Quick actions"}</h3>
               </div>
               <div className="p-2 flex flex-col">
-                <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
-                  <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-2" /> Edit pitch</Link>
-                </Button>
-                <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
-                  <Link to="/messages"><MessageSquare className="h-3.5 w-3.5 mr-2" /> View messages</Link>
-                </Button>
-                <Button onClick={triggerSecurityAlert} variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
-                  <ShieldCheck className="h-3.5 w-3.5 mr-2" /> Security dashboard
-                </Button>
+                {!isSuperAdmin && (
+                  <>
+                    <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                      <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-2" /> Edit pitch</Link>
+                    </Button>
+                    <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                      <Link to="/messages"><MessageSquare className="h-3.5 w-3.5 mr-2" /> View messages</Link>
+                    </Button>
+                    <Button onClick={triggerSecurityAlert} variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                      <ShieldCheck className="h-3.5 w-3.5 mr-2" /> Security dashboard
+                    </Button>
+                  </>
+                )}
+                {isSuperAdmin && (
+                  <Button asChild variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
+                    <Link to="/superadmin/pitches"><FileText className="h-3.5 w-3.5 mr-2" /> Return to queue</Link>
+                  </Button>
+                )}
                 <Button onClick={handleShareLink} variant="ghost" className="justify-start h-9 px-3 rounded-md text-[13px] font-medium">
                   <Share2 className="h-3.5 w-3.5 mr-2" /> Share public link
                 </Button>
@@ -555,15 +564,17 @@ export default function PitchDetail() {
             </Card>
 
             {/* Tips */}
-            <Card className="border border-border bg-card rounded-xl shadow-none p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
-                <h3 className="text-sm font-semibold text-foreground">Boost your pitch</h3>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Pitches with a deck, traction numbers, and a clear funding ask get up to 3× more investor interest. Keep your overview tight and your problem statement sharp.
-              </p>
-            </Card>
+            {!isSuperAdmin && (
+              <Card className="border border-border bg-card rounded-xl shadow-none p-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
+                  <h3 className="text-sm font-semibold text-foreground">Boost your pitch</h3>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Pitches with a deck, traction numbers, and a clear funding ask get up to 3× more investor interest. Keep your overview tight and your problem statement sharp.
+                </p>
+              </Card>
+            )}
           </div>
         </div>
       </div>
