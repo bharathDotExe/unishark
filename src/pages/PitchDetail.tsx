@@ -309,15 +309,15 @@ export default function PitchDetail() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-          <StatCard label="Status" value={statusLabel} icon={FileText} tone={statusTone as any} />
+          <StatCard label="Status" value={statusLabel} icon={FileText} tone={isSuperAdmin ? "neutral" : statusTone as any} />
           <StatCard label="Views" value={pitch.view_count || 0} icon={Eye} />
           <StatCard label="Messages" value={messagesCount} icon={MessageSquare} />
           <StatCard label="Bookmarks" value={bookmarksCount} icon={Bookmark} />
         </div>
 
         {pitch.status === "REJECTED" && pitch.rejection_reason && (
-          <Card className="p-5 border border-destructive/30 bg-destructive/5 rounded-xl shadow-none">
-            <p className="text-[11px] font-semibold text-destructive uppercase tracking-wider mb-1">Reason for rejection</p>
+          <Card className={cn("p-5 rounded-xl shadow-none", isSuperAdmin ? "border border-border bg-card" : "border border-destructive/30 bg-destructive/5")}>
+            <p className={cn("text-[11px] font-semibold uppercase tracking-wider mb-1", isSuperAdmin ? "text-muted-foreground" : "text-destructive")}>Reason for rejection</p>
             <p className="text-sm text-foreground">{pitch.rejection_reason}</p>
           </Card>
         )}
@@ -475,7 +475,7 @@ export default function PitchDetail() {
                 <div className="aspect-[16/9] w-full flex flex-col items-center justify-center border border-dashed border-border bg-muted/30 rounded-lg mb-4">
                   <FileText className="h-8 w-8 text-muted-foreground mb-2" />
                   <p className="text-sm font-medium text-foreground">No deck attached</p>
-                  <p className="text-xs text-muted-foreground mt-1">Upload a deck from the edit page.</p>
+                    <p className="text-xs text-muted-foreground mt-1">{isSuperAdmin ? "This pitch was submitted without a deck." : "Upload a deck from the edit page."}</p>
                 </div>
               )}
               <div className="flex gap-2">
