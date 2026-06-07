@@ -234,8 +234,9 @@ export default function PitchDetail() {
     pitch.status === "APPROVED" ? "Approved" :
     pitch.status === "REJECTED" ? "Rejected" :
     pitch.status === "SUBMITTED" ? "Under review" : "Draft";
+  const isSuperAdmin = roles.includes("superadmin");
 
-  if (roles.includes("investor")) {
+  if (!isSuperAdmin && roles.includes("investor")) {
     return <InvestorPitchView pitch={pitch} authorProfile={authorProfile} deckSignedUrl={deckSignedUrl} />;
   }
 
@@ -248,30 +249,42 @@ export default function PitchDetail() {
   const showOverview = metaTiles.length > 0 || !!pitch.thumbnail_url;
 
   return (
-    <div className="min-h-screen bg-muted/20">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 space-y-6 pb-24">
+    <div className={cn("min-h-screen", isSuperAdmin ? "bg-background" : "bg-muted/20")}>
+      <div className={cn(
+        "mx-auto px-4 md:px-6 lg:px-8 py-6 md:py-8 space-y-6 pb-24",
+        isSuperAdmin ? "max-w-none space-y-7" : "max-w-7xl"
+      )}>
         <Link
-          to="/dashboard"
+          to={isSuperAdmin ? "/superadmin/pitches" : "/dashboard"}
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Back to dashboard
+          <ArrowLeft className="h-3.5 w-3.5" /> {isSuperAdmin ? "Back to pitch queue" : "Back to dashboard"}
         </Link>
 
         <PageHeader
-          eyebrow="Pitch detail"
+          eyebrow={isSuperAdmin ? "Super admin / pitch review" : "Pitch detail"}
           title={pitch.title || "Untitled pitch"}
-          subtitle={pitch.one_liner || "Review and manage this pitch from one focused workspace."}
+          subtitle={pitch.one_liner || (isSuperAdmin ? "Audit and manage this pitch from the platform control room." : "Review and manage this pitch from one focused workspace.")}
           actions={
             <>
-              <Button asChild variant="outline" size="sm" className="h-9 rounded-lg border-border">
-                <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-1.5" /> Edit</Link>
-              </Button>
-              <Button variant="outline" size="sm" onClick={triggerSecurityAlert} className="h-9 rounded-lg border-border">
-                <ShieldCheck className="h-3.5 w-3.5 mr-1.5" /> Security
-              </Button>
+              {!isSuperAdmin && (
+                <>
+                  <Button asChild variant="outline" size="sm" className="h-9 rounded-lg border-border">
+                    <Link to={`/pitches/${pitch.id}/edit`}><Edit3 className="h-3.5 w-3.5 mr-1.5" /> Edit</Link>
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={triggerSecurityAlert} className="h-9 rounded-lg border-border">
+                    <ShieldCheck className="h-3.5 w-3.5 mr-1.5" /> Security
+                  </Button>
+                </>
+              )}
               <Button variant="outline" size="sm" onClick={handleShareLink} className="h-9 rounded-lg border-border">
                 <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
               </Button>
+              {isSuperAdmin && (
+                <Button disabled={actioning} variant="destructive" size="sm" onClick={handleDelete} className="h-9 rounded-lg">
+                  <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete
+                </Button>
+              )}
               <Button size="sm" onClick={handleDownloadDeck} className="h-9 rounded-lg">
                 <Download className="h-3.5 w-3.5 mr-1.5" /> Deck
               </Button>
