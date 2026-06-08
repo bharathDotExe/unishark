@@ -17,35 +17,35 @@ import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
 const youtubeVideos = [
   {
     id: "yt1",
-    embedId: "gDQOWOhtPXY",
-    title: "How to Value a Startup (Detailed Guide)",
+    embedId: "bNpx7gpSqbY",
+    title: "How to Start a Startup — Sam Altman (Lecture 1)",
     channel: "Y Combinator",
-    views: "1.2M views",
-    duration: "22 min",
+    views: "2.4M views",
+    duration: "46 min",
   },
   {
     id: "yt2",
-    embedId: "5w3EUQh1mXQ",
-    title: "Angel Investing: Due Diligence Checklist",
-    channel: "Venture School",
-    views: "450K views",
-    duration: "18 min",
+    embedId: "ZoqgAy3h4OM",
+    title: "Before the Startup — Paul Graham",
+    channel: "Y Combinator",
+    views: "1.8M views",
+    duration: "48 min",
   },
   {
     id: "yt3",
-    embedId: "WsKPGIBbQgM",
-    title: "How Venture Capital Works",
-    channel: "WSJ",
-    views: "3.1M views",
-    duration: "15 min",
+    embedId: "CBYhVcO4WgI",
+    title: "How to Raise Money — Marc Andreessen, Ron Conway",
+    channel: "Y Combinator",
+    views: "780K views",
+    duration: "49 min",
   },
   {
     id: "yt4",
-    embedId: "BqMGBGUFwXk",
-    title: "What Investors Look For in a Startup",
-    channel: "Stanford eCorner",
-    views: "890K views",
-    duration: "12 min",
+    embedId: "0lJKucu6HJc",
+    title: "How to Get Rich (Without Getting Lucky) — Naval",
+    channel: "Naval",
+    views: "5.2M views",
+    duration: "3 hr",
   },
 ];
 
@@ -61,6 +61,7 @@ const twitterPosts = [
     replies: 142,
     retweets: 3200,
     likes: 12800,
+    url: "https://twitter.com/naval",
   },
   {
     id: "tw2",
@@ -73,6 +74,7 @@ const twitterPosts = [
     replies: 88,
     retweets: 4500,
     likes: 21000,
+    url: "https://twitter.com/paulg",
   },
   {
     id: "tw3",
@@ -85,6 +87,7 @@ const twitterPosts = [
     replies: 64,
     retweets: 890,
     likes: 3400,
+    url: "https://twitter.com/msuster",
   },
 ];
 
@@ -100,6 +103,7 @@ const linkedinPosts = [
     likes: 1402,
     comments: 124,
     reposts: 34,
+    url: "https://www.linkedin.com/in/sarahchenspellings/",
   },
   {
     id: "li2",
@@ -112,6 +116,7 @@ const linkedinPosts = [
     likes: 2810,
     comments: 340,
     reposts: 91,
+    url: "https://www.linkedin.com/in/anandsanwal/",
   },
 ];
 
@@ -124,6 +129,7 @@ const instagramPosts = [
     quote: "It's not about how much you raise. It's about how little you burn.",
     likes: 4231,
     caption: "Keep burn rates low. Market conditions change fast. #StartupLife #VentureCapital",
+    url: "https://www.instagram.com/explore/tags/startuplife/",
   },
   {
     id: "ig2",
@@ -133,6 +139,7 @@ const instagramPosts = [
     quote: "The best investment you can make is in a founder who has already failed once.",
     likes: 6102,
     caption: "Second-time founders have a 30% higher success rate. #AngelInvesting",
+    url: "https://www.instagram.com/explore/tags/angelinvesting/",
   },
 ];
 
