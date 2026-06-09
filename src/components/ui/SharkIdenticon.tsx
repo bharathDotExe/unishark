@@ -8,122 +8,131 @@ interface SharkIdenticonProps {
   className?: string;
 }
 
-// Simple deterministic hash function (djb2)
 const hashString = (str: string): number => {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) + str.charCodeAt(i); /* hash * 33 + c */
+    hash = ((hash << 5) + hash) + str.charCodeAt(i);
   }
   return Math.abs(hash);
 };
 
-export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({ 
-  seed, 
-  role = 'student', 
+const ROLES = ['student', 'mentor', 'investor', 'admin'] as const;
+
+const hueFromHash = (hash: number, offset: number): number => {
+  return ((hash >> offset) & 0xFF) / 255;
+};
+
+export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({
+  seed,
+  role = 'student',
   size = 40,
-  className 
+  className,
 }) => {
-  const { grid, colorTheme } = useMemo(() => {
+  const { rings, defs, bgFill, accentFill } = useMemo(() => {
     const hash = hashString(seed);
-    
-    // Generate a 5x5 symmetrical grid (15 unique blocks, reflected)
-    // We use the bits of the hash to determine if a block is active
-    const grid: boolean[][] = Array(5).fill(false).map(() => Array(5).fill(false));
-    let bitIndex = 0;
-    
-    // To make it look slightly more "fin-like", we can bias the bottom/center
-    // but pure randomness is fine for 5x5 identicons.
-    for (let col = 0; col < 3; col++) {
-      for (let row = 0; row < 5; row++) {
-        // Extract the nth bit from the hash
-        const bit = (hash >> bitIndex) & 1;
-        const isActive = bit === 1;
-        
-        // Apply to left side and mirrored right side
-        grid[row][col] = isActive;
-        grid[row][4 - col] = isActive;
-        
-        bitIndex++;
+    const roleIndex = ROLES.indexOf(role);
+
+    // Role-based hue anchors for sophistication
+    const roleHues = [200, 270, 155, 45]; // student=blue, mentor=purple, investor=green, admin=gold
+    const baseHue = roleHues[roleIndex];
+    const hueVar = Math.floor(hueFromHash(hash, 0) * 40) - 20; // ±20° variation
+    const primaryHue = (baseHue + hueVar + 360) % 360;
+    const secondaryHue = (primaryHue + 30) % 360;
+
+    // Build 3 concentric rings with segments
+    const rings: { segments: number; innerR: number; outerR: number; bits: boolean[] }[] = [];
+    let bitOffset = 8;
+
+    const ringConfigs = [
+      { segments: 6, innerR: 0.12, outerR: 0.35 },
+      { segments: 10, innerR: 0.37, outerR: 0.60 },
+      { segments: 14, innerR: 0.62, outerR: 0.85 },
+    ];
+
+    for (const cfg of ringConfigs) {
+      const bits: boolean[] = [];
+      for (let i = 0; i < cfg.segments; i++) {
+        bits.push(((hash >> (bitOffset + i)) & 1) === 1);
       }
+      bitOffset += cfg.segments;
+      rings.push({ segments: cfg.segments, innerR: cfg.innerR, outerR: cfg.outerR, bits });
     }
 
-    // Role-based color themes (Dark mode optimized, neon, glowing)
-    const themes = {
-      student: {
-        bg: "bg-[#050B14]", // Dark deep blue
-        fill: "#00E5FF", // Neon Cyan
-        glow: "rgba(0, 229, 255, 0.4)"
-      },
-      mentor: {
-        bg: "bg-[#11051A]", // Dark deep purple
-        fill: "#B026FF", // Neon Purple
-        glow: "rgba(176, 38, 255, 0.4)"
-      },
-      investor: {
-        bg: "bg-[#03150D]", // Dark deep green
-        fill: "#00FFA3", // Emerald Green
-        glow: "rgba(0, 255, 163, 0.4)"
-      },
-      admin: {
-        bg: "bg-[#1A1301]", // Dark deep gold
-        fill: "#FFC107", // Gold
-        glow: "rgba(255, 193, 7, 0.4)"
-      }
-    };
+    // Gradient IDs unique per seed
+    const gradBg = `bg-${seed.slice(0, 8)}`;
+    const gradAccent = `accent-${seed.slice(0, 8)}`;
 
-    return { grid, colorTheme: themes[role] };
+    const bgFill = `url(#${gradBg})`;
+    const accentFill = `url(#${gradAccent})`;
+
+    const defs = (
+      <>
+        <radialGradient id={gradBg} cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+          <stop offset="0%" stopColor={`hsl(${primaryHue}, 25%, 22%)`} />
+          <stop offset="100%" stopColor={`hsl(${primaryHue}, 35%, 12%)`} />
+        </radialGradient>
+        <linearGradient id={gradAccent} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor={`hsl(${primaryHue}, 70%, 65%)`} />
+          <stop offset="100%" stopColor={`hsl(${secondaryHue}, 60%, 55%)`} />
+        </linearGradient>
+      </>
+    );
+
+    return { rings, defs, bgFill, accentFill };
   }, [seed, role]);
 
-  const blockSize = size / 5;
+  // Generate SVG paths for a ring segment
+  const segmentPath = (innerR: number, outerR: number, segments: number, index: number): string => {
+    const startAngle = (index / segments) * Math.PI * 2 - Math.PI / 2;
+    const endAngle = ((index + 1) / segments) * Math.PI * 2 - Math.PI / 2;
+    const gap = 0.03; // slight gap between segments
+
+    const sa = startAngle + gap;
+    const ea = endAngle - gap;
+
+    const x1 = 0.5 + innerR * Math.cos(sa);
+    const y1 = 0.5 + innerR * Math.sin(sa);
+    const x2 = 0.5 + outerR * Math.cos(sa);
+    const y2 = 0.5 + outerR * Math.sin(sa);
+    const x3 = 0.5 + outerR * Math.cos(ea);
+    const y3 = 0.5 + outerR * Math.sin(ea);
+    const x4 = 0.5 + innerR * Math.cos(ea);
+    const y4 = 0.5 + innerR * Math.sin(ea);
+
+    const largeArc = (ea - sa) > Math.PI ? 1 : 0;
+
+    return `M ${x1} ${y1} L ${x2} ${y2} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x3} ${y3} L ${x4} ${y4} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x1} ${y1} Z`;
+  };
 
   return (
-    <div 
+    <div
       className={cn(
-        "rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center justify-center flex-shrink-0",
-        colorTheme.bg,
+        'rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 transition-transform duration-300 hover:scale-105',
         className
       )}
-      style={{ 
-        width: size, 
-        height: size,
-        boxShadow: `0 0 10px ${colorTheme.glow}` 
-      }}
+      style={{ width: size, height: size }}
     >
-      <svg 
-        width="100%" 
-        height="100%" 
-        viewBox="-1.5 -1.5 8 8" 
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 1 1"
         xmlns="http://www.w3.org/2000/svg"
-        className="transform transition-transform duration-500 hover:rotate-3"
       >
-        <defs>
-          <filter id={`glow-${seed}`}>
-            <feGaussianBlur stdDeviation="0.3" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        
-        {grid.map((row, r) => 
-          row.map((isActive, c) => {
-            if (!isActive) return null;
+        {defs}
+        {/* Background circle */}
+        <circle cx="0.5" cy="0.5" r="0.5" fill={bgFill} />
+
+        {/* Rings */}
+        {rings.map((ring, ringIdx) =>
+          ring.bits.map((active, segIdx) => {
+            if (!active) return null;
+            const opacity = 0.6 + (ringIdx * 0.2); // inner rings more opaque
             return (
-              <rect
-                key={`${r}-${c}`}
-                x={c}
-                y={r}
-                width={1}
-                height={1}
-                fill={colorTheme.fill}
-                rx={0.25} // Rounded pixel edges
-                ry={0.25}
-                filter={`url(#glow-${seed})`}
-                className="transition-all duration-300"
-                style={{
-                  transformOrigin: 'center',
-                }}
+              <path
+                key={`r${ringIdx}-s${segIdx}`}
+                d={segmentPath(ring.innerR, ring.outerR, ring.segments, segIdx)}
+                fill={accentFill}
+                opacity={opacity}
               />
             );
           })
