@@ -141,11 +141,6 @@ export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({
             );
           })
         )}
-
-        {/* Center dot */}
-        {useMemo(() => ((hashString(seed) >> 5) & 1) === 1, [seed]) && (
-          <circle cx="0.5" cy="0.5" r="0.08" fill={accentFill} opacity="0.9" />
-        )}
       </svg>
     </div>
   );
