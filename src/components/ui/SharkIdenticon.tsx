@@ -78,7 +78,7 @@ export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({
       </>
     );
 
-    return { rings, defs, bgFill, accentFill, hasCenter };
+    return { rings, defs, bgFill, accentFill };
   }, [seed, role]);
 
   // Generate SVG paths for a ring segment
