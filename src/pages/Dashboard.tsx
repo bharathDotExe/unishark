@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
+import ArticleFeedSection from "@/components/ArticleFeedSection";
 
 type Pitch = {
   id: string;
