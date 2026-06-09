@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import logo from "@/assets/logo.png";
+import ArticleFeedSection from "@/components/ArticleFeedSection";
 
 type Pitch = {
   id: string;
@@ -365,101 +366,11 @@ export default function Dashboard() {
 
       {/* SECTION: STARTUP FEED — Posts from around the web */}
       <div className="mb-12">
-        <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-          <h3 className="text-2xl font-display font-extrabold text-foreground tracking-tight flex items-center gap-2">
-            <Newspaper className="h-6 w-6" /> Startup Feed
-          </h3>
-          <p className="text-sm text-muted-foreground font-medium">
-            What founders and investors are sharing this week
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {[
-            {
-              source: "linkedin",
-              author: "Aarti Mehra",
-              role: "Founder, Brightleaf · ex-Stripe",
-              time: "2h",
-              text: "Stop pitching features. Start pitching the painful problem you have spent 100 hours living with. Investors fund clarity, not cleverness.",
-              tag: "Fundraising",
-            },
-            {
-              source: "twitter",
-              author: "Naval",
-              role: "@naval",
-              time: "5h",
-              text: "Specific knowledge is found by pursuing your genuine curiosity. Build the company only you can build.",
-              tag: "Mindset",
-            },
-            {
-              source: "linkedin",
-              author: "Rohan Iyer",
-              role: "Partner, Blume Ventures",
-              time: "1d",
-              text: "The best student founders I have backed all share one trait: they ship something every week, even when nobody is watching.",
-              tag: "Founders",
-            },
-            {
-              source: "twitter",
-              author: "Paul Graham",
-              role: "@paulg",
-              time: "1d",
-              text: "Make something a small number of people want a lot, instead of something a lot of people want a little.",
-              tag: "Product",
-            },
-            {
-              source: "linkedin",
-              author: "Sneha Kapoor",
-              role: "Angel Investor · IIT Bombay",
-              time: "2d",
-              text: "Three things I check in 60 seconds on every deck: who is the customer, what hurts them today, and why now. If those are unclear, I pass.",
-              tag: "Pitch Tips",
-            },
-            {
-              source: "twitter",
-              author: "Y Combinator",
-              role: "@ycombinator",
-              time: "3d",
-              text: "Talk to users. Then talk to more users. Then build. Repeat. This is the whole playbook for the first 90 days.",
-              tag: "Playbook",
-            },
-          ].map((post, i) => {
-            const Icon = post.source === "linkedin" ? Linkedin : Twitter;
-            const iconColor = post.source === "linkedin" ? "text-[hsl(210_90%_40%)]" : "text-[hsl(203_89%_53%)]";
-            return (
-              <Card
-                key={i}
-                className="p-5 border-2 border-foreground bg-card shadow-[4px_4px_0_0_hsl(var(--foreground))] rounded-2xl transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-full bg-foreground/5 border border-foreground/10 flex items-center justify-center font-display font-extrabold text-foreground text-sm shrink-0">
-                    {post.author.split(" ").map(w => w[0]).slice(0, 2).join("")}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-sm text-foreground truncate">{post.author}</span>
-                      <Icon className={cn("h-3.5 w-3.5 shrink-0", iconColor)} />
-                      <span className="text-xs text-muted-foreground font-semibold">· {post.time}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground font-semibold mb-2 truncate">{post.role}</p>
-                    <p className="text-sm text-foreground/90 leading-relaxed font-medium mb-3">
-                      {post.text}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className="text-[10px] font-bold uppercase tracking-wider border-foreground/20">
-                        {post.tag}
-                      </Badge>
-                      <span className="text-[11px] font-bold text-muted-foreground">
-                        {post.source === "linkedin" ? "LinkedIn" : "X / Twitter"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
+        <ArticleFeedSection
+          audience="student"
+          title="Live Startup Feed"
+          subtitle="Real posts: Dev.to, Indie Hackers, Hacker News & Y Combinator"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">

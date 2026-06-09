@@ -11,6 +11,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
+import ArticleFeedSection from "@/components/ArticleFeedSection";
 
 // ── STATIC EDITORIAL DATA ────────────────────────────────────────────────────
 
@@ -498,9 +499,7 @@ export default function InvestorHome() {
             {[
               { key: "all", label: "All" },
               { key: "youtube", label: "YouTube" },
-              { key: "twitter", label: "X / Twitter" },
-              { key: "linkedin", label: "LinkedIn" },
-              { key: "instagram", label: "Instagram" },
+              { key: "twitter", label: "Live Articles" },
             ].map((t) => (
               <button
                 key={t.key}
@@ -529,43 +528,13 @@ export default function InvestorHome() {
             </section>
           )}
 
-          {/* TWITTER SECTION */}
+          {/* LIVE ARTICLES SECTION (replaces mock Twitter/LinkedIn/Instagram) */}
           {(activeTab === "all" || activeTab === "twitter") && (
-            <section>
-              <h3 className="text-xl font-display font-extrabold text-foreground mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#1DA1F2] rounded-full inline-block" />
-                X / Twitter — Investor Insights
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {twitterPosts.map((p) => <TwitterCard key={p.id} post={p} />)}
-              </div>
-            </section>
-          )}
-
-          {/* LINKEDIN SECTION */}
-          {(activeTab === "all" || activeTab === "linkedin") && (
-            <section>
-              <h3 className="text-xl font-display font-extrabold text-foreground mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#0A66C2] rounded-full inline-block" />
-                LinkedIn — Market Signals
-              </h3>
-              <div className="grid grid-cols-1 gap-5">
-                {linkedinPosts.map((p) => <LinkedInCard key={p.id} post={p} />)}
-              </div>
-            </section>
-          )}
-
-          {/* INSTAGRAM SECTION */}
-          {(activeTab === "all" || activeTab === "instagram") && (
-            <section>
-              <h3 className="text-xl font-display font-extrabold text-foreground mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#E1306C] rounded-full inline-block" />
-                Instagram — Founder Wisdom
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {instagramPosts.map((p) => <InstagramCard key={p.id} post={p} />)}
-              </div>
-            </section>
+            <ArticleFeedSection
+              audience="investor"
+              title="Live Investor Feed"
+              subtitle="Real posts: Hacker News, a16z, Y Combinator & Paul Graham essays"
+            />
           )}
         </div>
 
