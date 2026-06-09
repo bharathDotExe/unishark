@@ -58,10 +58,6 @@ export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({
       rings.push({ segments: cfg.segments, innerR: cfg.innerR, outerR: cfg.outerR, bits });
     }
 
-    // Center dot presence
-    const hasCenter = ((hash >> 5) & 1) === 1;
-    const centerDotSize = 0.06 + (hueFromHash(hash, 16) * 0.04);
-
     // Gradient IDs unique per seed
     const gradBg = `bg-${seed.slice(0, 8)}`;
     const gradAccent = `accent-${seed.slice(0, 8)}`;
