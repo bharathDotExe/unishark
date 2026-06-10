@@ -3,140 +3,170 @@ import { cn } from '@/lib/utils';
 
 interface SharkIdenticonProps {
   seed: string;
+  name?: string;
   role?: 'student' | 'mentor' | 'investor' | 'admin';
   size?: number;
   className?: string;
 }
 
-const hashString = (str: string): number => {
-  let hash = 5381;
+// Strong, well-distributed hash (FNV-1a)
+const fnv1a = (str: string): number => {
+  let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
   }
-  return Math.abs(hash);
+  return h >>> 0;
 };
 
 const ROLES = ['student', 'mentor', 'investor', 'admin'] as const;
 
-const hueFromHash = (hash: number, offset: number): number => {
-  return ((hash >> offset) & 0xFF) / 255;
+// Curated, vibrant gradient palettes — every user gets a distinct beautiful combo
+const PALETTES: [string, string, string][] = [
+  ['#FF6B6B', '#FFD93D', '#FF8E53'], // sunset
+  ['#6A11CB', '#2575FC', '#00C9FF'], // electric blue/purple
+  ['#11998E', '#38EF7D', '#A8FF78'], // mint forest
+  ['#FC466B', '#3F5EFB', '#A044FF'], // magenta to indigo
+  ['#F7971E', '#FFD200', '#FF6A00'], // golden hour
+  ['#00DBDE', '#FC00FF', '#7B2FF7'], // cyber neon
+  ['#FA709A', '#FEE140', '#FF9A8B'], // peach pink
+  ['#43E97B', '#38F9D7', '#00C9A7'], // emerald aqua
+  ['#5EE7DF', '#B490CA', '#F794A4'], // pastel dream
+  ['#FF512F', '#DD2476', '#F09819'], // crimson amber
+  ['#4FACFE', '#00F2FE', '#43E97B'], // arctic
+  ['#F953C6', '#B91D73', '#FFB6B9'], // berry bloom
+  ['#3A1C71', '#D76D77', '#FFAF7B'], // dusk
+  ['#1FA2FF', '#12D8FA', '#A6FFCB'], // ocean
+  ['#FF9966', '#FF5E62', '#FFC371'], // tangerine
+  ['#8E2DE2', '#4A00E0', '#00C2FF'], // deep galaxy
+];
+
+const getInitials = (name?: string, seed?: string): string => {
+  const source = (name || '').trim();
+  if (source) {
+    const parts = source.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+    return source.slice(0, 2).toUpperCase();
+  }
+  if (seed) {
+    // Pick two letters from seed
+    const clean = seed.replace(/[^a-zA-Z0-9]/g, '');
+    return (clean.slice(0, 2) || 'U').toUpperCase();
+  }
+  return 'U';
 };
 
 export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({
   seed,
+  name,
   role = 'student',
   size = 40,
   className,
 }) => {
-  const { rings, defs, bgFill, accentFill } = useMemo(() => {
-    const hash = hashString(seed);
-    const roleIndex = ROLES.indexOf(role);
+  const { gradId, patternId, colors, angle, shapes, initials, ringColor } = useMemo(() => {
+    const hash = fnv1a(seed + role);
+    const colors = PALETTES[hash % PALETTES.length];
+    const angle = (hash >> 4) % 360;
+    const uid = (hash.toString(36) + (seed || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6)) || 'id';
+    const gradId = `g-${uid}`;
+    const patternId = `p-${uid}`;
 
-    // Role-based hue anchors for sophistication
-    const roleHues = [200, 270, 155, 45]; // student=blue, mentor=purple, investor=green, admin=gold
-    const baseHue = roleHues[roleIndex];
-    const hueVar = Math.floor(hueFromHash(hash, 0) * 40) - 20; // ±20° variation
-    const primaryHue = (baseHue + hueVar + 360) % 360;
-    const secondaryHue = (primaryHue + 30) % 360;
+    // Generate 5 decorative floating shapes (circles/blobs) for unique pattern
+    const shapes = Array.from({ length: 6 }).map((_, i) => {
+      const h = fnv1a(seed + ':' + i);
+      return {
+        cx: ((h & 0xff) / 255) * 100,
+        cy: (((h >> 8) & 0xff) / 255) * 100,
+        r: 8 + (((h >> 16) & 0xff) / 255) * 18,
+        opacity: 0.12 + (((h >> 20) & 0x0f) / 15) * 0.22,
+      };
+    });
 
-    // Build 3 concentric rings with segments
-    const rings: { segments: number; innerR: number; outerR: number; bits: boolean[] }[] = [];
-    let bitOffset = 8;
-
-    const ringConfigs = [
-      { segments: 6, innerR: 0.12, outerR: 0.35 },
-      { segments: 10, innerR: 0.37, outerR: 0.60 },
-      { segments: 14, innerR: 0.62, outerR: 0.85 },
-    ];
-
-    for (const cfg of ringConfigs) {
-      const bits: boolean[] = [];
-      for (let i = 0; i < cfg.segments; i++) {
-        bits.push(((hash >> (bitOffset + i)) & 1) === 1);
-      }
-      bitOffset += cfg.segments;
-      rings.push({ segments: cfg.segments, innerR: cfg.innerR, outerR: cfg.outerR, bits });
-    }
-
-    // Gradient IDs unique per seed
-    const gradBg = `bg-${seed.slice(0, 8)}`;
-    const gradAccent = `accent-${seed.slice(0, 8)}`;
-
-    const bgFill = `url(#${gradBg})`;
-    const accentFill = `url(#${gradAccent})`;
-
-    const defs = (
-      <>
-        <radialGradient id={gradBg} cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
-          <stop offset="0%" stopColor={`hsl(${primaryHue}, 25%, 22%)`} />
-          <stop offset="100%" stopColor={`hsl(${primaryHue}, 35%, 12%)`} />
-        </radialGradient>
-        <linearGradient id={gradAccent} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={`hsl(${primaryHue}, 70%, 65%)`} />
-          <stop offset="100%" stopColor={`hsl(${secondaryHue}, 60%, 55%)`} />
-        </linearGradient>
-      </>
-    );
-
-    return { rings, defs, bgFill, accentFill };
-  }, [seed, role]);
-
-  // Generate SVG paths for a ring segment
-  const segmentPath = (innerR: number, outerR: number, segments: number, index: number): string => {
-    const startAngle = (index / segments) * Math.PI * 2 - Math.PI / 2;
-    const endAngle = ((index + 1) / segments) * Math.PI * 2 - Math.PI / 2;
-    const gap = 0.03; // slight gap between segments
-
-    const sa = startAngle + gap;
-    const ea = endAngle - gap;
-
-    const x1 = 0.5 + innerR * Math.cos(sa);
-    const y1 = 0.5 + innerR * Math.sin(sa);
-    const x2 = 0.5 + outerR * Math.cos(sa);
-    const y2 = 0.5 + outerR * Math.sin(sa);
-    const x3 = 0.5 + outerR * Math.cos(ea);
-    const y3 = 0.5 + outerR * Math.sin(ea);
-    const x4 = 0.5 + innerR * Math.cos(ea);
-    const y4 = 0.5 + innerR * Math.sin(ea);
-
-    const largeArc = (ea - sa) > Math.PI ? 1 : 0;
-
-    return `M ${x1} ${y1} L ${x2} ${y2} A ${outerR} ${outerR} 0 ${largeArc} 1 ${x3} ${y3} L ${x4} ${y4} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x1} ${y1} Z`;
-  };
+    const initials = getInitials(name, seed);
+    const ringColor = colors[2];
+    return { gradId, patternId, colors, angle, shapes, initials, ringColor };
+  }, [seed, name, role]);
 
   return (
     <div
       className={cn(
-        'rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 transition-transform duration-300 hover:scale-105',
+        'rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 select-none',
         className
       )}
       style={{ width: size, height: size }}
+      aria-label={`Avatar for ${name || seed}`}
     >
       <svg
         width="100%"
         height="100%"
-        viewBox="0 0 1 1"
+        viewBox="0 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
       >
-        {defs}
-        {/* Background circle */}
-        <circle cx="0.5" cy="0.5" r="0.5" fill={bgFill} />
+        <defs>
+          <linearGradient
+            id={gradId}
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+            gradientTransform={`rotate(${angle} 0.5 0.5)`}
+          >
+            <stop offset="0%" stopColor={colors[0]} />
+            <stop offset="55%" stopColor={colors[1]} />
+            <stop offset="100%" stopColor={colors[2]} />
+          </linearGradient>
+          <radialGradient id={`${gradId}-shine`} cx="30%" cy="25%" r="60%">
+            <stop offset="0%" stopColor="white" stopOpacity="0.35" />
+            <stop offset="60%" stopColor="white" stopOpacity="0.05" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </radialGradient>
+        </defs>
 
-        {/* Rings */}
-        {rings.map((ring, ringIdx) =>
-          ring.bits.map((active, segIdx) => {
-            if (!active) return null;
-            const opacity = 0.6 + (ringIdx * 0.2); // inner rings more opaque
-            return (
-              <path
-                key={`r${ringIdx}-s${segIdx}`}
-                d={segmentPath(ring.innerR, ring.outerR, ring.segments, segIdx)}
-                fill={accentFill}
-                opacity={opacity}
-              />
-            );
-          })
-        )}
+        {/* Background gradient */}
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${gradId})`} />
+
+        {/* Decorative shapes for unique per-user texture */}
+        <g>
+          {shapes.map((s, i) => (
+            <circle
+              key={i}
+              cx={s.cx}
+              cy={s.cy}
+              r={s.r}
+              fill="white"
+              opacity={s.opacity}
+            />
+          ))}
+        </g>
+
+        {/* Soft top-left shine */}
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${gradId}-shine)`} />
+
+        {/* Initials */}
+        <text
+          x="50"
+          y="50"
+          textAnchor="middle"
+          dominantBaseline="central"
+          fontFamily="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
+          fontWeight="800"
+          fontSize="42"
+          fill="white"
+          style={{ letterSpacing: '-1px', paintOrder: 'stroke', textShadow: '0 1px 2px rgba(0,0,0,0.25)' }}
+        >
+          {initials}
+        </text>
+
+        {/* Inner ring accent */}
+        <circle
+          cx="50"
+          cy="50"
+          r="48"
+          fill="none"
+          stroke="white"
+          strokeOpacity="0.25"
+          strokeWidth="1.5"
+        />
       </svg>
     </div>
   );
