@@ -9,7 +9,7 @@ interface SharkIdenticonProps {
   className?: string;
 }
 
-// Strong, well-distributed hash (FNV-1a)
+// FNV-1a hash
 const fnv1a = (str: string): number => {
   let h = 2166136261 >>> 0;
   for (let i = 0; i < str.length; i++) {
@@ -19,26 +19,25 @@ const fnv1a = (str: string): number => {
   return h >>> 0;
 };
 
-const ROLES = ['student', 'mentor', 'investor', 'admin'] as const;
-
-// Curated, vibrant gradient palettes — every user gets a distinct beautiful combo
-const PALETTES: [string, string, string][] = [
-  ['#FF6B6B', '#FFD93D', '#FF8E53'], // sunset
-  ['#6A11CB', '#2575FC', '#00C9FF'], // electric blue/purple
-  ['#11998E', '#38EF7D', '#A8FF78'], // mint forest
-  ['#FC466B', '#3F5EFB', '#A044FF'], // magenta to indigo
-  ['#F7971E', '#FFD200', '#FF6A00'], // golden hour
-  ['#00DBDE', '#FC00FF', '#7B2FF7'], // cyber neon
-  ['#FA709A', '#FEE140', '#FF9A8B'], // peach pink
-  ['#43E97B', '#38F9D7', '#00C9A7'], // emerald aqua
-  ['#5EE7DF', '#B490CA', '#F794A4'], // pastel dream
-  ['#FF512F', '#DD2476', '#F09819'], // crimson amber
-  ['#4FACFE', '#00F2FE', '#43E97B'], // arctic
-  ['#F953C6', '#B91D73', '#FFB6B9'], // berry bloom
-  ['#3A1C71', '#D76D77', '#FFAF7B'], // dusk
-  ['#1FA2FF', '#12D8FA', '#A6FFCB'], // ocean
-  ['#FF9966', '#FF5E62', '#FFC371'], // tangerine
-  ['#8E2DE2', '#4A00E0', '#00C2FF'], // deep galaxy
+// Soft, premium pastel palettes (Apple/Notion-inspired). Background is light,
+// monogram is a deep tonal version of the same hue. Calm, elegant, distinct.
+const PALETTES: { bg: [string, string, string]; ink: string }[] = [
+  { bg: ['#FDE7EF', '#F8C8DC', '#F4A6C0'], ink: '#7A1F3D' }, // rose
+  { bg: ['#E6F0FF', '#C5DCFF', '#9BC2FF'], ink: '#0F3A8A' }, // sky
+  { bg: ['#E7F8EE', '#BFEBD0', '#8FD9AE'], ink: '#0E5132' }, // sage
+  { bg: ['#FFF1DC', '#FFD9A8', '#FFB778'], ink: '#7A3D08' }, // apricot
+  { bg: ['#F0E8FF', '#D6C3FF', '#B79CFF'], ink: '#3B1A85' }, // lilac
+  { bg: ['#E0F7FA', '#A7E8EE', '#74D2DB'], ink: '#0B4A55' }, // aqua
+  { bg: ['#FFF4D6', '#FCE48A', '#F4C752'], ink: '#6A4900' }, // sand
+  { bg: ['#F5EDE3', '#E4D2BB', '#C8AE8B'], ink: '#4A3618' }, // sand stone
+  { bg: ['#FFE4E1', '#FFB8B0', '#FF8F82'], ink: '#7A1A12' }, // coral
+  { bg: ['#E6FBF1', '#A8EFCD', '#6BDFA8'], ink: '#0B5235' }, // mint
+  { bg: ['#EEF1FF', '#C8D0FF', '#9AA8FF'], ink: '#1B2670' }, // periwinkle
+  { bg: ['#F9E8FF', '#E3B8F7', '#CB8DEC'], ink: '#561A75' }, // orchid
+  { bg: ['#FFEDE0', '#FFC8A0', '#FFA56C'], ink: '#7A2E00' }, // tangerine
+  { bg: ['#E8F5E9', '#B4DCB8', '#7EBE88'], ink: '#1B4A21' }, // moss
+  { bg: ['#FFE6F2', '#FFB0D8', '#FF85BD'], ink: '#7A0F47' }, // pink
+  { bg: ['#E9F3FF', '#B6D9FF', '#7FBAFF'], ink: '#0B3B7A' }, // azure
 ];
 
 const getInitials = (name?: string, seed?: string): string => {
@@ -49,7 +48,6 @@ const getInitials = (name?: string, seed?: string): string => {
     return source.slice(0, 2).toUpperCase();
   }
   if (seed) {
-    // Pick two letters from seed
     const clean = seed.replace(/[^a-zA-Z0-9]/g, '');
     return (clean.slice(0, 2) || 'U').toUpperCase();
   }
@@ -63,28 +61,24 @@ export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({
   size = 40,
   className,
 }) => {
-  const { gradId, patternId, colors, angle, shapes, initials, ringColor } = useMemo(() => {
+  const { uid, palette, blobs, initials, rotation } = useMemo(() => {
     const hash = fnv1a(seed + role);
-    const colors = PALETTES[hash % PALETTES.length];
-    const angle = (hash >> 4) % 360;
-    const uid = (hash.toString(36) + (seed || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 6)) || 'id';
-    const gradId = `g-${uid}`;
-    const patternId = `p-${uid}`;
+    const palette = PALETTES[hash % PALETTES.length];
+    const uid = `id-${hash.toString(36)}`;
+    const rotation = (hash >> 8) % 360;
 
-    // Generate 5 decorative floating shapes (circles/blobs) for unique pattern
-    const shapes = Array.from({ length: 6 }).map((_, i) => {
-      const h = fnv1a(seed + ':' + i);
+    // Three soft mesh blobs with deterministic per-user positions
+    const blobs = Array.from({ length: 3 }).map((_, i) => {
+      const h = fnv1a(seed + '::' + i);
       return {
-        cx: ((h & 0xff) / 255) * 100,
-        cy: (((h >> 8) & 0xff) / 255) * 100,
-        r: 8 + (((h >> 16) & 0xff) / 255) * 18,
-        opacity: 0.12 + (((h >> 20) & 0x0f) / 15) * 0.22,
+        cx: 15 + ((h & 0xff) / 255) * 70,
+        cy: 15 + (((h >> 8) & 0xff) / 255) * 70,
+        r: 38 + (((h >> 16) & 0xff) / 255) * 22,
+        color: palette.bg[i % 3],
       };
     });
 
-    const initials = getInitials(name, seed);
-    const ringColor = colors[2];
-    return { gradId, patternId, colors, angle, shapes, initials, ringColor };
+    return { uid, palette, blobs, initials: getInitials(name, seed), rotation };
   }, [seed, name, role]);
 
   return (
@@ -103,69 +97,56 @@ export const SharkIdenticon: React.FC<SharkIdenticonProps> = ({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient
-            id={gradId}
-            x1="0%"
-            y1="0%"
-            x2="100%"
-            y2="100%"
-            gradientTransform={`rotate(${angle} 0.5 0.5)`}
-          >
-            <stop offset="0%" stopColor={colors[0]} />
-            <stop offset="55%" stopColor={colors[1]} />
-            <stop offset="100%" stopColor={colors[2]} />
-          </linearGradient>
-          <radialGradient id={`${gradId}-shine`} cx="30%" cy="25%" r="60%">
-            <stop offset="0%" stopColor="white" stopOpacity="0.35" />
-            <stop offset="60%" stopColor="white" stopOpacity="0.05" />
-            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          <radialGradient id={`${uid}-base`} cx="50%" cy="50%" r="65%">
+            <stop offset="0%" stopColor={palette.bg[0]} />
+            <stop offset="100%" stopColor={palette.bg[1]} />
           </radialGradient>
+          <filter id={`${uid}-blur`} x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="10" />
+          </filter>
         </defs>
 
-        {/* Background gradient */}
-        <rect x="0" y="0" width="100" height="100" fill={`url(#${gradId})`} />
+        {/* Soft tonal base */}
+        <rect x="0" y="0" width="100" height="100" fill={`url(#${uid}-base)`} />
 
-        {/* Decorative shapes for unique per-user texture */}
-        <g>
-          {shapes.map((s, i) => (
-            <circle
-              key={i}
-              cx={s.cx}
-              cy={s.cy}
-              r={s.r}
-              fill="white"
-              opacity={s.opacity}
-            />
+        {/* Mesh-style soft blobs — gives each user a unique flow */}
+        <g
+          filter={`url(#${uid}-blur)`}
+          transform={`rotate(${rotation} 50 50)`}
+          opacity="0.85"
+        >
+          {blobs.map((b, i) => (
+            <circle key={i} cx={b.cx} cy={b.cy} r={b.r} fill={b.color} />
           ))}
         </g>
 
-        {/* Soft top-left shine */}
-        <rect x="0" y="0" width="100" height="100" fill={`url(#${gradId}-shine)`} />
+        {/* Subtle inner highlight for depth */}
+        <ellipse cx="35" cy="28" rx="30" ry="18" fill="white" opacity="0.22" />
 
-        {/* Initials */}
+        {/* Monogram — refined serif for premium feel */}
         <text
           x="50"
-          y="50"
+          y="52"
           textAnchor="middle"
           dominantBaseline="central"
-          fontFamily="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif"
-          fontWeight="800"
-          fontSize="42"
-          fill="white"
-          style={{ letterSpacing: '-1px', paintOrder: 'stroke', textShadow: '0 1px 2px rgba(0,0,0,0.25)' }}
+          fontFamily="'Cormorant Garamond', 'Playfair Display', Georgia, 'Times New Roman', serif"
+          fontWeight="600"
+          fontSize="46"
+          fill={palette.ink}
+          style={{ letterSpacing: '0.5px' }}
         >
           {initials}
         </text>
 
-        {/* Inner ring accent */}
+        {/* Hairline ring */}
         <circle
           cx="50"
           cy="50"
-          r="48"
+          r="49"
           fill="none"
-          stroke="white"
-          strokeOpacity="0.25"
-          strokeWidth="1.5"
+          stroke={palette.ink}
+          strokeOpacity="0.15"
+          strokeWidth="1"
         />
       </svg>
     </div>
