@@ -196,7 +196,7 @@ export default function InvestorProfile() {
             {profile.avatar_url ? (
               <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
             ) : (
-              <SharkIdenticon seed={user?.id || "default"} role="investor" size={112} className="w-full h-full rounded-none" />
+              <SharkIdenticon seed={user?.id || "default"} name={profile.full_name} role="investor" size={112} className="w-full h-full rounded-none" />
             )}
           </div>
 
