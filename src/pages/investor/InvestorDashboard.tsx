@@ -537,6 +537,10 @@ export default function InvestorHome() {
               subtitle="Real posts: Hacker News, a16z, Y Combinator & Paul Graham essays"
             />
           )}
+
+          {(activeTab === "all" || activeTab === "twitter") && (
+            <ProductHuntSection />
+          )}
         </div>
 
         {/* ── RIGHT: DEAL FLOW (real DB data) ── */}
