@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
 import ArticleFeedSection from "@/components/ArticleFeedSection";
+import ProductHuntSection from "@/components/ProductHuntSection";
 
 // ── STATIC EDITORIAL DATA ────────────────────────────────────────────────────
 
@@ -535,6 +536,10 @@ export default function InvestorHome() {
               title="Live Investor Feed"
               subtitle="Real posts: Hacker News, a16z, Y Combinator & Paul Graham essays"
             />
+          )}
+
+          {(activeTab === "all" || activeTab === "twitter") && (
+            <ProductHuntSection />
           )}
         </div>
 
