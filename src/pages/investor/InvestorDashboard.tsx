@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
 import ArticleFeedSection from "@/components/ArticleFeedSection";
+import ProductHuntSection from "@/components/ProductHuntSection";
 
 // ── STATIC EDITORIAL DATA ────────────────────────────────────────────────────
 
