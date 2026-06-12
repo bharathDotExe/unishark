@@ -14,7 +14,7 @@ type PHItem = {
 };
 
 const RSS2JSON = "https://api.rss2json.com/v1/api.json?rss_url=";
-const PH_FEED = "https://www.producthunt.com/feed?category=undefined";
+const PH_FEED = "https://www.producthunt.com/feed";
 
 function timeAgo(iso?: string) {
   if (!iso) return "";
