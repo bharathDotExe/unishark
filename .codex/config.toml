@@ -1,0 +1,10 @@
+[mcp_servers.supabase-local]
+command = "npx.cmd"
+args = [
+    "-y",
+    "@supabase/mcp-server-supabase",
+]
+
+[mcp_servers.supabase-local.env]
+SUPABASE_ACCESS_TOKEN = "sbp_91f3eb03e0f7d6fe3558a50d9b23fe8236ad53b5"
+SUPABASE_PROJECT_REF = "irxssaogqjgkutogducx"

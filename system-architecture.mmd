@@ -1,0 +1,38 @@
+%% High-level System Architecture (Mermaid)
+flowchart LR
+  subgraph Client Applications
+    U["Vite React SPA"]
+  end
+
+  subgraph Frontend
+    App[Vite React SPA<br/>React + TypeScript]
+    UI[UI: Radix, Tailwind, shadcn]
+    Router[Router & Auth Guards]
+  end
+
+  subgraph Backend Services
+    Auth[Supabase Auth<br/>OAuth / Email OTP / Sessions]
+    Postgres["Supabase Postgres<br/>(Managed Postgres + RLS)"]
+    Storage[Supabase Storage<br/>Buckets: profile-photos, pitch-decks, identity-cards, pitch-thumbnails]
+  end
+
+  subgraph External Services
+    Lovable["Lovable OAuth Broker (Google sign-in)"]
+    SupabaseCluster[Supabase Platform]
+  end
+
+  subgraph Infrastructure
+    CDN["Static Host & CDN (Vite build)"]
+  end
+
+  U -->|loads app| CDN
+  CDN --> App
+  App --> Router
+  Router -->|Auth calls| Auth
+  Router -->|PostgREST / RPC| Postgres
+  App -->|Storage upload/download| Storage
+  Auth -->|session metadata| Postgres
+  Auth -->|OAuth redirect| Lovable
+  SupabaseCluster --> Auth
+  SupabaseCluster --> Postgres
+  SupabaseCluster --> Storage

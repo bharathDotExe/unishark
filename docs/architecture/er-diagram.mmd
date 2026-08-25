@@ -1,0 +1,193 @@
+%% UniShark Database ER Diagram
+%% Based on supabase/migrations and src/integrations/supabase/types.ts.
+erDiagram
+  AUTH_USERS {
+    uuid id PK
+    text email
+  }
+
+  PROFILES {
+    uuid id PK,FK
+    text email
+    text full_name
+    text avatar_url
+    boolean is_suspended
+    timestamptz suspended_at
+    text suspension_reason
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  USER_ROLES {
+    uuid id PK
+    uuid user_id FK
+    app_role role
+    timestamptz created_at
+  }
+
+  STUDENT_PROFILES {
+    uuid id PK
+    uuid user_id FK
+    text full_name
+    text college
+    text year
+    text city
+    text contact_number
+    text linkedin_url
+    text twitter_url
+    text website_url
+    text bio
+    text identity_card_url
+    text profile_photo_url
+    text cover_photo_url
+    boolean profile_complete
+    jsonb experiences
+    text_array skills
+    text_array interests
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  INVESTOR_PROFILES {
+    uuid id PK
+    uuid user_id FK
+    text full_name
+    text company_fund_name
+    text city
+    text contact_number
+    text linkedin_url
+    text bio
+    numeric ticket_size_min
+    numeric ticket_size_max
+    text_array sectors
+    text_array investment_sectors
+    text_array preferred_stages
+    boolean verified
+    text verification_status
+    timestamptz verified_at
+    boolean profile_complete
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  PITCHES {
+    uuid id PK
+    uuid user_id FK
+    text title
+    text one_liner
+    text problem
+    text solution
+    text market_size
+    pitch_stage stage
+    pitch_status status
+    text funding_ask
+    text deck_url
+    text thumbnail_url
+    jsonb team_members
+    text traction
+    integer view_count
+    text rejection_reason
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  MESSAGES {
+    uuid id PK
+    uuid pitch_id FK
+    uuid sender_id FK
+    uuid recipient_id FK
+    text content
+    boolean read
+    timestamptz created_at
+  }
+
+  BOOKMARKS {
+    uuid id PK
+    uuid user_id FK
+    uuid pitch_id FK
+    timestamptz created_at
+  }
+
+  DEALS {
+    uuid id PK
+    uuid pitch_id FK
+    uuid investor_id FK
+    uuid student_id FK
+    deal_status status
+    numeric amount_committed
+    numeric platform_commission
+    timestamptz created_at
+    timestamptz updated_at
+  }
+
+  TRANSACTIONS {
+    uuid id PK
+    uuid user_id FK
+    transaction_type type
+    numeric amount
+    transaction_status status
+    text reference_id
+    timestamptz created_at
+  }
+
+  AUDIT_LOGS {
+    uuid id PK
+    uuid actor_id FK
+    text action
+    text target_id
+    audit_category category
+    audit_severity severity
+    text ip_address
+    timestamptz created_at
+  }
+
+  PLATFORM_SETTINGS {
+    text id PK
+    jsonb value
+    uuid updated_by FK
+    timestamptz updated_at
+  }
+
+  DATABASE_BACKUPS {
+    uuid id PK
+    text name
+    text type
+    bigint size_bytes
+    text status
+    bigint duration_ms
+    timestamptz created_at
+  }
+
+  STORAGE_BUCKETS {
+    text id PK
+    text name
+    boolean public
+  }
+
+  STORAGE_OBJECTS {
+    uuid id PK
+    text bucket_id FK
+    text name
+    uuid owner
+  }
+
+  AUTH_USERS ||--|| PROFILES : "creates"
+  PROFILES ||--o{ USER_ROLES : "has"
+  PROFILES ||--o| STUDENT_PROFILES : "student profile"
+  PROFILES ||--o| INVESTOR_PROFILES : "investor profile"
+  PROFILES ||--o{ PITCHES : "owns"
+  PROFILES ||--o{ MESSAGES : "sends"
+  PROFILES ||--o{ MESSAGES : "receives"
+  PROFILES ||--o{ BOOKMARKS : "creates"
+  PITCHES ||--o{ BOOKMARKS : "bookmarked"
+  PITCHES ||--o{ MESSAGES : "conversation context"
+  PITCHES ||--o{ DEALS : "funding deal"
+  PROFILES ||--o{ DEALS : "investor"
+  PROFILES ||--o{ DEALS : "student"
+  PROFILES ||--o{ TRANSACTIONS : "billed"
+  PROFILES ||--o{ AUDIT_LOGS : "actor"
+  PROFILES ||--o{ PLATFORM_SETTINGS : "updated by"
+  STORAGE_BUCKETS ||--o{ STORAGE_OBJECTS : "contains"
+  PITCHES }o..o{ STORAGE_OBJECTS : "deck_url / thumbnail_url"
+  STUDENT_PROFILES }o..o{ STORAGE_OBJECTS : "identity/profile/cover URLs"
+  INVESTOR_PROFILES }o..o{ STORAGE_OBJECTS : "profile URLs"

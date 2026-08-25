@@ -1,0 +1,91 @@
+architecture-beta
+    group client(internet)[Client Applications]
+    group frontend(cloud)[Frontend]
+    group backend(cloud)[Backend Services]
+    group database(database)[Database Layer]
+    group external(external)[External Services]
+    group infra(server)[Infrastructure]
+
+    service browser(internet)[Web Browser] in client
+    service publicRoutes(internet)[Public Visitors] in client
+    service studentUsers(internet)[Student Founders] in client
+    service investorUsers(internet)[Investors] in client
+    service adminUsers(internet)[Admin / Superadmin] in client
+
+    service staticApp(server)[Vite React SPA] in frontend
+    service router(server)[React Router] in frontend
+    service authProvider(server)[AuthProvider + ProtectedRoute] in frontend
+    service queryClient(server)[TanStack Query] in frontend
+    service uiKit(server)[Radix UI + Tailwind Components] in frontend
+    service supabaseClient(server)[Supabase JS Client] in frontend
+
+    service supabaseAuth(server)[Supabase Auth] in backend
+    service postgrest(server)[Supabase Data API / PostgREST] in backend
+    service storageApi(server)[Supabase Storage API] in backend
+    service rls(server)[Postgres RLS Policies] in backend
+    service dbFunctions(server)[DB Functions + Triggers] in backend
+
+    service authUsers(database)[auth.users] in database
+    service identity(database)[profiles + user_roles] in database
+    service roleProfiles(database)[student_profiles + investor_profiles] in database
+    service pitchData(database)[pitches + bookmarks + messages] in database
+    service adminData(database)[deals + transactions + audit_logs + platform_settings + database_backups] in database
+    service storageBuckets(database)[Storage Buckets: pitch-decks, pitch-thumbnails, identity-cards, profile-photos] in database
+
+    service google(external)[Google OAuth] in external
+    service lovable(external)[Lovable Cloud Auth] in external
+    service supabasePlatform(external)[Supabase Managed Platform] in external
+
+    service vite(infra)[Vite Build Pipeline] in infra
+    service staticHost(infra)[Static Web Host / CDN] in infra
+    service migrations(infra)[Supabase Migrations] in infra
+    service envConfig(infra)[VITE Supabase Env Config] in infra
+
+    publicRoutes:R --> L:browser
+    studentUsers:R --> L:browser
+    investorUsers:R --> L:browser
+    adminUsers:R --> L:browser
+
+    browser:R --> L:staticHost : load static assets
+    staticHost:R --> L:staticApp : serves built SPA
+    vite:T --> B:staticHost : build output
+    envConfig:T --> B:staticApp : Supabase URL + publishable key
+
+    staticApp:R --> L:router : route selection
+    router:R --> L:authProvider : role guards
+    staticApp:B --> T:uiKit : render views
+    staticApp:R --> L:queryClient : client query state
+    queryClient:R --> L:supabaseClient : data operations
+    authProvider:R --> L:supabaseClient : sessions + roles
+
+    supabaseClient:R --> L:supabaseAuth : sign up, login, OTP, OAuth callback, session refresh
+    supabaseClient:R --> L:postgrest : select, insert, update, delete
+    supabaseClient:B --> T:storageApi : upload, public URL, signed URL
+
+    google:R --> L:lovable : OAuth identity provider
+    lovable:R --> L:supabaseAuth : OAuth redirect / callback
+    supabaseAuth:B --> T:authUsers : manages users + sessions
+    supabaseAuth:R --> L:dbFunctions : on_auth_user_created trigger
+    dbFunctions:B --> T:identity : create profile + role
+    dbFunctions:B --> T:roleProfiles : create role-specific profile
+
+    postgrest:R --> L:rls : authorize request
+    rls:B --> T:identity
+    rls:B --> T:roleProfiles
+    rls:B --> T:pitchData
+    rls:B --> T:adminData
+
+    storageApi:R --> L:rls : bucket object policies
+    storageApi:B --> T:storageBuckets
+    pitchData:R --> L:storageBuckets : deck_url + thumbnail_url
+    roleProfiles:R --> L:storageBuckets : avatar, profile, identity-card URLs
+
+    supabasePlatform:B --> T:supabaseAuth
+    supabasePlatform:B --> T:postgrest
+    supabasePlatform:B --> T:storageApi
+    supabasePlatform:B --> T:authUsers
+
+    migrations:R --> L:identity : schema + policies
+    migrations:R --> L:pitchData : schema + policies
+    migrations:R --> L:adminData : schema + policies
+    migrations:R --> L:storageBuckets : buckets + object policies

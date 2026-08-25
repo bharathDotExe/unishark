@@ -46,6 +46,7 @@ import MyPitches from "./pages/MyPitches.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import PitchSecurity from "./pages/PitchSecurity.tsx";
 import Messages from "./pages/Messages.tsx";
+import AndroidAppDesign from "./pages/AndroidAppDesign.tsx";
 import StudentOnboarding from "./pages/onboarding/StudentOnboarding.tsx";
 import InvestorOnboarding from "./pages/onboarding/InvestorOnboarding.tsx";
 import { ThemeProvider } from "next-themes";
@@ -116,6 +117,7 @@ const App = () => (
             <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/android-app-design" element={<AndroidAppDesign />} />
 
             {/* Onboarding */}
             <Route path="/onboarding/student" element={<ProtectedRoute><StudentOnboarding /></ProtectedRoute>} />
