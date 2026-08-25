@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { studentProfileSchema, studentSkillsSchema } from "@/lib/validations/auth";
-import { GraduationCap, MapPin, Linkedin, Phone, ChevronRight, ChevronLeft, CheckCircle2 } from "lucide-react";
+import { GraduationCap, MapPin, Linkedin, Phone, ChevronRight, ChevronLeft, CheckCircle2, Upload } from "lucide-react";
 
 const COLLEGES = [
   "IIT Delhi", "IIT Bombay", "IIT Madras", "IIT Kharagpur", "IIT Kanpur",
@@ -62,6 +62,7 @@ export default function StudentOnboarding() {
   const [skills, setSkills] = useState<string[]>([]);
   const [startupInterests, setStartupInterests] = useState<string[]>([]);
   const [industriesInterest, setIndustriesInterest] = useState("");
+  const [idCardFile, setIdCardFile] = useState<File | null>(null);
 
   const progress = ((step + 1) / STEP_TITLES.length) * 100;
 
@@ -90,9 +91,20 @@ export default function StudentOnboarding() {
       return;
     }
     if (!user) { toast.error("Not authenticated"); return; }
+    if (!idCardFile) { toast.error("Please upload your university ID card"); return; }
 
     setLoading(true);
     try {
+      // Upload identity card
+      let identityCardUrl: string | null = null;
+      const filePath = `${user.id}/id-card-${Date.now()}`;
+      const { error: uploadError } = await supabase.storage
+        .from("identity-cards")
+        .upload(filePath, idCardFile, { upsert: true, contentType: idCardFile.type });
+      if (uploadError) throw uploadError;
+      const { data: publicUrlData } = supabase.storage.from("identity-cards").getPublicUrl(filePath);
+      identityCardUrl = publicUrlData.publicUrl;
+
       // Upsert student profile into Supabase
       const { error: profileError } = await supabase.from("profiles").update({
         full_name: fullName,
@@ -104,6 +116,7 @@ export default function StudentOnboarding() {
         college,
         year: YEAR_TO_DB[year as keyof typeof YEAR_TO_DB],
         linkedin_url: linkedinUrl || null,
+        identity_card_url: identityCardUrl,
         skills: { skills, startupInterests, industriesInterest, city, contactNumber },
       }, { onConflict: "user_id" });
 
@@ -310,6 +323,29 @@ export default function StudentOnboarding() {
                     />
                   </div>
 
+                  {/* Identity Card Upload */}
+                  <div className="p-4 border-2 border-dashed border-border rounded-xl bg-muted/30">
+                    <Label className="font-semibold flex items-center gap-2 mb-2">
+                      <Upload className="w-4 h-4" /> University ID Card *
+                    </Label>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Upload a clear photo of your university ID. Our team verifies this to keep UniShark trusted.
+                    </p>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setIdCardFile(file);
+                      }}
+                      required
+                      className="cursor-pointer file:cursor-pointer file:bg-primary file:text-primary-foreground file:border-0 file:rounded-md file:px-3 file:py-1 file:mr-3 file:font-medium file:hover:bg-primary/90"
+                    />
+                    {idCardFile && (
+                      <p className="text-xs text-foreground mt-2">Selected: {idCardFile.name}</p>
+                    )}
+                  </div>
+
                   <div className="flex gap-3">
                     <Button
                       type="button"
@@ -321,7 +357,7 @@ export default function StudentOnboarding() {
                     </Button>
                     <Button
                       type="submit"
-                      disabled={loading || skills.length === 0 || startupInterests.length === 0}
+                      disabled={loading || skills.length === 0 || startupInterests.length === 0 || !idCardFile}
                       className="flex-[2] h-12 rounded-full border-2 border-foreground shadow-[3px_3px_0_0_hsl(var(--foreground))] bg-foreground text-background font-bold hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[5px_5px_0_0_hsl(var(--foreground))] transition-all disabled:opacity-50"
                     >
                       {loading ? "Saving…" : "Complete profile 🎉"}

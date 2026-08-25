@@ -11,41 +11,43 @@ import {
   RefreshCw
 } from "lucide-react";
 import { SharkIdenticon } from "@/components/ui/SharkIdenticon";
+import ArticleFeedSection from "@/components/ArticleFeedSection";
+import ProductHuntSection from "@/components/ProductHuntSection";
 
 // ── STATIC EDITORIAL DATA ────────────────────────────────────────────────────
 
 const youtubeVideos = [
   {
     id: "yt1",
-    embedId: "gDQOWOhtPXY",
-    title: "How to Value a Startup (Detailed Guide)",
+    embedId: "bNpx7gpSqbY",
+    title: "How to Start a Startup — Sam Altman (Lecture 1)",
     channel: "Y Combinator",
-    views: "1.2M views",
-    duration: "22 min",
+    views: "2.4M views",
+    duration: "46 min",
   },
   {
     id: "yt2",
-    embedId: "5w3EUQh1mXQ",
-    title: "Angel Investing: Due Diligence Checklist",
-    channel: "Venture School",
-    views: "450K views",
-    duration: "18 min",
+    embedId: "ZoqgAy3h4OM",
+    title: "Before the Startup — Paul Graham",
+    channel: "Y Combinator",
+    views: "1.8M views",
+    duration: "48 min",
   },
   {
     id: "yt3",
-    embedId: "WsKPGIBbQgM",
-    title: "How Venture Capital Works",
-    channel: "WSJ",
-    views: "3.1M views",
-    duration: "15 min",
+    embedId: "CBYhVcO4WgI",
+    title: "How to Raise Money — Marc Andreessen, Ron Conway",
+    channel: "Y Combinator",
+    views: "780K views",
+    duration: "49 min",
   },
   {
     id: "yt4",
-    embedId: "BqMGBGUFwXk",
-    title: "What Investors Look For in a Startup",
-    channel: "Stanford eCorner",
-    views: "890K views",
-    duration: "12 min",
+    embedId: "0lJKucu6HJc",
+    title: "How to Get Rich (Without Getting Lucky) — Naval",
+    channel: "Naval",
+    views: "5.2M views",
+    duration: "3 hr",
   },
 ];
 
@@ -61,6 +63,7 @@ const twitterPosts = [
     replies: 142,
     retweets: 3200,
     likes: 12800,
+    url: "https://twitter.com/naval",
   },
   {
     id: "tw2",
@@ -73,6 +76,7 @@ const twitterPosts = [
     replies: 88,
     retweets: 4500,
     likes: 21000,
+    url: "https://twitter.com/paulg",
   },
   {
     id: "tw3",
@@ -85,6 +89,7 @@ const twitterPosts = [
     replies: 64,
     retweets: 890,
     likes: 3400,
+    url: "https://twitter.com/msuster",
   },
 ];
 
@@ -100,6 +105,7 @@ const linkedinPosts = [
     likes: 1402,
     comments: 124,
     reposts: 34,
+    url: "https://www.linkedin.com/in/sarahchenspellings/",
   },
   {
     id: "li2",
@@ -112,6 +118,7 @@ const linkedinPosts = [
     likes: 2810,
     comments: 340,
     reposts: 91,
+    url: "https://www.linkedin.com/in/anandsanwal/",
   },
 ];
 
@@ -124,6 +131,7 @@ const instagramPosts = [
     quote: "It's not about how much you raise. It's about how little you burn.",
     likes: 4231,
     caption: "Keep burn rates low. Market conditions change fast. #StartupLife #VentureCapital",
+    url: "https://www.instagram.com/explore/tags/startuplife/",
   },
   {
     id: "ig2",
@@ -133,6 +141,7 @@ const instagramPosts = [
     quote: "The best investment you can make is in a founder who has already failed once.",
     likes: 6102,
     caption: "Second-time founders have a 30% higher success rate. #AngelInvesting",
+    url: "https://www.instagram.com/explore/tags/angelinvesting/",
   },
 ];
 
@@ -156,17 +165,36 @@ function YTCard({ video }: { video: typeof youtubeVideos[0] }) {
       <div className="aspect-video border-b-2 border-foreground">
         <iframe
           className="w-full h-full"
-          src={`https://www.youtube.com/embed/${video.embedId}`}
+          src={`https://www.youtube-nocookie.com/embed/${video.embedId}?rel=0`}
           title={video.title}
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
         />
       </div>
       <div className="p-4 flex flex-col gap-1">
-        <Badge className="self-start mb-1 bg-red-100 text-red-700 border-red-400 font-bold text-[10px] rounded-sm">
-          YouTube
-        </Badge>
-        <h4 className="font-extrabold text-base leading-snug">{video.title}</h4>
+        <div className="flex items-center justify-between mb-1">
+          <Badge className="bg-red-100 text-red-700 border-red-400 font-bold text-[10px] rounded-sm">
+            YouTube
+          </Badge>
+          <a
+            href={`https://www.youtube.com/watch?v=${video.embedId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[10px] font-extrabold text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
+          >
+            Watch on YouTube <ExternalLink className="w-3 h-3" />
+          </a>
+        </div>
+        <a
+          href={`https://www.youtube.com/watch?v=${video.embedId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-extrabold text-base leading-snug hover:underline"
+        >
+          {video.title}
+        </a>
         <div className="flex gap-2 text-xs font-bold text-muted-foreground mt-1">
           <span>{video.channel}</span>
           <span>•</span>
@@ -195,9 +223,11 @@ function TwitterCard({ post }: { post: typeof twitterPosts[0] }) {
             <p className="text-xs font-bold text-muted-foreground">{post.handle} · {post.time}</p>
           </div>
         </div>
-        <Badge variant="outline" className="text-[10px] font-bold border-[#1DA1F2] text-[#1DA1F2]">
-          X / Twitter
-        </Badge>
+        <a href={post.url} target="_blank" rel="noopener noreferrer">
+          <Badge variant="outline" className="text-[10px] font-bold border-[#1DA1F2] text-[#1DA1F2] gap-1 hover:bg-[#1DA1F2]/10">
+            X / Twitter <ExternalLink className="w-3 h-3" />
+          </Badge>
+        </a>
       </div>
 
       <p className="text-sm font-semibold leading-relaxed whitespace-pre-line">{post.content}</p>
@@ -237,9 +267,11 @@ function LinkedInCard({ post }: { post: typeof linkedinPosts[0] }) {
             <p className="text-[10px] font-bold text-muted-foreground">{post.time} · Edited</p>
           </div>
         </div>
-        <Badge variant="outline" className="text-[10px] font-bold border-[#0A66C2] text-[#0A66C2] shrink-0">
-          LinkedIn
-        </Badge>
+        <a href={post.url} target="_blank" rel="noopener noreferrer" className="shrink-0">
+          <Badge variant="outline" className="text-[10px] font-bold border-[#0A66C2] text-[#0A66C2] gap-1 hover:bg-[#0A66C2]/10">
+            LinkedIn <ExternalLink className="w-3 h-3" />
+          </Badge>
+        </a>
       </div>
 
       <p className="text-sm font-semibold leading-relaxed whitespace-pre-line">{post.content}</p>
@@ -270,9 +302,11 @@ function InstagramCard({ post }: { post: typeof instagramPosts[0] }) {
           </div>
           <span className="text-xs font-extrabold">{post.handle}</span>
         </div>
-        <Badge variant="outline" className="text-[10px] font-bold border-[#E1306C] text-[#E1306C]">
-          Instagram
-        </Badge>
+        <a href={post.url} target="_blank" rel="noopener noreferrer">
+          <Badge variant="outline" className="text-[10px] font-bold border-[#E1306C] text-[#E1306C] gap-1 hover:bg-[#E1306C]/10">
+            Instagram <ExternalLink className="w-3 h-3" />
+          </Badge>
+        </a>
       </div>
 
       <div className={`${post.bgColor} flex items-center justify-center p-8 text-center border-b-2 border-foreground min-h-[160px]`}>
@@ -466,9 +500,7 @@ export default function InvestorHome() {
             {[
               { key: "all", label: "All" },
               { key: "youtube", label: "YouTube" },
-              { key: "twitter", label: "X / Twitter" },
-              { key: "linkedin", label: "LinkedIn" },
-              { key: "instagram", label: "Instagram" },
+              { key: "twitter", label: "Live Articles" },
             ].map((t) => (
               <button
                 key={t.key}
@@ -497,43 +529,17 @@ export default function InvestorHome() {
             </section>
           )}
 
-          {/* TWITTER SECTION */}
+          {/* LIVE ARTICLES SECTION (replaces mock Twitter/LinkedIn/Instagram) */}
           {(activeTab === "all" || activeTab === "twitter") && (
-            <section>
-              <h3 className="text-xl font-display font-extrabold text-foreground mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#1DA1F2] rounded-full inline-block" />
-                X / Twitter — Investor Insights
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {twitterPosts.map((p) => <TwitterCard key={p.id} post={p} />)}
-              </div>
-            </section>
+            <ArticleFeedSection
+              audience="investor"
+              title="Live Investor Feed"
+              subtitle="Real posts: Hacker News, a16z, Y Combinator & Paul Graham essays"
+            />
           )}
 
-          {/* LINKEDIN SECTION */}
-          {(activeTab === "all" || activeTab === "linkedin") && (
-            <section>
-              <h3 className="text-xl font-display font-extrabold text-foreground mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#0A66C2] rounded-full inline-block" />
-                LinkedIn — Market Signals
-              </h3>
-              <div className="grid grid-cols-1 gap-5">
-                {linkedinPosts.map((p) => <LinkedInCard key={p.id} post={p} />)}
-              </div>
-            </section>
-          )}
-
-          {/* INSTAGRAM SECTION */}
-          {(activeTab === "all" || activeTab === "instagram") && (
-            <section>
-              <h3 className="text-xl font-display font-extrabold text-foreground mb-4 flex items-center gap-2">
-                <span className="w-1.5 h-6 bg-[#E1306C] rounded-full inline-block" />
-                Instagram — Founder Wisdom
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {instagramPosts.map((p) => <InstagramCard key={p.id} post={p} />)}
-              </div>
-            </section>
+          {(activeTab === "all" || activeTab === "twitter") && (
+            <ProductHuntSection />
           )}
         </div>
 
